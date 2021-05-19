@@ -1,0 +1,1619 @@
+000001*
+000002*               COPYRIGHT SHAW SYSTEMS ASSOCIATES, INC.
+000003*
+000004*    $Revision:   1.12  $
+000005*    $Date:   02 Aug 2016 09:47:16  $
+000006*    $Author:   hsubramanyam  $
+000007*
+000010*N IL80MAST -- LOAN MASTER LAYOUT                          V6.0   43MASTDE
+000020******************************************************************43MASTDE
+000030***                                                               43MASTDE
+000040***                                                               43MASTDE
+000050***  NAME IS IL80MAST                             VERSION IS 4.3  43MASTDE
+000060******************************************************************43MASTDE
+BBT000*                    LOG OF BB&T CHANGES
+BBT000*
+BBT000*  CHG#..  INI  DPSR #...  MM/DD/YY  DESC.......................
+BBT000*         ..........MULTIPLE LINES OF DESC......................
+BBT000*
+BBT000*  BBT000  RLB  N00-XXXXX  05/30/00  PUT BB&T LOG INTO PROGRAM
+BBT000*  BBT001  LMB  N00-51652  09/15/00  REDEFINE SHAW USER FIELDS
+BBT000*         TO HOUSE TWO DATES REPRESENTING CURRENT AND PREVIOUS
+BBT000*         DEFERRALS GRANTED.
+BBT000*  BBT002  LMB  N00-54906  09/15/00  REDEFINE FILLER TO HOUSE
+BBT000*         NEW BBT DEFINED FIELDS. THESE FIELDS WILL BE POPULATED
+BBT000*         THROUGH LPA.
+BBT000*  BBT003  LMB  N00-00000  10/20/01  MOVE BBT FIELDS TO SHAW
+BBT000*         DEFINED FIELDS INSTEAD OF FILLER FOR LS2000 DISPLAY
+BBT000*  BBT004  WEA  N00-00000  01/18/2002  RE-DEFINE  USER-ALPHA1-3
+BBT000*         TO BECOME THE NEW 1098 REPORTING FLAG.  WEA
+BBT000*  BBT005  RLB  N02-64660  07/26/2002  REDEFINE M-UF-ALPHA3-1
+BBT000*         TO BECOME THE NEW M-BBT-REIT-STAR-FLAG.
+BBT000*  BBT006  WEA  N02-NNNNN  08/23/2002
+BBT000*          REDEFINE M-UF-DATE-4  TO THE NEW M-BBT-MODIFY-DATE
+BBT000*          REDEFINE M-UF-DATE-5  TO THE NEW M-BBT-LST-PAYMNT-DTE.
+BBT000*          REDEFINE M-UF-NUM72-4 TO THE NEW M-BBT-LST-PAYMNT-AMT.
+BBT000*  BBT007  WEA  N02-NNNNN  09/05/2002
+BBT000*          REDEFINE M-UF-ALPHA1-5 TO THE NEW M-BBT-STUFFER-FLAG
+BBT000*  BBT008  PDL  NEW RELEASE CHANGES 4.5
+BBT000*          MOVE BBT FIELDS TO END OF RECORD LAYOUT AND TO FILLER
+BBT000*          AREA AFTER M-FP-DISB-IND. ADD M-BBT-FLA-DOC-STAMP
+BBT000*          REDEFINES.
+BBT000*  BBT009  DMM  N03-NNNNN  08/06/2003
+BBT000*          REDEFINE M-USER-REG-FLD6-1 TO M-BBT-ELT-FLAG
+BBT000*  BBT010  lmb  N03-68105  11/14/2003
+BBT000*          REDEFINE M-USER-REG-FLD7-1 TO M-BBT-ELIG-IUI
+BBT000*  BBT011  DMM  N03-68105  11/18/2003
+BBT000*          REDEFINE M-UF-NUM72-5 TO M-BBT-MTD-IUI-ADJ
+BBT000*  BBT012  WEA  N03-69514  12/19/2003
+BBT000*          CREATE NEW M-BBT-DEALER-ST FIELD.
+BBT000*  BBT014  DMM  N04-69736  03/08/2004
+BBT000*          REDEFINE M-UF-ALPHA1-6 to M-BBT-HMDA-FLAG
+BBT000*  BBT015  WJT  N04-17961  11/15/2004
+BBT000*          REDEFINE M-UF-ALPHA3-2 to M-BBT-FHLB
+BBT000*  BBT016  WJT  N02-64162  11/23/2004
+BBT000*          REDEFINE M-UF-ALPHA10-1 TO M-BBT-APP-ID
+BBT000*  BBT017  PPY  N04-18499  04/21/05  APPLIED METRO II CHANGES
+BBT000*         MODIFICATION 000147
+BBT000*  BBT018  WEA  BRL#2595   10/13/07  CONVERT ALL BB&T FILEDS INTO SHAW
+BBT000*               USER FIELDS FOR MAINT AND WORK-BENCH USE.  011437
+BBT000*  BBT019  WEA  BRL#2724   01/05/2007
+BBT000*          REDEFINE M-UF-NUM112-1 TO M-BBT-SBA-NUM  W/O DECIMAL POSITIONS
+BBT000*  BBT020  WEA  BRL#3214   05/08/2008  REDEFINE M-USER-REG-FLD5-1
+BBT000*          TO BE THE NEW STMT SUPPRESS FLAG  M-BBT-SUPPRESS-FLAG
+BBT000*  BBT023  WEA  BRL#3833   01/26/2010  REDEFINE M-USER-REG-FLD4-1
+BBT000*          TO BE THE NEW USER FIELD  M-BBT-HMSTD-HELOC-FLAG
+BBT000*  BBT022  WEA  BRL#3583   08/14/2009  REDEFINE M-USER-REG-FLD3-1
+BBT000*          TO BE THE NEW USER FIELD  M-BBT-REGZ-HIGH-COST-FLAG
+BBT000*  BBT023  WEA  BRL#3883   08/14/2009  REDEFINE M-USER-REG-FLD6-1
+BBT000*          TO BE THE NEW USER FIELD  M-BBT-CALL-CODE
+BBT000*  BBT023  WEA  BRL#3883   12/01/2009  REDEFINE M-UF-ALPHA4-1
+BBT000*          TO M-BBT-SOP033 AND M-BBT-POOL-NBR
+BBT000*  BBT023  WEA  BRL#3883   05/28/2010 TAKE BACK THE BBT022 CHANGE
+BBT000*  BBT024  WJT  BRL#4225   07/09/2010 CHANGE M-BBT-ELITE-CODE TO
+BBT000*                                     M-BBT-REAL-ESTATE-CODE.
+BBT000*  BBT025  WEA  BRL#4123   06/30/2010  REG Z CHANGES, 2 NEW FIELDS
+BBT000*  BBT026  WEA  BRL#4190   12/01/2010  REDEFINE M-UF-NUM3-3
+BBT000*                                      TO       M-BBT-SBA-PERCENT
+BBT000*  BBT027  WEA  BRL#5025   09/10/2011  REDEFINE M-USER-IDX6
+BBT000*                                      TO  M-BBT-DISCOUNT-PRICING-CD
+BBT000*  BBT028  DMM  BRL#5123   12/10/2011  REDEFINE
+BBT000*               M-CS-UNDERWRITER-CODE to M-BBT-MOD-BEACON-SCORE
+BBT000*               M-CS-OVERRIDE-CODE  to M-BBT-MOD-CREDIT-SCORE
+BBT000*               M-CS-ALGORITHM-CODE to M-BBT-MOD-COAPP-OFF
+BBT000*               M-UF-NUM3-2         to M-BBT-MOD-LTV-RATE
+BBT000*               M-UF-NUM5-1         to M-BBT-MOD-DEPT-RATIO
+BBT000*  BBT029  DMM  BRL#5326   05/11/2012  REDEFINE
+BBT000*               M-UF-ALPHA1-5       to M-BBT-GOVT-PROG-CD
+BBT000*  BBT030  DMM  BRL#5359   05/14/2012  REDEFINE
+BBT000*               M-UF-ALPHA1-10      to M-BBT-IMPAIRED-FLAG
+BBT000*  BBT031  DMM  TFS#147    03/2013     REDEFINE
+BBT000*               M-TICK-B-DTE        to M-BBT-ADVRS-ACT-DTE
+BBT000*  BBT032  TCS  TFS#10386  03/21/14    CFPB STATEMENT CHANGES
+BBT000*                                      SHAW TO FIX-000287
+BBT000*  BBT033  TCS  TFS#16093  06/17/14    REDEFINE M-TICK-B-CD
+BBT000*                                      TO  M-BBT-CONDO-FLAG
+BBT000*  BBT034  WEA  TFS#4651   08/08/14    REDEFINE TICK-A-DATE
+BBT000*                                      TO M-BBT-SBA-DATE
+BBT000*  BBT035  TCS  TFS#58312  09/27/17    REDEFINE M-USER-SIN-AA-ORG
+BBT000*                                      TO M-BBT-2D-RISK-NEW
+BBT000*                                      REDEFINE M-USER-SIN-AA-ST
+BBT000*                                      TO M-BBT-2D-RISK-MOD
+BBT000*  BBT036  TCS  TFS#80289  08/23/18    REDEFINE M-UF-NUM5-2 TO
+BBT000*                                      M-BBT-PAG-DEALER-NO.
+BBT000*                                      NEW FIELDS OF
+BBT000*                                      M-BBT-GAP-PREMIUM-AMT
+BBT000*                                      M-BBT-GAP-END-DT
+BBT000*                                      M-BBT-WARR-PREMIUM-AMT
+BBT000*                                      M-BBT-WARR-END-DT ADDED BY
+BBT000*                                      ADJUSTING THE FILLER FOR
+BBT000*                                      CSC IN-SOURCING PROJECT
+BBT000*
+BBT000*
+BBT000*
+000070                                                                  43MASTDE
+000100*01  LOAN-MAST.                                                   42MASTH5
+000200    02  M-LOAN-RECORD.                                            42MASTH5
+000300     05  M-DELETE                PIC X.                           42MASTH5
+000400     05  ILMAST-KEY.                                              42MASTH5
+000500           10  BK                PIC 999.                         42MASTH5
+000600           10  CUSLN             PIC X(14).                       42MASTH5
+000700           10  REDIF REDEFINES CUSLN.                             42MASTH5
+000800               15  BR            PIC 999.                         42MASTH5
+000900               15  CUS           PIC 9(7).                        42MASTH5
+001000               15  LN            PIC 9(4).                        42MASTH5
+001100               15  LN-BRK REDEFINES LN.                           42MASTH5
+001200                   20  HILN      PIC 9.                           42MASTH5
+001300                   20  LOLN      PIC 9(3).                        42MASTH5
+001400     05  CUS-SHORT-NAM           PIC X(15).                       42MASTH5
+001500     05  CALC                    PIC X.                           42MASTH5
+001600     05  MODE--X                 PIC X.                           42MASTH5
+001700     05  NOTICE                  PIC X.                           42MASTH5
+001800     05  TYPE--X                 PIC X.                           42MASTH5
+001900           88  M-TYPE-1                        VALUE '1'.         42MASTH5
+002000           88  M-TYPE-2                        VALUE '2'.         42MASTH5
+002100           88  M-TYPE-3                        VALUE '3'.         42MASTH5
+002200           88  M-TYPE-4                        VALUE '4'.         42MASTH5
+002300           88  M-TYPE-5                        VALUE '5'.         42MASTH5
+002400           88  M-TYPE-6                        VALUE '6'.         42MASTH5
+002500           88  M-TYPE-7                        VALUE '7'.         42MASTH5
+002600           88  M-TYPE-SIMPLE                   VALUE '1' THRU '4'.42MASTH5
+002700           88  M-TYPE-ADD-ON                   VALUE '5' THRU '6'.42MASTH5
+002800           88  M-TYPE-ELC                      VALUE '7'.         42MASTH5
+002900           88  M-TYPE-PLC                      VALUE '8'.         42MASTH5
+002910           88  M-TYPE-9                        VALUE '9'.         42MASTH5
+003000     05  INT-SCH                 PIC 9.                           42MASTH5
+003100     05  PRIN-SCH                PIC 9.                           42MASTH5
+003200     05  HOLD                    PIC X.                           42MASTH5
+003300     05  CLOS                    PIC X.                           42MASTH5
+003400     05  REV                     PIC X.                           42MASTH5
+003500     05  DEMAND                  PIC X.                           42MASTH5
+003600     05  MAT-CODE                PIC X.                           42MASTH5
+003700     05  PGM-CODE                PIC X.                           42MASTH5
+003800     05  MISC-CODE               PIC X.                           42MASTH5
+003900     05  COMAKER-CD              PIC X.                           42MASTH5
+004000     05  L-CODE                  PIC X.                           42MASTH5
+004100     05  CHG-OFF-CD              PIC X.                           42MASTH5
+004200     05  COLL-CARD-CD            PIC X.                           42MASTH5
+004300     05  AUTO-EXT-CD             PIC X.                           42MASTH5
+004400     05  M-ACTIVE-SW             PIC 9.                           42MASTH5
+004500     05  M-ALT-NA-CD             PIC X.                           42MASTH5
+004600     05  M-JOINT-CD              PIC X.                           42MASTH5
+004700     05  M-COSIGNER-CD           PIC X.                           42MASTH5
+004800     05  M-INS-RECORD-CD         PIC X.                           42MASTH5
+004900     05  M-OL-ACTV               PIC X.                           42MASTH5
+005000     05  C-DLR-UPD-CD            PIC X.                           42MASTH5
+005100     05  M-CONTROL1              PIC X(3).                        42MASTH5
+005200     05  M-CONTROL2              PIC X(3).                        42MASTH5
+005300     05  M-CONTROL3              PIC X(3).                        42MASTH5
+005500     05  M-CLCTN-OFF             PIC X(6).                        42MASTH5
+005600     05  GEOGRAPHIC-CODE         PIC X(7).                        42MASTH5
+005700     05  COLL                    PIC 9(4).                        42MASTH5
+005800     05  COLL-CD REDEFINES COLL.                                  42MASTH5
+005900           10  HI-CD             PIC 99.                          42MASTH5
+006000           10  LO-CD             PIC 99.                          42MASTH5
+006100     05  DEPT                    PIC 99.                          42MASTH5
+006200     05  LED-CD  REDEFINES DEPT.                                  42MASTH5
+006300           10  HI-LED            PIC 9.                           42MASTH5
+006400           10  LO-LED            PIC 9.                           42MASTH5
+006450     05  LED-CDX REDEFINES LED-CD                                 42MASTH5
+006455                                 PIC X(2).                        42MASTH5
+006500*BBT 05  CLAS                    PIC 99.       CLASS TO ALHA NREL 42MASTH5
+BBTNRL     05  CLAS                    PIC XX.                          42MASTH5
+006600     05  BILL-DAY                PIC 99.                          42MASTH5
+006700     05  BOR-CODE                PIC XXX.                         42MASTH5
+006800     05  OCC-CODE                PIC XX.                          42MASTH5
+006900     05  RPT-BR-NO               PIC S9(4)       COMP-3.          42MASTH5
+007000     05  NTE-RTNG                PIC X(3).                        42MASTH5
+007100     05  REM                     PIC X.                           42MASTH5
+007200     05  REMARKS--X              PIC X(30).                       42MASTH5
+007300     05  LNROT-DTE               PIC S9(7)       COMP-3.          42MASTH5
+007400     05  DTE-INT-BEGIN           PIC S9(7)       COMP-3.          42MASTH5
+007500     05  NOTE-DTE                PIC S9(7)       COMP-3.          42MASTH5
+007600     05  MAT-DTE                 PIC S9(7)       COMP-3.          42MASTH5
+007700     05  DUE-DTE-I               PIC S9(7)       COMP-3.          42MASTH5
+007800     05  DUE-DTE-P               PIC S9(7)       COMP-3.          42MASTH5
+007900     05  DTE-LAST                PIC S9(7)       COMP-3.          42MASTH5
+008000     05  EST-MAT-DATE            PIC S9(7)       COMP-3.          42MASTH5
+008100     05  M-PD-TO-DATE            PIC S9(7)       COMP-3.          42MASTH5
+008110     05  M-DTE-LAST-SCH-CHG  REDEFINES M-PD-TO-DATE               42MASTH5
+008112                                 PIC S9(7)       COMP-3.          42MASTH5
+008200     05  PAST-DTE                PIC S9(7)       COMP-3.          42MASTH5
+008300     05  M-TICK-A-DTE            PIC S9(7)       COMP-3.          42MASTH5
+BBT034     05  M-BBT-SBA-DTE  REDEFINES  M-TICK-A-DTE
+BBT034                                 PIC S9(7)       COMP-3.
+008400     05  M-TICK-B-DTE            PIC S9(7)       COMP-3.          42MASTH5
+BBT031     05  M-BBT-ADVRS-ACT-DTE  REDEFINES  M-TICK-B-DTE
+BBT031                                 PIC S9(7)       COMP-3.
+008500     05  DTE-LAST-PMT            PIC S9(7)       COMP-3.          42MASTH5
+008600     05  CUR-PO-DTE              PIC S9(7)       COMP-3.          42MASTH5
+008700     05  M-LAST-EXT-DTE          PIC S9(7)       COMP-3.          42MASTH5
+008800     05  M-ORG-PROCESS-DTE       PIC S9(7)       COMP-3.          42MASTH5
+008900     05  M-ORG-MAT-DTE           PIC S9(7)       COMP-3.          42MASTH5
+009000     05  M-REWRITE-NO            PIC S9(3)       COMP-3.          42MASTH5
+009100     05  M-REWRITE-ACCT          PIC S9(15)      COMP-3.          42MASTH5
+009200     05  ORG-TERM                PIC S9(3)       COMP-3.          42MASTH5
+009300     05  SELL-ABA                PIC S9(7)       COMP-3.          42MASTH5
+009400     05  TERM                    PIC S9(3)       COMP-3.          42MASTH5
+009500     05  RATE                    PIC SV9(7)      COMP-3.          42MASTH5
+009501     05  RATE-P REDEFINES RATE   PIC S9(02)V9(05) COMP-3.         43MASTDE
+009600     05  ORG                     PIC S9(9)V99    COMP-3.          42MASTH5
+009700     05  LN-BAL                  PIC S9(9)V99    COMP-3.          42MASTH5
+009800     05  FIG-AMT                 PIC S9(9)V99    COMP-3.          42MASTH5
+009900     05  DIS-AMT                 PIC S9(7)V99    COMP-3.          42MASTH5
+010000     05  PAYMENT                 PIC S9(9)V99    COMP-3.          42MASTH5
+010100     05  DUE-PRIN                PIC S9(9)V99    COMP-3.          42MASTH5
+010200     05  DUE-INT                 PIC S9(7)V99    COMP-3.          42MASTH5
+010300     05  THIER-BAL               PIC S9(9)V99    COMP-3.          42MASTH5
+010400     05  PRIN-PD                 PIC S9(9)V99    COMP-3.          42MASTH5
+010500     05  INT-PD                  PIC S9(7)V99    COMP-3.          42MASTH5
+010600     05  FEES-PD                 PIC S9(7)V99    COMP-3.          42MASTH5
+010700     05  INT-PAY                 PIC S9(7)V9(8)  COMP-3.          42MASTH5
+010800     05  INT-ACCUM               PIC S9(7)V9(8)  COMP-3.          42MASTH5
+010900     05  PARTIAL-PAY             PIC S9(9)V99    COMP-3.          42MASTH5
+011000     05  CHRG                    PIC S9(5)V9(8)  COMP-3.          42MASTH5
+011100     05  PAID-LCHRGS             PIC S9(5)V99    COMP-3.          42MASTH5
+011200     05  UNPAID-LCHRGS           PIC S9(5)V99    COMP-3.          42MASTH5
+011300     05  PAID-OTH-CHRG           PIC S9(5)V99    COMP-3.          42MASTH5
+011400     05  UNPAID-OTH-CHRG         PIC S9(5)V99    COMP-3.          42MASTH5
+011410     05  M-NOTC-LEAD-DAYS        PIC 9(2).                        42MASTH5
+011500     05  M-DESC-BILL-PO-OPT      PIC X(1).                        42MASTH5
+011600     05  NO-EXTNS                PIC S9(3)       COMP-3.          42MASTH5
+011700     05  RENEW                   PIC S9(3)       COMP-3.          42MASTH5
+011800     05  NO-PARTS                PIC S99.                         42MASTH5
+011900     05  CAR-BY-US               PIC S9V9(4)     COMP-3.          42MASTH5
+011901       05  CAR-BY-US-P REDEFINES CAR-BY-US   PIC S9(03)V99 COMP-3. *ILDE*
+012000     05  M-ESC-INS-BAL           PIC S9(7)V99    COMP-3.          49----M9
+012100     05  M-ESC-TAX-BAL           PIC S9(7)V99    COMP-3.          49----M9
+012200     05  M-ASSD-OTH-CHRG         PIC S9(5)V99    COMP-3.          42MASTH5
+012300     05  M-WAIVD-OTH-CHRG        PIC S9(5)V99    COMP-3.          42MASTH5
+012400     05  M-ASSD-LCHRGS           PIC S9(5)V99    COMP-3.          42MASTH5
+012500     05  M-WAIVD-LCHRGS          PIC S9(5)V99    COMP-3.          42MASTH5
+012600     05  M-EXT-INT-FEES-ASSD     PIC S9(5)V99    COMP-3.          42MASTH5
+012700     05  M-EXT-INT-FEES-DEF      PIC S9(5)V99    COMP-3.          42MASTH5
+012800     05  M-NO-MOS-RUN-HOLD       PIC S9(3)       COMP-3.          42MASTH5
+012900     05  M-YTD-INT-PD-PRIOR      PIC S9(7)V99    COMP-3.          42MASTH5
+013000     05  N-MIN-ACC               PIC S9(3)V99    COMP-3.          42MASTH5
+013100     05  PMT-BY-OTH              PIC S9(3)       COMP-3.          42MASTH5
+013200     05  NO-PMT1                 PIC S9(3)       COMP-3.          42MASTH5
+013300     05  M-LAST-TRAN-AMT         PIC S9(9)V99    COMP-3.          42MASTH5
+013310     05  M-PRODUCT-CODE          PIC X(04).                       43MASTJ2
+013315     05  M-GOVERNING-CODE        PIC X(04).                       43MASTJ2
+013320     05  M-ADDON-ACCRUAL-DAYS    PIC S9(03)      COMP-3.          43MASTJ2
+013400     05  M-FEE-REBATE            PIC S9(09)V99   COMP-3.          44MASTJS
+013402     05  M-UNEARNED-FEES         PIC S9(09)V99   COMP-3.          44MASTJS
+013404     05  M-UNEARNED-COSTS        PIC S9(09)V99   COMP-3.          44MASTJS
+013406     05  M-TERMINATION-FEES      PIC S9(09)V99   COMP-3.          44MASTJS
+013410     05  M-MISC-FEES-BNP-AMT     PIC S9(09)V99   COMP-3.          44MASTK9
+013412     05  M-OTHR-CHGS-BNP-AMT     PIC S9(09)V99   COMP-3.          44MASTK9
+013414     05  M-FEE-PLAN-CODE         PIC X(03).                       44MASTK9
+013416     05  M-NO-HOLIDAY-EXTNS      PIC S9(03)      COMP-3.          45MASTKK
+013417     05  M-ACCOUNTING-UNIT       PIC 9(07).                       45MASTKM
+013418     05  M-USER-SIN-AA-ORG       PIC X(02).                       47----LL
+BBT035     05  M-BBT-2D-RISK-NEW REDEFINES M-USER-SIN-AA-ORG
+BBT035                                 PIC X(02).
+013419     05  M-USER-SIN-AA-ST        PIC X(02).                       47----LL
+BBT035     05  M-BBT-2D-RISK-MOD REDEFINES M-USER-SIN-AA-ST
+BBT035                                 PIC X(02).
+013420     05  M-BQR                   PIC 99.                          47----LN
+013421     05  M-NSF-IND               PIC X.                           47----LL
+013422     05  M-NSF-FEE               PIC S9(03)V99   COMP-3.          45MASTJX
+013424     05  M-NSF-RATE              PIC SV9(07)     COMP-3.          45MASTJX
+013426     05  M-NSF-RATE-P REDEFINES M-NSF-RATE                        45MASTJX
+013428                                 PIC S9(02)V9(05) COMP-3.         45MASTJX
+013430     05  M-ACB-HIGH-BALANCE      PIC S9(9)V99    COMP-3.          48----K1
+013431     05  M-ACB-CLOSE-PD-DAYS     PIC S9(3)       COMP-3.          48----K1
+013432     05  M-ACB-COMP-COND-CD      PIC X(02).                       48----K1
+013433     05  M-ACB-CONS-INFO-IND     PIC X(02).                       48----K1
+013440     05  M-ACB-CHARGE-OFF-AMT    PIC S9(9)V99    COMP-3.          48----K1
+013442     05  M-DATE-PAID-OFF         PIC S9(7)       COMP-3.          48----K1
+013444     05  M-PAYOFF-TRANS          PIC X(7).                        48----K1
+013446     05  M-FP-SORT-IND           PIC X.                           48----K1
+013448     05  M-FP-TRIAL-IND          PIC X.                           48----K1
+013450     05  M-FP-ADDR-IND           PIC X.                           48----K1
+014000     05  CUR-78-FACTOR           PIC S99V9(11)   COMP-3.          42MASTH5
+014100     05  M-SCHED-LNBAL   REDEFINES CUR-78-FACTOR                  42MASTH5
+014200                                 PIC S9(11)V99   COMP-3.          42MASTH5
+014300     05  NXT-78-FACTOR           PIC S99V9(11)   COMP-3.          42MASTH5
+014400     05  M-SCHED-LNBAL-PREV  REDEFINES NXT-78-FACTOR              42MASTH5
+014500                                 PIC S9(11)V99   COMP-3.          42MASTH5
+014600     05  M-TICK-A-CD             PIC X.                           42MASTH5
+014700     05  M-TICK-B-CD             PIC X.                           42MASTH5
+BBT033     05  M-BBT-CONDO-FLAG    REDEFINES M-TICK-B-CD
+BBT033                                 PIC X.
+014800     05  M-EXT-FEES-PD           PIC S9(7)V99    COMP-3.          42MASTH5
+014900     05  INS-REB-CUR-TOT         PIC S9(7)V9(4)  COMP-3.          42MASTH5
+015000     05  INST-INS-FLDS.                                           42MASTH5
+015100        07  INST-INS    OCCURS 7 TIMES.                           42MASTH5
+015200         10  II-CO-CD            PIC X.                           42MASTH5
+015300         10  II-REB-CD           PIC X.                           42MASTH5
+015310             88  M-REBATE-DAILY    VALUE  'D' 'N' 'T'.            45MASTKZ
+015312             88  M-REBATE-D        VALUE  'D'.                    42MASTH5
+015313             88  M-REBATE-N        VALUE  'N'.                    42MASTH5
+015314             88  M-REBATE-O        VALUE  'O'.                    020628
+015315             88  M-REBATE-T        VALUE  'T'.                    45MASTKZ
+015316             88  M-REBATE-FEE      VALUE  'F' THRU 'M'            42MASTH5
+015317                                          'W' THRU 'Z'.           42MASTH5
+015318             88  M-REBATE-FEE-IMM  VALUE  'W' 'F' 'G'.            42MASTH5
+015320             88  M-REBATE-FEE-PRO  VALUE  'X' 'H' 'I'.            42MASTH5
+015321             88  M-REBATE-FEE-SI   VALUE  'Y' 'J' 'K'.            42MASTH5
+015322             88  M-REBATE-FEE-78   VALUE  'Z' 'L' 'M'.            42MASTH5
+015323             88  M-REBATE-YTD-INT  VALUE  'F' 'H' 'J' 'L'.        42MASTH5
+015324             88  M-REBATE-EARN-INT VALUE  'F' THRU 'M'.           42MASTH5
+015325             88  M-REBATE-EARN-FEE VALUE  'W' THRU 'Z'.           42MASTH5
+015326             88  M-REBATE-UPFRONT  VALUE  '0' THRU '9'            42MASTIJ
+015327                                 'A' 'B' 'C' 'O' 'Q' 'R' 'U' 'V'. 020628
+015328             88  M-REBATE-0        VALUE  '0'.                    42MASTH5
+015330             88  M-REBATE-1        VALUE  '1'.                    42MASTH5
+015332             88  M-REBATE-2        VALUE  '2'.                    42MASTH5
+015334             88  M-REBATE-3        VALUE  '3'.                    42MASTH5
+015336             88  M-REBATE-4        VALUE  '4'.                    42MASTH5
+015338             88  M-REBATE-5        VALUE  '5'.                    42MASTH5
+015340             88  M-REBATE-6        VALUE  '6'.                    42MASTH5
+015342             88  M-REBATE-7        VALUE  '7'.                    42MASTH5
+015344             88  M-REBATE-8        VALUE  '8'.                    42MASTH5
+015345             88  M-REBATE-9        VALUE  '9'.                    42MASTH5
+015346             88  M-REBATE-ELC      VALUE  'E', 'S'.               42MASTH5
+015348             88  M-REBATE-E        VALUE  'E'.                    42MASTH5
+015350             88  M-REBATE-S        VALUE  'S'.                    42MASTH5
+015352             88  M-REBATE-PROJECT  VALUE  'P'.                    42MASTH5
+015354             88  M-REBATE-P        VALUE  'P'.                    42MASTH5
+015356             88  M-REBATE-ACTUARIAL                               42MASTH5
+015358                                   VALUE  'A'.                    42MASTH5
+015360             88  M-REBATE-A        VALUE  'A'.                    42MASTH5
+015362             88  M-REBATE-NONE     VALUE  '0', '4', ' '.          42MASTH5
+015364             88  M-REBATE-ROA      VALUE  'B' 'C' 'Q'.            42MASTIJ
+015366             88  M-REBATE-B        VALUE  'B'.                    42MASTIJ
+015368             88  M-REBATE-C        VALUE  'C'.                    42MASTIJ
+015370             88  M-REBATE-Q        VALUE  'Q'.                    42MASTIJ
+015372             88  M-REBATE-CL-MOB   VALUE  'B'.                    42MASTIJ
+015374             88  M-REBATE-AH       VALUE  'C'.                    42MASTIJ
+015376             88  M-REBATE-CL-SP    VALUE  'Q'.                    42MASTIJ
+015378             88  M-REBATE-U                  VALUE  'U'.          42MASTIZ
+015380             88  M-REBATE-V                  VALUE  'V'.          42MASTIZ
+015382             88  M-REBATE-MOD-RULE-78S       VALUE  'U'.          42MASTIZ
+015384             88  M-REBATE-CRIT-PRD-AH        VALUE  'V'.          42MASTIZ
+015386             88  M-REBATE-MEAN-PRORATA-78S   VALUE  'R'.          42MASTJ5
+015400         10  II-AMT              PIC S9(5)V99    COMP-3.          42MASTH5
+015500         10  II-RATE     REDEFINES II-AMT                         42MASTH5
+015600                                 PIC SV9(7)      COMP-3.          42MASTH5
+015601         10  II-RATE-P   REDEFINES II-RATE                        43MASTDE
+015602                                 PIC S9(02)V9(05) COMP-3.         43MASTDE
+015700         10  II-INT              PIC S9(5)V99    COMP-3.          42MASTH5
+015800         10  II-EXP-DTE          PIC S9(7)       COMP-3.          42MASTH5
+015900         10  II-STRT-DTE         PIC S9(7)       COMP-3.          42MASTH5
+016000     05  NO-TMS-DLQ.                                              42MASTH5
+016100         10  NTD-10-29           PIC S9(3)       COMP-3.          42MASTH5
+016200         10  NTD-30-59           PIC S9(3)       COMP-3.          42MASTH5
+016300         10  NTD-60-89           PIC S9(3)       COMP-3.          42MASTH5
+016400         10  NTD-90              PIC S9(3)       COMP-3.          42MASTH5
+016500     05  NO-PMTS-MD              PIC S9(3)       COMP-3.          42MASTH5
+016600     05  NO-PMTS-PDUE            PIC S9(3)       COMP-3.          42MASTH5
+016700     05  M-NO-MOS-RUN-YTD        PIC S9(3)       COMP-3.          42MASTH5
+016800     05  NO-MOS-RUN              PIC S9(3)       COMP-3.          42MASTH5
+016900     05  M-PMT-SKIP-MOS.                                          42MASTH5
+017000         10  M-PMT-SKIP-MO   OCCURS 12 TIMES                      42MASTH5
+017100                                 PIC 9.                           42MASTH5
+017200     05  M-MAX-LCHRGS            PIC S9(5)V99    COMP-3.          42MASTH5
+017300     05  FILLER                  PIC X(03).                       020632C
+017400     05  M-LAST-TRAN.                                             42MASTH5
+017500         10  M-LAST-TRAN-CDE     PIC 99.                          42MASTH5
+017600         10  M-LAST-AC-CDE       PIC X.                           42MASTH5
+017700     05  M-LAST-TRAN-DTE         PIC S9(7)       COMP-3.          42MASTH5
+017800     05  M-INS-INT-BEG-DTE       PIC S9(7)       COMP-3.          42MASTH5
+017900     05  M-INS-INT-REB           PIC S9(5)V9(4)  COMP-3.          42MASTH5
+018000     05  M-PO-INS-INT-REB        PIC S9(5)V9(4)  COMP-3.          42MASTH5
+018100     05  M-EARN-DTE              PIC S9(7)       COMP-3.          42MASTH5
+018200     05  M-ORG-BILL-DAY          PIC 99.                          42MASTH5
+018300     05  M-CF-FIELDS.                                             42MASTH5
+018400         10  M-CFA-KEY1          PIC S9(13)      COMP-3.          42MASTH5
+018500         10  M-CFA-KEY2          PIC S9(13)      COMP-3.          42MASTH5
+018510         10  M-LAST-ESC-ANALYSIS-DTE                              49----M9
+018520                                 PIC S9(7)       COMP-3.          49----M9
+018530         10  M-RESPA-ESC-ANALYSIS-CD                              49----M9
+018540                                 PIC X.                           49----M9
+018550             88  M-RESPA-NO        VALUE  'N' SPACE.              49----M9
+018560             88  M-RESPA-YES       VALUE  'Y'.                    49----M9
+018600         10  FILLER              PIC X(05).                       02061650
+018610         10  M-DLR-PRGM-CD       PIC X(03).                       02061650
+018700     05  M-USER-FIELDS.                                           42MASTH5
+018800         10  M-USER-REMARKS      PIC X(30).                       42MASTH5
+018900         10  FILLER              PIC X(20).                       42MASTH5
+019000     05  C-RUN-CD                PIC X.                           42MASTH5
+019100     05  DTE-LAST-RUN            PIC S9(7)       COMP-3.          42MASTH5
+019110     05  M-SEC-FP-COMM-RPT-BR REDEFINES DTE-LAST-RUN              44MASTKF
+019120                                 PIC S9(7) COMP-3.                44MASTKF
+019200     05  DYS-LAST-RUN            PIC S9(3)       COMP-3.          42MASTH5
+019300     05  DYS-BEFORE              PIC S9(3)       COMP-3.          42MASTH5
+019400     05  M-NEXT-067-PROCESS-DATE PIC S9(7)     COMP-3.            42MASTH5
+019450     05  M-PRIME-NOTC-IND        PIC X.                           42MASTH5
+019700     05  M-ALT-MODE-IND          PIC X.                           48----L5
+019800     05  M-MISC-STATUS           PIC X.                           42MASTH5
+019900     05  M-INS-ELIG-CL           PIC X.                           42MASTH5
+020000     05  M-INS-ELIG-AH           PIC X.                           42MASTH5
+020100     05  M-INS-FILE-IND          PIC X.                           48----L5
+020200     05  M-DEF-NOTC-CD           PIC X.                           42MASTH5
+020300     05  M-MISC-CODE2            PIC X.                           42MASTH5
+020400     05  M-MISC-BAL-IND          PIC X.                           42MASTH5
+020500     05  M-CHG-OFF-REASON        PIC XX.                          42MASTH5
+020600     05  M-NEW-USED-CODE         PIC X.                           42MASTH5
+020700     05  M-CLOSED-TO-POSTING     PIC X.                           42MASTH5
+020800     05  M-LAST-LC-ASSMT-DTE     PIC S9(7)       COMP-3.          42MASTH5
+020810     05  M-RIGHT-CURE-NUM        PIC 9.                           42MASTH5
+020900     05  M-NEW-LOAN-FEE          PIC S9(5)V99    COMP-3.          42MASTH5
+021000     05  S-CHRG                  PIC S9(5)V99    COMP-3.          42MASTH5
+021100     05  M-TOT-INS-REB-CUR       PIC S9(5)V99    COMP-3.          42MASTH5
+021200     05  M-OVER-PYMT             PIC S9(5)V99    COMP-3.          42MASTH5
+021300     05  M-PO-AMOUNT             PIC S9(9)V99    COMP-3.          42MASTH5
+021400     05  M-INT-LOST              PIC S9(7)V9(8)  COMP-3.          42MASTH5
+021500     05  M-YTD-INT-PD            PIC S9(7)V9(4)  COMP-3.          42MASTH5
+021600     05  M-MISC-FEES-ASSD        PIC S9(5)V99    COMP-3.          42MASTH5
+021700     05  M-MISC-FEES-WAIVD       PIC S9(5)V99    COMP-3.          42MASTH5
+021800     05  M-MISC-FEES-PD          PIC S9(5)V99    COMP-3.          42MASTH5
+021900     05  M-MISC-FEES-UNPD        PIC S9(5)V99    COMP-3.          42MASTH5
+022000     05  M-PO-BK-REB             PIC S9(7)V99    COMP-3.          42MASTH5
+022100     05  M-PO-INT-PAY        REDEFINES   M-PO-BK-REB              42MASTH5
+022200                                 PIC S9(7)V99    COMP-3.          42MASTH5
+022300     05  M-AMT-PAST-DUE          PIC S9(9)V99    COMP-3.          42MASTH5
+022400     05  M-BIRTH-DTE             PIC S9(7)       COMP-3.          42MASTH5
+022500     05  M-HOLD-DTE              PIC S9(7)       COMP-3.          42MASTH5
+022600     05  M-NO-TITLES             PIC S9(3)       COMP-3.          42MASTH5
+022700     05  M-NO-CLCTNS             PIC S9(3)       COMP-3.          42MASTH5
+022800     05  M-NO-NSF                PIC S9(3)       COMP-3.          42MASTH5
+022900     05  M-CUR-UNEARN-BK         PIC S9(7)V9(8)  COMP-3.          42MASTH5
+023000     05  M-ACH-FIELDS.                                            42MASTH5
+023100         10  M-ACH-CODE          PIC X.                           42MASTH5
+023200         10  M-ACCT-TYPE         PIC X.                           42MASTH5
+023210         10  M-ACH-RATE-INCR-IND PIC X.                           42MASTH5
+023220             88  M-ACH-RATE-INCR-0           VALUE '0'.           42MASTH5
+023230             88  M-ACH-RATE-INCR-1           VALUE '1'.           42MASTH5
+023240             88  M-ACH-RATE-INCR-2           VALUE '2'.           42MASTH5
+023250             88  M-ACH-RATE-INCR-9           VALUE '9'.           42MASTIT
+023400         10  M-TRANSIT1          PIC S9(9)       COMP-3.          42MASTH8
+023500         10  M-ACCT-TYPE2        PIC X.                           42MASTH8
+023700         10  M-TRANSIT2          PIC S9(9)       COMP-3.          42MASTH8
+023800         10  M-ACH-AMOUNT        PIC S9(5)V99    COMP-3.          42MASTH8
+023900         10  M-ACH-START-DTE     PIC S9(7)       COMP-3.          42MASTH8
+023905     05  M-CRA-FIELDS.                                            42MASTH8
+023910         10  M-CRA-IL-CATEG      PIC X(1).                        42MASTH8
+023915             88  M-CRA-VEHICLE               VALUE 'V'.           42MASTH8
+023920             88  M-CRA-CR-CARD               VALUE 'C'.           42MASTH8
+023925             88  M-CRA-HM-EQUITY             VALUE 'H'.           42MASTH8
+023930             88  M-CRA-SECURED               VALUE 'S'.           42MASTH8
+023935             88  M-CRA-UNSECURED             VALUE 'U'.           42MASTH8
+023940         10  M-CRA-COMD-ID       PIC X(1).                        42MASTH8
+023945             88  M-CRA-COMD-YES              VALUE 'Y'.           42MASTH8
+023950         10  M-CRA-1MIL-ID       PIC X(1).                        42MASTH8
+023955             88  M-CRA-1MIL-YES              VALUE 'Y'.           42MASTH8
+023960         10  M-CRA-STATE-CD      PIC X(2).                        42MASTH8
+023965         10  M-CRA-COUNTY-CD     PIC X(3).                        42MASTH8
+023970         10  M-CRA-BOR-INC-AMT   PIC 9(4).                        42MASTH8
+BBT003         10  M-BBT-GROSS-INCOME REDEFINES M-CRA-BOR-INC-AMT
+BBT003                                 PIC 9(04).
+023975     05  M-EMPLOYEE-IND          PIC X.                           45MASTKH
+023980     05  M-HOLD-EFF-DT           PIC S9(7)       COMP-3.          42MASTH8
+024000     05  M-PRIME-FIELDS.                                          42MASTH5
+024100         10  PRIME-CODE          PIC X(3).                        42MASTH5
+024200         10  PRIME-RELATION      PIC S9V9(4)     COMP-3.          42MASTH5
+024300         10  M-ADD-ON-RATE   REDEFINES PRIME-RELATION             42MASTH5
+024400                                 PIC SV9(5)      COMP-3.          42MASTH5
+024500         10  M-FLOOR             PIC SV9(7)      COMP-3.          42MASTH5
+024501         10  M-FLOOR-P REDEFINES M-FLOOR                          43MASTDE
+024502                                 PIC S9(02)V9(05) COMP-3.         43MASTDE
+024600         10  M-CEILING           PIC SV9(7)      COMP-3.          42MASTH5
+024601         10  M-CEILING-P REDEFINES M-CEILING                      43MASTDE
+024602                                 PIC S9(02)V9(05) COMP-3.         43MASTDE
+024700         10  M-PREV-RATES.                                        42MASTH5
+024800             15  M-PREV-RATE1    PIC SV9(7)      COMP-3.          42MASTH5
+024900             15  M-PREV-RATE2    PIC SV9(7)      COMP-3.          42MASTH5
+025000             15  M-PREV-RATE3    PIC SV9(7)      COMP-3.          42MASTH5
+025100         10  M-PREV-RATE   REDEFINES M-PREV-RATES OCCURS 3 TIMES  42MASTH5
+025200                                 PIC SV9(7)      COMP-3.          42MASTH5
+025300         10  M-PREV-RATE-DTES.                                    42MASTH5
+025400             15  M-PREV-RATE-DTE1                                 42MASTH5
+025410                                 PIC S9(7) COMP-3.                42MASTH5
+025500             15  M-PREV-RATE-DTE2                                 42MASTH5
+025510                                 PIC S9(7) COMP-3.                42MASTH5
+025600             15  M-PREV-RATE-DTE3                                 42MASTH5
+025610                                 PIC S9(7) COMP-3.                42MASTH5
+025700         10  M-PREV-RATE-DTE REDEFINES M-PREV-RATE-DTES           42MASTH5
+025800                             OCCURS 3 TIMES                       42MASTH5
+025900                                 PIC S9(7)       COMP-3.          42MASTH5
+026000     05  M-DEALER-LOAN-FIELDS.                                    42MASTH5
+026100         10  DLR-NUM             PIC S9(5)       COMP-3.          42MASTH5
+026200         10  M-DLR-RATE          PIC SV9(7)      COMP-3.          42MASTH5
+026201         10  M-DLR-RATE-P REDEFINES M-DLR-RATE                    43MASTDE
+026202                                 PIC S9(02)V9(05) COMP-3.         43MASTDE
+026300         10  DLR-DIS-AMT         PIC S9(7)V99    COMP-3.          42MASTH5
+026400         10  M-DLR-DIS-AMT2      PIC S9(7)V99    COMP-3.          42MASTH5
+026500         10  M-DLR-DIS-AMT3      PIC S9(7)V99    COMP-3.          42MASTH5
+026510         07  M-DLR-REBATE-AMTS.                                   45MASTJV
+026600         10  DLR-REB-CUR         PIC S9(7)V9(4)  COMP-3.          42MASTH5
+026700         10  M-DLR-REB-CUR2      PIC S9(7)V9(4)  COMP-3.          42MASTH5
+026800         10  M-DLR-REB-CUR3      PIC S9(7)V9(4)  COMP-3.          42MASTH5
+026810         07  M-AGG-ADJ-BALS REDEFINES M-DLR-REBATE-AMTS.          45MASTJV
+026815           10  M-AGG-ADJ-TIER1  PIC S9(9)V99    COMP-3.           45MASTJV
+026820           10  M-AGG-ADJ-TIER2  PIC S9(9)V99    COMP-3.           45MASTJV
+026825           10  M-AGG-ADJ-TIER3  PIC S9(9)V99    COMP-3.           45MASTJV
+026830         07  M-DLR-REST.                                          45MASTJV
+026900         10  M-PO-DLR-REB        PIC S9(7)V99    COMP-3.          42MASTH5
+027000         10  M-PO-DLR-REB2       PIC S9(7)V99    COMP-3.          42MASTH5
+027100         10  M-PO-DLR-REB3       PIC S9(7)V99    COMP-3.          42MASTH5
+027200         10  M-DLR-LTD-PAID   REDEFINES M-PO-DLR-REB3             42MASTH5
+027300                                 PIC S9(7)V99    COMP-3.          42MASTH5
+027400         10  DLR-HOLDBACK        PIC S9(9)V99    COMP-3.          42MASTH5
+027410           10  M-AGG-ADJ-TIER4  REDEFINES DLR-HOLDBACK            45MASTJV
+027415                                 PIC S9(9)V99    COMP-3.          45MASTJV
+027500         10  M-RECOURSE-AMT      PIC S9(9)V99    COMP-3.          42MASTH5
+027600         10  M-RECOURSE-CODE     PIC X.                           42MASTH5
+027700         10  M-DLR-PERDIEM       PIC S9(5)V9(8)  COMP-3.          42MASTH5
+027800         10  M-CUR-UNEARN-DLR1   PIC S9(7)V9(4)  COMP-3.          42MASTH5
+027900         10  M-DLR-ACCUM     REDEFINES M-CUR-UNEARN-DLR1          42MASTH5
+028000                                 PIC S9(7)V9(4)  COMP-3.          42MASTH5
+028100         10  M-CUR-UNEARN-DLR2   PIC S9(7)V9(4)  COMP-3.          42MASTH5
+028200         10  M-DLR-PAID      REDEFINES M-CUR-UNEARN-DLR2          42MASTH5
+028300                                 PIC S9(7)V9(4)  COMP-3.          42MASTH5
+028400         10  M-CUR-UNEARN-DLR3   PIC S9(7)V9(4)  COMP-3.          42MASTH5
+028500         10  M-DLR-LTD-ACCUM REDEFINES M-CUR-UNEARN-DLR3          42MASTH5
+028600                                 PIC S9(7)V9(4)  COMP-3.          42MASTH5
+028700         10  M-DLR-PAY-METHOD    PIC 9.                           42MASTH5
+028800             88  M-DLR-ADD-ON    VALUE 0.                         42MASTH5
+028900             88  M-DLR-UPFRONT   VALUE 1.                         42MASTH5
+029000             88  M-DLR-PAYGO     VALUE 2.                         42MASTH5
+029100             88  M-DLR-PREPAID   VALUE 3.                         42MASTH5
+029200     05  M-ELC-FIELDS.                                            42MASTH5
+029300         10  M-MTD-AGG-AVAIL     PIC S9(11)V99   COMP-3.          42MASTH5
+029400         10  M-MTD-AGG-LNBAL     PIC S9(11)V99   COMP-3.          42MASTH5
+029500         10  M-MTD-INT-ADJ       PIC S9(7)V9(8)  COMP-3.          42MASTH5
+029600         10  M-MTD-INS-OWING     PIC S9(5)V9(4)  COMP-3.          42MASTH5
+029700         10  M-MTD-INS-ADJ       PIC S9(5)V9(4)  COMP-3.          42MASTH5
+029800         10  M-MTD-ADV-FEE       PIC S9(5)V99    COMP-3.          42MASTH5
+029900         10  M-PREV-LNBAL        PIC S9(9)V99    COMP-3.          42MASTH5
+030000         10  M-YTD-INS-PD        PIC S9(5)V99    COMP-3.          42MASTH5
+030100         10  M-LTD-INS-PD        PIC S9(5)V99    COMP-3.          42MASTH5
+030200         10  M-MTD-NO-ADV        PIC S9(3)       COMP-3.          42MASTH5
+030300         10  M-YTD-NO-ADV        PIC S9(3)       COMP-3.          42MASTH5
+030400         10  M-CYCLE-DYS         PIC S9(3)       COMP-3.          42MASTH5
+030500         10  M-LAST-STMT-DTE     PIC S9(7)       COMP-3.          42MASTH5
+030600         10  M-CYCLE-BEG-DTE     PIC S9(7)       COMP-3.          42MASTH5
+030700         10  M-CYCLE-END-DTE     PIC S9(7)       COMP-3.          42MASTH5
+030800         10  M-ADV-FEE-IND       PIC 9.                           42MASTH5
+030900         10  M-ELC-PAYMENT-TYPE  PIC X.                           42MASTH5
+030905             88  M-ELC-PMT-TYPE-FIXED      VALUE '0', 'A'.        42MASTHT
+030908             88  M-ELC-PMT-TYPE-PCT-BAL    VALUE 'I' THRU 'L'.    43MASTJP
+030910             88  M-ELC-PMT-TYPE-PCT        VALUE '1' THRU '4',    43MASTJP
+030912                                                   'I', 'K'.      43MASTJP
+030915             88  M-ELC-PMT-TYPE-FIXED-OL   VALUE '5', 'B'.        42MASTHT
+030920             88  M-ELC-PMT-TYPE-PCT-OL     VALUE '6' THRU '9',    43MASTJP
+030922                                                   'J', 'L'.      43MASTJP
+030925             88  M-ELC-PMT-TYPE-BALANCE    VALUE 'C' THRU 'H'.    42MASTH5
+030930             88  M-ELC-PMT-TYPE-BALANCE-OL VALUE 'F' THRU 'H'.    42MASTH5
+030935             88  M-ELC-PMT-TYPE-OL         VALUE '5' THRU '9',    42MASTH5
+030939                                                 'B', 'J', 'L',   43MASTJP
+030940                                                 'F' THRU 'H',    49----MF
+030942                                                 'M' THRU 'W'.    49----MF
+031000         10  M-ELC-PAYMENT-MIN   PIC S9(9)V99    COMP-3.          42MASTH5
+031100         10  M-ELC-PAYMENT-PC    PIC SV9(5)      COMP-3.          42MASTH5
+031101         10  M-ELC-PAYMENT-PC-P REDEFINES M-ELC-PAYMENT-PC        43MASTDE
+031102                                 PIC S9(02)V9(03) COMP-3.         43MASTDE
+031200           10  M-PLC-PROMO-INFO1.                                 45MASTJV
+031205               15  M-PROMO-INCR-LN-BAL   PIC S9(09)V99 COMP-3.    45MASTJV
+031210               15  M-PROMO-COMP-LN-BAL   PIC S9(09)V99 COMP-3.    45MASTJV
+031215               15  M-PROMO-TIER-BAL   OCCURS 3 TIMES              45MASTJV
+031220                                         PIC S9(09)V99 COMP-3.    45MASTJV
+031230               15  M-PROMO-TIER-INFO OCCURS 4 TIMES.              45MASTJV
+031235                   20  M-PROMO-TIER-RATE PIC SV9(07)   COMP-3.    45MASTJV
+031236                   20  M-PROMO-TIER-RATE-P REDEFINES              45MASTJV
+031238                       M-PROMO-TIER-RATE PIC S9(2)V9(5) COMP-3.   45MASTJV
+031240                   20  M-PROMO-TIER-FMT  PIC X.                   45MASTJV
+031245               15  M-PROMO-ADV-START-DT  PIC S9(07)    COMP-3.    45MASTJV
+031250               15  M-PROMO-ADV-END-DT    PIC S9(07)    COMP-3.    45MASTJV
+031255               15  M-PROMO-RTE-START-DT  PIC S9(07)    COMP-3.    45MASTJV
+031260               15  M-PROMO-RTE-END-DT    PIC S9(07)    COMP-3.    45MASTJV
+031262               15  M-PROMO-TIER-METHOD   PIC 9.                   45MASTJV
+031264                   88  M-PROMO-TIER-NONE        VALUE 0.          45MASTJV
+031266                   88  M-PROMO-TIER-BALANCE     VALUE 1.          45MASTJV
+031268                   88  M-PROMO-TIER-STEP        VALUE 2.          45MASTJV
+031270               15  M-PROMO-AFF-BAL-CD    PIC X.                   45MASTJV
+031272                   88  M-PROMO-AFF-BAL-ALL      VALUE 'A'.        45MASTJV
+031274                   88  M-PROMO-AFF-BAL-INCR     VALUE 'I'.        45MASTJV
+031275               15  M-PROMO-MIN-ADD-TYPE  PIC X.                   45MASTJV
+031280               15  M-PROMO-MIN-MNT-TYPE  PIC X.                   45MASTJV
+031285               15  M-PROMO-DISQ-CYCLES   PIC S9(03)    COMP-3.    45MASTJV
+031290               15  M-PROMO-MIN-ADD-STATUS PIC X(01).              45MASTJV
+031295                   88  M-PROMO-MIN-ADD-REQ-MET   VALUE 'Y'.       45MASTJV
+031300               15  M-PROMO-MIN-MNT-STATUS PIC X(01).              45MASTJV
+031305                   88  M-PROMO-MIN-MNT-REQ-MET   VALUE 'Y'.       45MASTJV
+031310               15  M-PROMO-PREV-INCR-BAL PIC S9(09)V99 COMP-3.    45MASTJV
+031400           10  FILLER                    PIC X(04).               45MASTJV
+031600         10  M-DISPUTE-AMT       PIC S9(9)V99    COMP-3.          42MASTH5
+031700     05  M-APR                   PIC SV9(5)      COMP-3.          42MASTH5
+031705     05  M-APR-P REDEFINES M-APR PIC S9(02)V9(03) COMP-3.         43MASTDE
+031710*BBT 05  M-OFFICER               PIC X(6). NEW REL CODE CHANGE    42MASTH5
+BBTNRL     05  M-OFFICER.
+BBTNRL         10  FIL                 PIC X.
+BBTNRL         10  OFF-NUM             PIC X(5).
+031720     05  M-HOLD-OFFICER          PIC X(6).                        42MASTH5
+031730     05  M-ALLOCATION-ORDER.                                      42MASTH5
+031735         10  M-ALLOC-ORDER       PIC X(1)        OCCURS 10 TIMES. 42MASTH5
+031790     05  M-PRIME-NOTC-LEAD-DAYS  PIC S9(03)    COMP-3.            42MASTH5
+031800       05  M-PENDING-RATE        PIC SV9(07)   COMP-3.            42MASTH5
+031801       05  M-PENDING-RATE-P REDEFINES M-PENDING-RATE               *ILDE*
+031802                                 PIC S9(02)V9(05)   COMP-3.        *ILDE*
+031900     05  M-TOT-CHRG              PIC S9(5)V9(4)  COMP-3.          42MASTH5
+032000     05  M-OL-PRINCIPAL-ACTV     PIC S9(9)V99    COMP-3.          42MASTH5
+032100     05  M-OL-OTHER-ACTV         PIC S9(9)V99    COMP-3.          42MASTH5
+032200     05  M-CHAIN.                                                 42MASTH5
+032300         10  M-CHAIN-BATCH       PIC X(3).                        49----MS
+032400         10  M-CHAIN-SEQ         PIC S9(4)       COMP.            42MASTH5
+032410       05  M-PLC-PROMO-INFO2.                                     45MASTJV
+032415           10  M-PROMO-CYCLE-INFO OCCURS 4 TIMES.                 45MASTJV
+032420               15  M-PROMO-AGG-BAL   PIC S9(11)V99 COMP-3.        45MASTJV
+032425               15  M-PROMO-CYC-DYS   PIC S9(03)    COMP-3.        45MASTJV
+032430           10  M-PROMO-MIN-ADD-BAL   PIC S9(05)V99 COMP-3.        45MASTJV
+032435           10  M-PROMO-MIN-ADD-PCT REDEFINES M-PROMO-MIN-ADD-BAL  45MASTJV
+032440                                     PIC SV9(07)   COMP-3.        45MASTJV
+032442           10  M-PROMO-MIN-ADD-PCT-P REDEFINES                    45MASTJV
+032444               M-PROMO-MIN-ADD-PCT   PIC S9(2)V9(5) COMP-3.       45MASTJV
+032446           10  M-PROMO-MIN-MNT-BAL   PIC S9(05)V99 COMP-3.        45MASTJV
+032450           10  M-PROMO-MIN-MNT-PCT REDEFINES M-PROMO-MIN-MNT-BAL  45MASTJV
+032452                                     PIC SV9(07)   COMP-3.        45MASTJV
+032454           10  M-PROMO-MIN-MNT-PCT-P REDEFINES                    45MASTJV
+032500               M-PROMO-MIN-MNT-PCT   PIC S9(2)V9(5) COMP-3.       45MASTJV
+032510     05  M-USER-IDX1             PIC X(03).                       45MASTKH
+032515     05  M-USER-IDX2             PIC X(03).                       45MASTKH
+032520     05  M-USER-IDX3             PIC X(03).                       45MASTKH
+032525     05  M-USER-IDX4             PIC X(03).                       45MASTKH
+032530     05  M-USER-IDX5             PIC X(03).                       45MASTKH
+032532     05  M-USER-MGN1             PIC SV9(5)      COMP-3.          45MASTKH
+032534     05  M-USER-MGN1-P REDEFINES M-USER-MGN1                      45MASTKH
+032536                                 PIC S9(02)V9(03) COMP-3.         45MASTKH
+032538     05  M-USER-MGN2             PIC SV9(5)      COMP-3.          45MASTKH
+032540     05  M-USER-MGN2-P REDEFINES M-USER-MGN2                      45MASTKH
+032542                                 PIC S9(02)V9(03) COMP-3.         45MASTKH
+032544     05  M-USER-MGN3             PIC SV9(5)      COMP-3.          45MASTKH
+032546     05  M-USER-MGN3-P REDEFINES M-USER-MGN3                      45MASTKH
+032548                                 PIC S9(02)V9(03) COMP-3.         45MASTKH
+032550     05  M-USER-MGN4             PIC SV9(5)      COMP-3.          45MASTKH
+032552     05  M-USER-MGN4-P REDEFINES M-USER-MGN4                      45MASTKH
+032554                                 PIC S9(02)V9(03) COMP-3.         45MASTKH
+032556     05  M-USER-MGN5             PIC SV9(5)      COMP-3.          45MASTKH
+032558     05  M-USER-MGN5-P REDEFINES M-USER-MGN5                      45MASTKH
+032560                                 PIC S9(02)V9(03) COMP-3.         45MASTKH
+032562     05  M-USER-MGN6             PIC SV9(5)      COMP-3.          45MASTKH
+032564     05  M-USER-MGN6-P REDEFINES M-USER-MGN6                      45MASTKH
+032566                                 PIC S9(02)V9(03) COMP-3.         45MASTKH
+033200     05  M-USURY-CODE            PIC XX.                          42MASTH5
+033300     05  M-REAMORT-DTE           PIC S9(7)       COMP-3.          42MASTH5
+033310     05  M-VSI-INS-INT-THRU  REDEFINES  M-REAMORT-DTE             42MASTH5
+033312                                 PIC S9(7)    COMP-3.             42MASTH5
+033400     05  M-REAMORT-FREQ          PIC X.                           42MASTH5
+033500     05  M-PER-CEIL-RATE         PIC SV9(7)      COMP-3.          42MASTH5
+033501     05  M-PER-CEIL-RATE-P REDEFINES M-PER-CEIL-RATE              43MASTDE
+033502                                 PIC S9(02)V9(05) COMP-3.         43MASTDE
+033600     05  M-PER-CEIL-DTE          PIC S9(7)       COMP-3.          42MASTH5
+033700     05  M-PER-CEIL-MAX-INC      PIC SV9(5)      COMP-3.          42MASTH5
+033701     05  M-PER-CEIL-MAX-INC-P REDEFINES M-PER-CEIL-MAX-INC        43MASTDE
+033702                                 PIC S9(02)V9(03) COMP-3.         43MASTDE
+033800     05  M-PER-CEIL-FREQ         PIC X.                           42MASTH5
+033900     05  M-BANK-EARNINGS-RATE    PIC SV9(7)      COMP-3.          42MASTH5
+033901       05  M-BANK-EARNINGS-RATE-P REDEFINES M-BANK-EARNINGS-RATE   *ILDE*
+033902                                 PIC S9(02)V9(05) COMP-3.          *ILDE*
+034000     05  M-CREDIT-SCORE          PIC X(3).                        42MASTH5
+034100     05  M-PMT-CEILING           PIC S9(9)V99    COMP-3.          42MASTH5
+034200     05  M-USER-EXIT-CD          PIC XX.                          42MASTH5
+034210     05  M-PICKUP-PAY-BAL        PIC S9(9)V99    COMP-3.          42MASTH5
+034212     05  M-REPO-DTE              PIC S9(7)       COMP-3.          42MASTH5
+034214     05  M-SMSA-CD               PIC 9(5).                        42MASTH5
+034216     05  M-CLSFD-DTE             PIC S9(7)       COMP-3.          42MASTH5
+034218     05  M-CLSFD-CD              PIC XX.                          42MASTH5
+034220     05  M-CLSFD-AMT             PIC S9(9)V99    COMP-3.          42MASTH5
+034221     05  M-FUNDS-RATE            PIC SV9(5)      COMP-3.          42MASTH5
+034222     05  M-FUNDS-RATE-P REDEFINES M-FUNDS-RATE                    43MASTDE
+034223                                 PIC S9(02)V9(03) COMP-3.         43MASTDE
+034224     05  M-RECOURSE-PERCENT      PIC S9V9(4)     COMP-3.          42MASTH5
+034225     05  M-RECOURSE-PERCENT-P REDEFINES M-RECOURSE-PERCENT        43MASTDE
+034226                                 PIC S9(03)V9(02) COMP-3.         43MASTDE
+034227     05  M-LATE-ASSMT-DTE        PIC S9(7)       COMP-3.          42MASTH5
+034300     05  M-VEHICLE-INFO.                                          42MASTH5
+034310         10  M-VIN               PIC X(17).                       42MASTH5
+034320         10  M-TRUST-RECEIPT     PIC X(6).                        42MASTH5
+034330         10  M-STOCK-NO          PIC X(7).                        42MASTH5
+034340         10  M-MODEL-YR          PIC X(2).                        42MASTH5
+034350         10  M-MANUFACTURER      PIC X(8).                        42MASTH5
+034360         10  M-MODEL             PIC X(12).                       42MASTH5
+034400     05  M-TIER-INFO   OCCURS 3 TIMES.                            42MASTH5
+034500         10  M-TIER-RATE         PIC SV9(7)      COMP-3.          42MASTH5
+034501         10  M-TIER-RATE-P REDEFINES M-TIER-RATE                  43MASTDE
+034502                                 PIC S9(02)V9(05) COMP-3.         43MASTDE
+034600         10  M-TIER-BALANCE      PIC S9(9)V99    COMP-3.          42MASTH5
+034700         10  M-TIER-PRIME-CODE   PIC X(3).                        42MASTH5
+034800         10  M-TIER-PRIME-REL    PIC S9V9(4)     COMP-3.          42MASTH5
+034900         10  M-TIER-PREV-RATES.                                   42MASTH5
+035000             15  M-TIER-PREV-RATE1                                42MASTH5
+035010                                 PIC SV9(7)  COMP-3.              42MASTH5
+035100             15  M-TIER-PREV-RATE2                                42MASTH5
+035110                                 PIC SV9(7)  COMP-3.              42MASTH5
+035200             15  M-TIER-PREV-RATE3                                42MASTH5
+035210                                 PIC SV9(7)  COMP-3.              42MASTH5
+035300         10  M-TIER-PREV-RATE REDEFINES M-TIER-PREV-RATES         42MASTH5
+035400                                   OCCURS 3 TIMES                 42MASTH5
+035500                                 PIC SV9(7)      COMP-3.          42MASTH5
+035600         10  M-TIER-PREV-RATE-DTES.                               42MASTH5
+035700             15  M-TIER-PREV-RATE-DTE1                            42MASTH5
+035710                                 PIC S9(7) COMP-3.                42MASTH5
+035800             15  M-TIER-PREV-RATE-DTE2                            42MASTH5
+035810                                 PIC S9(7) COMP-3.                42MASTH5
+035900             15  M-TIER-PREV-RATE-DTE3                            42MASTH5
+035910                                 PIC S9(7) COMP-3.                42MASTH5
+036000         10  M-TIER-PREV-RATE-DTE REDEFINES                       42MASTH5
+036010                                    M-TIER-PREV-RATE-DTES         42MASTH5
+036100                                   OCCURS 3 TIMES                 42MASTH5
+036200                                 PIC S9(7)       COMP-3.          42MASTH5
+036300         10  M-TIER-AGG-BALANCE  PIC S9(11)V99  COMP-3.           42MASTH5
+036400         10  M-TIER-CYCLE-DYS    PIC S9(3)       COMP-3.          42MASTH5
+036500         10  M-TIER-PAYMT-PC     PIC SV9(5)      COMP-3.          42MASTH5
+036501         10  M-TIER-PAYMT-PC-P REDEFINES M-TIER-PAYMT-PC          43MASTDE
+036502                                 PIC S9(02)V9(03) COMP-3.         43MASTDE
+036600         10  M-TIER-PAYMT-BAL    PIC S9(9)V99    COMP-3.          42MASTH5
+036700     05  M-TIER-BAL-CHG-DTE      PIC S9(7)       COMP-3.          42MASTH5
+036800     05  M-TIER-METHOD           PIC 9.                           42MASTH5
+036900         88  M-TIER-NONE                      VALUE 0.            42MASTH5
+037000         88  M-TIER-BAL                       VALUE 1.            42MASTH5
+037100         88  M-TIER-STEP                      VALUE 2.            42MASTH5
+037200     05  M-STMT-TYPE-CD          PIC X.                           42MASTH5
+037300     05  M-MEM-ASSMNT-DTE        PIC S9(7)       COMP-3.          42MASTH5
+037400     05  M-MTD-INT-OWE           PIC S9(7)V9(4)  COMP-3.          42MASTH5
+037500     05  M-DISPUTE-DTE           PIC S9(7)       COMP-3.          42MASTH5
+037600     05  M-PLC-REV-FREQ          PIC 9.                           42MASTH5
+037700     05  M-RIGHT-CURE-DTE        PIC S9(7)       COMP-3.          42MASTH5
+037710     05  M-PLC-FUNDS-ON-HOLD.                                     42MASTH5
+037720         10  M-PLC-FOH-FIELDS    OCCURS 5 TIMES.                  02111150
+037730             15  M-PLC-FOH-AMT   PIC S9(9)V99    COMP-3.          42MASTH5
+037740             15  M-PLC-FOH-DTE   PIC S9(7)       COMP-3.          42MASTH5
+037750             15  M-PLC-FOH-DYS   PIC S9(3)       COMP-3.          42MASTH5
+037760     05  M-RATE-CHG-ADJ          PIC SV9(5)      COMP-3.          42MASTH5
+037761     05  M-RATE-CHG-ADJ-P REDEFINES M-RATE-CHG-ADJ                43MASTDE
+037762                                 PIC S9(02)V9(03) COMP-3.         43MASTDE
+037770     05  M-DLR-RATE-CHG          PIC 9.                           42MASTH5
+037786     05  M-ACCT-NO               PIC X(17).                       42MASTH5
+037788     05  M-ACCT-NO2              PIC X(17).                       42MASTH5
+037800     05  M-PLC-CARD.                                              42MASTH5
+037810         10  M-PLC-LAST-ISSUED-DTE                                42MASTH5
+037815                                 PIC S9(7) COMP-3.                42MASTH5
+037820         10  M-PLC-NEXT-REISSUE-DTE                               42MASTH5
+037825                                 PIC S9(7) COMP-3.                42MASTH5
+037830         10  M-PLC-REISSUE-FREQ  PIC S99.                         42MASTH5
+037850     05  M-PP-PLAN-IND           PIC X.                           42MASTH5
+037852     05  M-PP-DEF-CODE.                                           42MASTH5
+037854         10  M-PP-DEF-TYPE       PIC X.                           42MASTH5
+037856             88  M-PP-TYPE-LNBAL                 VALUE 'L'.       42MASTH5
+037858             88  M-PP-TYPE-PROCEEDS              VALUE 'P'.       42MASTH5
+037860             88  M-PP-TYPE-FLAT-CHARGE           VALUE 'F'.       42MASTH5
+037862         10  M-PP-DEF-ASSESS     PIC X.                           42MASTH5
+037864             88  M-PP-ASSESS-MISC-FEE            VALUE 'M'.       42MASTH5
+037866             88  M-PP-ASSESS-OTH-CHG             VALUE 'O'.       42MASTH5
+037868         10  M-PP-DEF-PERIOD     PIC X.                           42MASTH5
+037870             88  M-PP-PERIOD-MONTHS              VALUE 'M'.       42MASTH5
+037872             88  M-PP-PERIOD-DAYS                VALUE 'D'.       42MASTH5
+037874     05  M-PP-ARRAY            OCCURS 4 TIMES.                    42MASTH5
+037876         10  M-PP-PERIOD-END     PIC  S9(3)      COMP-3.          42MASTH5
+037877           10  M-PP-PERCENTAGE   PIC SV9(7)      COMP-3.          42MASTH5
+037878           10  M-PP-PERCENTAGE-P REDEFINES M-PP-PERCENTAGE         *ILDE*
+037879                                 PIC  S9(02)V9(05)   COMP-3.       *ILDE*
+037880         10  M-PP-FLAT-CHARGE  REDEFINES M-PP-PERCENTAGE          42MASTH5
+037882                                 PIC  S9(5)V99   COMP-3.          42MASTH5
+037884     05  M-PP-AMOUNT             PIC  S9(5)V99   COMP-3.          42MASTH5
+037900     05  M-ESC-INS-PYMT          PIC S9(7)V99    COMP-3.          49----M9
+037908     05  M-ESC-INS-IND           PIC X.                           49----M9
+037910         88  M-ESCROW-INS-YES                       VALUE 'Y'.    49----M9
+037912         88  M-ESCROW-INS-NO                        VALUE 'N' ' '.49----M9
+037913     05  FILLER                  PIC X(1).                        014901
+037914     05  M-ACH-DIVIDED-PYMT-OPT  PIC X(1).                        014901
+037916     05  M-ESC-TAX-PYMT          PIC S9(7)V99    COMP-3.          49----M9
+037923     05  M-ESC-TAX-IND           PIC X.                           49----M9
+037924         88  M-ESCROW-TAX-YES                       VALUE 'Y'.    49----M9
+037926         88  M-ESCROW-TAX-NO                        VALUE 'N' ' '.49----M9
+037928     05  M-ACH-DRAFT-DAY2        PIC 99.                          000303
+037930     05  M-DEALER-LOAN-FIELDS-CONT.                               42MASTH5
+037932         10  M-DLR-UPFRONT-TYPE  PIC X.                           42MASTH5
+037934             88  M-DLR-UPF-TYPE-A                    VALUE 'A'.   42MASTH5
+037936             88  M-DLR-UPF-TYPE-B                    VALUE 'B'.   42MASTH5
+037938         10  M-DLR-PO-CHRG-BACK-TYPE                              02061650
+037939                                 PIC X.                           42MASTH5
+037940             88  M-DLR-PO-CB-TYPE-UNCOLL-1           VALUE '1'.   02061650
+037942             88  M-DLR-PO-CB-TYPE-FULL-2             VALUE '2'.   02061650
+037943             88  M-DLR-PO-CB-TYPE-UN-ADDL-3          VALUE '3'.   02061650
+037944         10  M-DLR-CO-CHRG-BACK-TYPE                              02061650
+037945                                 PIC X.                           02061650
+037946             88  M-DLR-CO-CB-TYPE-UNCOLL-1           VALUE '1'.   02061650
+037948             88  M-DLR-CO-CB-TYPE-FULL-2             VALUE '2'.   02061650
+037950             88  M-DLR-CO-CB-TYPE-NONE-3             VALUE '3'.   02061650
+037952         10  M-DLR-PO-CHRG-BACK-PRD-OPT                           02061650
+037953                                 PIC X.                           42MASTH5
+037954             88  M-DLR-PO-CB-PRD-DAYS-D              VALUE 'D'.   02061650
+037955             88  M-DLR-PO-CB-PRD-DAYS-F              VALUE 'F'.   020626
+037956             88  M-DLR-PO-CB-PRD-PYMTS-P             VALUE 'P'.   02061650
+037958         10  M-DLR-PO-CHRG-BACK-PERIOD                            02061650
+037959                                 PIC S9(5)       COMP-3.          42MASTH5
+037960         10  M-DLR-SPLIT-METHOD  PIC X(02).                       42MASTH5
+037961         10  M-DLR-ADV-PC        PIC S9V9(4)     COMP-3.          42MASTH5
+037962         10  M-DLR-ADV-PC-P REDEFINES M-DLR-ADV-PC                43MASTDE
+037963                                       PIC S9(03)V9(02) COMP-3.    *ILDE*
+037964         10  M-DLR-MIN-PC        PIC S9V9(4)     COMP-3.          42MASTH5
+037965         10  M-DLR-MIN-PC-P REDEFINES M-DLR-MIN-PC                43MASTDE
+037966                                 PIC S9(03)V9(02) COMP-3.         43MASTDE
+037967         10  M-DLR-MIN-RESERVE   PIC S9(7)V99    COMP-3.          42MASTH5
+037968         10  M-DLR-DISCOUNT-FULL PIC S9(7)V99    COMP-3.          42MASTH5
+037970         10  M-DLR1-ICNE-INC-ADJ-PO                               42MASTH5
+037971                                 PIC S9(7)V99    COMP-3.          42MASTH5
+037972         10  M-DLR2-ICNE-INC-ADJ-PO                               42MASTH5
+037973                                 PIC S9(7)V99    COMP-3.          42MASTH5
+037974         10  M-DLR3-ICNE-INC-ADJ-PO                               42MASTH5
+037975                                 PIC S9(7)V99    COMP-3.          42MASTH5
+037976         10  M-DLR4-IENC-INC-ADJ-PO                               42MASTH5
+037977                                 PIC S9(7)V99    COMP-3.          42MASTH5
+037978         10  M-DLR4-DLY-ADDL-EARN                                 42MASTH5
+037979                                 PIC S9(7)V9(4)  COMP-3.          42MASTH5
+037980         10  M-DLR4-MTD-ADDL-EARN                                 42MASTH5
+037981                                 PIC S9(7)V9(4)  COMP-3.          42MASTH5
+037982         10  M-DLR4-LTD-ADDL-EARN                                 42MASTH5
+037983                                 PIC S9(7)V9(4)  COMP-3.          42MASTH5
+038000     05  M-SECURITIZATION-INFO.                                   42MASTH5
+038100         10  M-SEC-POOL-NUM      PIC 9(03).                       42MASTH5
+038200         10  M-SEC-ELIG-CD       PIC X(01).                       42MASTH5
+038300             88  M-SEC-ELIGIBLE              VALUE '0'.           42MASTH5
+038400             88  M-SEC-INELIGIBLE            VALUE '1'.           42MASTH5
+038500         10  M-SEC-STATUS-CD     PIC X(01).                       42MASTH5
+038600             88  M-SEC-STATUS-ACTIVE         VALUE '1'.           42MASTH5
+038700             88  M-SEC-STATUS-REPURCHASED    VALUE '2'.           42MASTH5
+038800             88  M-SEC-STATUS-CHARGED-OFF    VALUE '3'.           42MASTH5
+038900             88  M-SEC-STATUS-PAID-OFF       VALUE '4'.           42MASTH5
+038910             88  M-SEC-STATUS-RESALE         VALUE '5'.           48----M5
+039000         10  M-SEC-SOLD-DT       PIC S9(07)      COMP-3.          42MASTH5
+039100     05  M-MEM-FEE-UNPD          PIC S9(05)V99   COMP-3.          42MASTH5
+039105     05  M-MEM-FEE-CAPT          PIC S9(05)V99   COMP-3.          42MASTH5
+039110     05  M-INT-CAPT-IND          PIC X(01).                       42MASTH5
+039115     05  M-MEM-FEE-CAPT-IND      PIC X(01).                       42MASTH5
+039116     05  M-NONACCR-AUTO-IN-OPT   PIC X(01).                       42MASTH8
+039118     05  M-NONACCR-AUTO-IN-DAYS  PIC S9(03) COMP-3.               42MASTH8
+039120     05  M-NONACCR-AUTO-OUT-OPT  PIC X(01).                       42MASTH8
+039122     05  M-NONACCR-AUTO-OUT-DAYS PIC S9(03) COMP-3.               42MASTH8
+039125     05  M-FXDTLO-MGR-IND        PIC X(01).                       42MASTH5
+039130         88  M-FXDTLO-MGR                 VALUE  '1' THRU '5'     49----ME
+039135                                                 '9'.             42MASTH5
+039140         88  M-FXDTLO-MGR-FRL             VALUE  '1' '2'.         42MASTH5
+039145         88  M-FXDTLO-MGR-VRL             VALUE  '3' '4' '5'.     49----ME
+039146         88  M-FXDTLO-MGR-WRL             VALUE  '5'.             49----ME
+039150         88  M-FXDTLO-MGR-COMM            VALUE  '9'.             42MASTH5
+039155     05  M-FLRPLAN-CURTAIL-SCH   PIC X(03).                       44MASTK6
+039160     05  M-FLRPLAN-CURTAIL-IND   PIC 9.                           44MASTK6
+039200     05  M-AUXILIARY-SEARCH      PIC X(25).                       42MASTH5
+039205     05  M-PREV-INT-DUE          PIC S9(9)V99    COMP-3.          42MASTH5
+039210     05  M-PREV-DUE-DTE-I        PIC S9(7)       COMP-3.          42MASTH5
+039220     05  M-ACCRUAL-CD            PIC X(1).                        42MASTH5
+039225         88  M-ACCRUAL-VALID           VALUE '1' THRU '6'.        42MASTH5
+039230     05  M-ORG-RATE              PIC SV9(7)      COMP-3.          42MASTH5
+039231       05  M-ORG-RATE-P REDEFINES M-ORG-RATE                       *ILDE*
+039232                                 PIC S9(02)V9(05) COMP-3.          *ILDE*
+039235     05  M-ORG-PRIN-PYMT         PIC S9(9)V99    COMP-3.          42MASTH5
+039236     05  M-FXDTLO-PRIN-PAID    REDEFINES M-ORG-PRIN-PYMT.         18980037
+039237         10  M-FXDTLO-PRIN-PD    PIC S9(9)V99   COMP-3.           18980037
+039240     05  M-ORG-PRIN-LST-PYMT     PIC S9(9)V99    COMP-3.          42MASTH5
+039241     05  M-FXDTLO-PRIN-PAID-DEL                                   18980037
+039242                           REDEFINES M-ORG-PRIN-LST-PYMT.         18980037
+039243         10  M-FXDTLO-PRIN-PD-DEL  PIC S9(9)V99   COMP-3.         18980037
+039245     05  M-ORG-PRIN-DUE-DTE      PIC S9(7)       COMP-3.          42MASTH5
+039250     05  M-TRW-COMMENTS          PIC X(02).                       44MASTK6
+039252     05  M-FLRPLAN-CURTAIL-PC    PIC SV9(07)               COMP-3.44MASTK6
+039254     05  M-FLRPLAN-CURTAIL-PC-P  REDEFINES                        44MASTK6
+039256         M-FLRPLAN-CURTAIL-PC    PIC S9(02)V9(05)          COMP-3.44MASTK6
+039260     05  M-FLRPLAN-CURTAIL-AMT   REDEFINES                        44MASTK6
+039262         M-FLRPLAN-CURTAIL-PC    PIC S9(05)V99             COMP-3.44MASTK6
+039270     05  M-NONACCR-PMTS-MD       PIC S9(03) COMP-3.               42MASTH8
+039275     05  M-PROMO-CODE            PIC X(03).                       42MASTH5
+039280     05  M-PROMO-EXP-DT          PIC S9(07)     COMP-3.           42MASTH5
+039285     05  M-PROMO-VAR-RATE        PIC S9V9(04)   COMP-3.           42MASTH5
+039300     05  M-PAST-DUE-MONTHS       PIC S9(03)     COMP-3.           42MASTH5
+039400     05  M-EFFECTIVE-INDICATOR-CD                                 42MASTH5
+039410                                 PIC X.                           42MASTH5
+039500         88  M-EFFECTIVE-NO-0                VALUE '0'.           42MASTH5
+039600         88  M-EFFECTIVE-YES-1               VALUE '1'.           42MASTH5
+039700     05  M-MAXIMUM-INSURANCE-AMOUNTS OCCURS 7 TIMES.              42MASTH5
+039800         10  M-MAX-INS-AMT       PIC S9(9)V99    COMP-3.          42MASTH5
+039900     05  M-PRICING-KEYS.                                          42MASTH5
+040000         10  M-PK-INTEREST.                                       42MASTH5
+040100             15  M-PK-INT-DT     PIC S9(7)       COMP-3.          42MASTH5
+040200             15  M-PK-INT-SEQ-NUM                                 42MASTH5
+040210                                 PIC S9(3) COMP-3.                42MASTH5
+040300         10  M-PK-INSURANCE       OCCURS 7 TIMES.                 42MASTH5
+040400             15  M-PK-INS-DT     PIC S9(7)       COMP-3.          42MASTH5
+040500             15  M-PK-INS-SEQ-NUM                                 42MASTH5
+040510                                 PIC S9(3) COMP-3.                42MASTH5
+040600     05  M-BALANCE-KEYS.                                          42MASTH5
+040700         10  M-BK-INTEREST.                                       42MASTH5
+040800             15  M-BK-INT-DT     PIC S9(7)       COMP-3.          42MASTH5
+040900             15  M-BK-INT-SEQ-NUM                                 42MASTH5
+040910                                 PIC S9(3) COMP-3.                42MASTH5
+041000         10  M-BK-INSURANCE       OCCURS 7 TIMES.                 42MASTH5
+041100             15  M-BK-INS-DT     PIC S9(7)       COMP-3.          42MASTH5
+041200             15  M-BK-INS-SEQ-NUM                                 42MASTH5
+041202                                 PIC S9(3) COMP-3.                42MASTH5
+041205     05  M-LAST-COUPON           PIC S9(3)  COMP-3.               42MASTIF
+041210     05  M-EXT-SCHED-NO REDEFINES M-LAST-COUPON                   42MASTHR
+041212                                 PIC S9(03) COMP-3.               42MASTHR
+041214     05  M-USER-IDX6             PIC X(3).                        45MASTKH
+BBT027     05  M-BBT-DISCOUNT-PRICING-CD  REDEFINES  M-USER-IDX6
+BBT027                                 PIC X(03).
+041216     05  M-EMPLOYEE-DISCOUNT     PIC SV9(3)      COMP-3.          45MASTKH
+041218     05  M-EMPLOYEE-DISCOUNT-P REDEFINES M-EMPLOYEE-DISCOUNT      45MASTKH
+041220                                 PIC S9(02)V9(01) COMP-3.         45MASTKH
+041222     05  M-DLR-AMT-OPT           PIC 9.                           48----M8
+041225     05  M-PENDING-RATE-EFF-DT   PIC S9(07)      COMP-3.          42MASTH5
+041230     05  M-FIRST-CHANGE-PAYMENT-DT                                42MASTH5
+041235                                 PIC S9(07)      COMP-3.          42MASTH5
+041240     05  M-REAMORT-NOTC-LEAD-DAYS                                 42MASTH5
+041245                                 PIC S9(03)      COMP-3.          42MASTH5
+041250     05  M-TIER-INFO-CONT        OCCURS 3 TIMES.                  42MASTH5
+041255         10  M-TIER-PENDING-RATE PIC SV9(07)     COMP-3.          42MASTH5
+041256         10  M-TIER-PENDING-RATE-P REDEFINES M-TIER-PENDING-RATE   *ILDE*
+041257                                 PIC S9(02)V9(05)  COMP-3.         *ILDE*
+041260         10  M-TIER-PENDING-RATE-EFF-DT                           42MASTH5
+041265                                 PIC S9(07)      COMP-3.          42MASTH5
+041300     05  M-USER-REG-FLD1-7       PIC X(07).                       42MASTH5
+BBT022     05  M-BBT-SF-INCENTIVE-CENTER REDEFINES  M-USER-REG-FLD1-7
+BBT022                                 PIC X(07).
+041310     05  M-USER-REG-FLD2-7       PIC X(07).                       42MASTH5
+041320     05  M-USER-REG-FLD3-1       PIC X(01).                       42MASTH5
+BBT022     05  M-BBT-REGZ-HIGH-COST-FLAG REDEFINES  M-USER-REG-FLD3-1
+BBT022                                 PIC X(01).
+041330     05  M-USER-REG-FLD4-1       PIC X(01).                       42MASTH5
+BBT023     05  M-BBT-HMSTD-HELOC-FLAG    REDEFINES  M-USER-REG-FLD4-1
+BBT021                                 PIC X(01).
+041340     05  M-USER-REG-FLD5-1       PIC X(01).                       42MASTH5
+BBT020     05  M-BBT-SUPPRESS-FLAG  REDEFINES  M-USER-REG-FLD5-1
+BBT020                                 PIC X(01).
+041350     05  M-USER-REG-FLD6-1       PIC X(01).                       42MASTH5
+BBT009     05  M-BBT-ELT-FLAG REDEFINES M-USER-REG-FLD6-1
+BBT009                                 PIC X(01).
+041360     05  M-USER-REG-FLD7-1       PIC X(01).                       42MASTH5
+BBT010     05  M-BBT-ELIG-IUI REDEFINES M-USER-REG-FLD7-1
+BBT010                                 PIC X(01).
+041400                                                                  14MASTL1
+041500     05  M-USER-FIELDS2          PIC X(100).                      42MASTH5
+041502     05  M-USER-FIELDS2X       REDEFINES M-USER-FIELDS2.          43MASTJK
+041504         10  M-UF-ALPHA1-1       PIC X.                           43MASTJK
+BBT003         10  M-BBT-STOP-PAY REDEFINES M-UF-ALPHA1-1
+BBT003                                 PIC X.
+041506         10  M-UF-ALPHA1-2       PIC X.                           43MASTJK
+BBT004         10  M-BBT-DRL-CNVR-FLAG REDEFINES M-UF-ALPHA1-2
+BBT004                                 PIC X.
+041508         10  M-UF-ALPHA1-3       PIC X.                           43MASTJK
+BBT004         10  M-BBT-1098-FLAG REDEFINES M-UF-ALPHA1-3
+BBT004                                 PIC X.
+041510         10  M-UF-ALPHA1-4       PIC X.                           43MASTJK
+BBT008         10  M-BBT-FLA-DOC-STAMP REDEFINES M-UF-ALPHA1-4
+BBT008                                 PIC X.
+041512         10  M-UF-ALPHA1-5       PIC X.                           43MASTJK
+BBT029         10  M-BBT-GOVT-PROG-CD  REDEFINES M-UF-ALPHA1-5
+BBT029                                 PIC X.
+BBT007*******> 10  M-BBT-STUFFER-FLAG  REDEFINES M-UF-ALPHA1-5
+BBT007*******>                         PIC X.
+041514         10  M-UF-ALPHA1-6       PIC X.                           43MASTJK
+BBT014         10  M-BBT-HMDA-FLAG     REDEFINES M-UF-ALPHA1-6
+BBT014                                 PIC X.
+041516         10  M-UF-ALPHA3-1       PIC X(3).                        43MASTJK
+BBT005         10  M-BBT-REIT-STAR-FLAG REDEFINES M-UF-ALPHA3-1
+BBT005                                 PIC X(3).
+041518         10  M-UF-ALPHA3-2       PIC X(3).                        43MASTJK
+041520         10  M-UF-ALPHA4-1       PIC X(4).                        43MASTJK
+BBT023         10  FILLER             REDEFINES  M-UF-ALPHA4-1.
+BBT023             15  M-BBT-SOP033    PIC X.
+BBT023             15  M-BBT-POOL-NBR  PIC X(03).
+041522         10  M-UF-ALPHA4-2       PIC X(4).                        43MASTJK
+041524         10  M-UF-ALPHA6-1       PIC X(6).                        43MASTJK
+BBT023         10  FILLER             REDEFINES M-UF-ALPHA6-1.
+BBT023             15  FILLER          PIC X.
+BBT023             15  M-BBT-CALL-CODE PIC X(05).
+041526         10  M-UF-ALPHA10-1      PIC X(10).                       43MASTJK
+BBT016         10  M-BBT-APP-ID       REDEFINES M-UF-ALPHA10-1
+BBT016                                 PIC X(10).
+041528         10  M-UF-DATE-1         PIC S9(7)       COMP-3.          43MASTJK
+BBT001         10  M-BBT-CURR-DEFER   REDEFINES M-UF-DATE-1
+BBT001                                 PIC S9(7)       COMP-3.
+041530         10  M-UF-DATE-2         PIC S9(7)       COMP-3.          43MASTJK
+BBT001         10  M-BBT-PRIOR1-DEFER   REDEFINES M-UF-DATE-2
+BBT001                                 PIC S9(7)       COMP-3.
+041532         10  M-UF-DATE-3         PIC S9(7)       COMP-3.          43MASTJK
+BBT001         10  M-BBT-PRIOR2-DEFER   REDEFINES M-UF-DATE-3
+BBT001                                 PIC S9(7)       COMP-3.
+041534         10  M-UF-DATE-4         PIC S9(7)       COMP-3.          43MASTJK
+BBT006         10  M-BBT-MODIFY-DATE    REDEFINES M-UF-DATE-4
+BBT006                                 PIC S9(7)       COMP-3.
+041536         10  M-UF-DATE-5         PIC S9(7)       COMP-3.          43MASTJK
+BBT006         10  M-BBT-LST-PAYMNT-DTE REDEFINES M-UF-DATE-5
+BBT006                                 PIC S9(7)       COMP-3.
+041538         10  M-UF-NUM3-1         PIC S9(3)       COMP-3.          43MASTJK
+BBT003         10  M-BBT-LTV-RATE REDEFINES M-UF-NUM3-1
+BBT003                                 PIC S9V99       COMP-3.
+041540         10  M-UF-NUM3-2         PIC S9(3)       COMP-3.          43MASTJK
+BBT028         10  M-BBT-MOD-LTV-RATE  REDEFINES M-UF-NUM3-2
+BBT028                                 PIC S9(3)       COMP-3.
+BBT023*******> 10  M-BBT-AA-POOL-CODE  REDEFINES M-UF-NUM3-2
+BBT023*******>                         PIC S9(3)       COMP-3.
+041542         10  M-UF-NUM3-3         PIC S9(3)       COMP-3.          43MASTJK
+BBT026         10  M-BBT-SBA-PERCENT   REDEFINES M-UF-NUM3-3
+BBT026                                 PIC S9(3)       COMP-3.
+041544         10  M-UF-NUM5-1         PIC S9(5)       COMP-3.          43MASTJK
+BBT028         10  M-BBT-MOD-DEBT-RATIO REDEFINES M-UF-NUM5-1
+BBT028                                 PIC S9V9(4)     COMP-3.
+041546         10  M-UF-NUM5-2         PIC S9(5)       COMP-3.          43MASTJK
+BBT036         10  M-BBT-PAG-DEALER-NO REDEFINES M-UF-NUM5-2
+BBT036                                 PIC S9(5)       COMP-3.
+041548         10  M-UF-NUM72-1        PIC S9(7)V99    COMP-3.          43MASTJK
+BBT003         10  M-BBT-ADJ-NET-WORTH REDEFINES M-UF-NUM72-1
+BBT003                                 PIC S9(7)V99    COMP-3.
+041550         10  M-UF-NUM72-2        PIC S9(7)V99    COMP-3.          43MASTJK
+BBT003         10 M-BBT-APPR-COLL-VALUE REDEFINES M-UF-NUM72-2
+BBT003                                 PIC S9(7)V99    COMP-3.
+041552         10  M-UF-NUM72-3        PIC S9(7)V99    COMP-3.          43MASTJK
+BBT003         10  M-BBT-ORIG-SHEET-RATE REDEFINES M-UF-NUM72-3
+BBT003                                 PIC SV9(9)      COMP-3.
+041554         10  M-UF-NUM72-4        PIC S9(7)V99    COMP-3.          43MASTJK
+BBT006         10  M-BBT-LST-PAYMNT-AMT  REDEFINES M-UF-NUM72-4
+BBT006                                 PIC S9(7)V99    COMP-3.
+041556         10  M-UF-NUM72-5        PIC S9(7)V99    COMP-3.          43MASTJK
+BBT011         10  M-BBT-MTD-IUI-ADJ     REDEFINES M-UF-NUM72-5
+BBT011                                 PIC S9(7)V99    COMP-3.
+041558         10  M-UF-NUM112-1       PIC S9(11)V99   COMP-3.          43MASTJK
+BBT019         10  M-BBT-SBA-NUM         REDEFINES M-UF-NUM112-1
+BBT019                                 PIC S9(13)      COMP-3.
+041800     05  M-FP-DISB-IND           PIC X(03).                       44MASTK5
+041801     05  M-FP-ACH-P-DRAFT-DAYS   PIC 99.                          47----LZ
+041802     05  M-BASEL-EXP-CD-1        PIC S9(3)       COMP-3.          47----M1
+041803     05  M-BASEL-EXP-CD-2        PIC S9(3)       COMP-3.          47----M1
+041804     05  M-BASEL-EXP-CD-3        PIC S9(3)       COMP-3.          47----M1
+041805     05  M-BASEL-EXP-CD-4        PIC S9(3)       COMP-3.          47----M1
+041806     05  M-BASEL-EXP-CD-5        PIC S9(3)       COMP-3.          47----M1
+041807     05  M-FP-TEXT-IND           PIC 9(02).                       47----M1
+041808     05  M-STAT-ACCT-UNIT        PIC 9(07).                       47----M1
+041809     05  M-AQR                   PIC 9(2).                        47----M1
+041815     05  M-AQR-SIGN              PIC X.                           47----LN
+041820     05  M-GQR                   PIC 9(2).                        47----LN
+041825     05  M-DAYS-PAST-DUE         PIC 9(3)        COMP-3.          47----LN
+041830     05  M-CHARGE-OFF-AMT        PIC S9(9)V99    COMP-3.          47----LN
+041835     05  FILLER                  PIC X(6).                        49----MW
+041840     05  M-COLL-VALIDATION-DT    PIC S9(7)       COMP-3.          47----LN
+041845     05  M-COLL-ADV-RT           PIC S9(3)V99    COMP-3.          47----LN
+041846     05  M-FP-ACH-IF-DRAFT-DAYS  PIC 99.                          47----LZ
+041850     05  M-INVESTOR-ID           PIC X(07).                       48----M5
+041855     05  M-BUR-ACCT-TYPE         PIC X(2).                        48----MB
+041860     05  M-PYMT-HIST-PROFILE.                                     48----MB
+041865         10  M-PYMT-H-PF         OCCURS 25 TIMES                  48----MB
+041870                                 PIC X(01).                       48----MB
+041875     05  M-BANKRUPTCY-DT         PIC S9(7)       COMP-3.          48----MB
+041880     05  M-BALLOON-IND           PIC X(1).                        48----MB
+041885     05  M-FIRST-DELQ-DT         PIC S9(7)       COMP-3.          48----MB
+041890     05  M-CQR-CHG-MAG           PIC X(03).                       49----MK
+041892     05  M-PLC-NO-OF-HOLD-DAYS   PIC S9(3)       COMP-3.          02111150
+042000     05  M-CREDIT-SCORE-DATA.                                     42MASTHV
+042002         10  M-CS-APPLICATION-SCORE                               42MASTHV
+042004                                 PIC X(4).                        42MASTHV
+BBT012         10  FILLER REDEFINES M-CS-APPLICATION-SCORE.
+BBT012             15  M-BBT-BEACON-SCR PIC X(3).
+BBT012             15  FILLER           PIC X.
+042006         10  M-CS-FINAL-SCORE    PIC X(4).                        42MASTHV
+042008         10  M-CS-ALGORITHM-CODE PIC X(6).                        42MASTHV
+BBT028         10  M-BBT-MOD-COAPP-OFF REDEFINES M-CS-ALGORITHM-CODE
+BBT028                                 PIC X(6).                        42MASTHV
+042010         10  M-CS-UNDERWRITER-CODE                                42MASTHV
+042012                                 PIC X(6).                        42MASTHV
+BBT028         10  FILLER REDEFINES M-CS-UNDERWRITER-CODE.
+BBT028             15  M-BBT-MOD-BEACON-SCORE PIC X(4).
+BBT028             15  FILLER                 PIC X(2).
+042014         10  M-CS-OVERRIDE-CODE  PIC X(4).                        42MASTHV
+BBT028         10  FILLER REDEFINES M-CS-OVERRIDE-CODE.
+BBT028             15  M-BBT-MOD-CREDIT-SCORE PIC X(3).
+BBT028             15  FILLER                 PIC X(1).
+042016         10  M-CS-BYPASS-CODE    PIC X(4).                        42MASTHV
+042018         10  M-CS-CUTOFF-SCORE   PIC X(4).                        42MASTHV
+042020         10  M-CS-BANKRUPT-CODE  PIC X(4).                        42MASTHV
+042022         10  M-CS-SCORE-DATE     PIC S9(7)                COMP-3. 42MASTHV
+042100     05  M-CTP-DATA.                                              42MASTHS
+042102         10  M-CTP-REASON-CODE   PIC X(4).                        42MASTHS
+042104         10  M-CTP-OFFICER       PIC X(6).                        42MASTHS
+042106         10  M-CTP-DATE          PIC S9(7)                COMP-3. 42MASTHS
+042108         10  M-CTP-PAST-DUE-DAYS PIC S9(3)                COMP-3. 42MASTHS
+042200     05  M-CREDIT-REASON-CODE    PIC X(3).                        42MASTHU
+042300     05  M-COMBINED-STMT-IND     PIC X(1).                        42MASTHZ
+042400     05  M-PLC-OPTIONS.                                           42MASTHP
+042500         10  M-INCREMENT-INIT-AMT                                 42MASTHW
+042510                                 PIC S9(5)V99             COMP-3. 42MASTHW
+042512         10  M-FP-ACTIVE-NUM     REDEFINES                        44MASTKD
+042514             M-INCREMENT-INIT-AMT                                 44MASTKD
+042516                                 PIC S9(7)                COMP-3. 44MASTKD
+042520         10  M-INCREMENT-SUBS-AMT                                 42MASTHW
+042530                                 PIC S9(5)V99             COMP-3. 42MASTHW
+042532         10  M-FP-LN-BAL-NUM     REDEFINES                        44MASTKD
+042534             M-INCREMENT-SUBS-AMT                                 44MASTKD
+042536                                 PIC S9(7)                COMP-3. 44MASTKD
+042540         10  M-MIN-ADVANCE-AMT   PIC S9(5)V99             COMP-3. 42MASTHW
+042600         10  M-OVERLINE-ADV-FEE-AMT                               42MASTHO
+042602                                 PIC S9(5)V99             COMP-3. 42MASTHO
+042700         10  M-PLC-MEMBER-FEE    PIC S9(5)V99             COMP-3. 42MASTHP
+042710         10  M-PLC-MEMBER-PCT REDEFINES                           42MASTHP
+042720             M-PLC-MEMBER-FEE    PIC SV9(7)               COMP-3. 42MASTHP
+042721         10  M-PLC-MEMBER-PCT-P REDEFINES                          *ILDE*
+042722             M-PLC-MEMBER-PCT    PIC S9(02)V9(05)         COMP-3.  *ILDE*
+042730         10  M-PLC-MEMBER-NEW-LINE                                42MASTHP
+042800                                 PIC X(1).                        42MASTHP
+042900         10  M-LAST-CONTRACT-DATE                                 42MASTHX
+042910                                 PIC S9(7)                COMP-3. 42MASTHX
+BBT003         10  M-BBT-CRDT-LIMIT-DTE REDEFINES M-LAST-CONTRACT-DATE
+BBT003                                 PIC S9(7)                COMP-3.
+043000     05  M-DELINQUENCY-CURR-EXPERIENCE.                           42MASTHN
+043010         10  M-DELQ-EXP-CTRS                  OCCURS 24 TIMES.    42MASTHN
+043020             15  M-DELQ-EXP-CTR               OCCURS  4 TIMES     42MASTHN
+043030                                 PIC S9(1)                COMP-3. 42MASTHN
+043040         10  M-CURR-TIMES-DELQ.                                   42MASTHN
+043050             15  M-CTD-10-29     PIC S9(3)                COMP-3. 42MASTHN
+043060             15  M-CTD-30-59     PIC S9(3)                COMP-3. 42MASTHN
+043100             15  M-CTD-60-89     PIC S9(3)                COMP-3. 42MASTHN
+043200             15  M-CTD-90        PIC S9(3)                COMP-3. 42MASTHN
+043210     05  M-CQR                   PIC 9(2).                        47----LN
+043220     05  M-ELC-PAYMENT-MONTHLY  OCCURS 12 TIMES.                  42MASTHZ
+043230         10  M-ELC-BILLED-DUE-DATE                                42MASTHZ
+043235                                 PIC S9(7)       COMP-3.          42MASTHZ
+043240         10  M-ELC-PAYMENT       PIC S9(9)V99    COMP-3.          42MASTHZ
+043250         10  M-ELC-PAID-CD       PIC 9.                           42MASTHZ
+043255     05  M-SI-INS-FLDS.                                           42MAST##
+043260         10  M-II-INS    OCCURS 7 TIMES.                          42MAST##
+043265             15  M-II-MTD-ACCRUALS                                42MAST##
+043267                                 PIC S9(5)V99   COMP-3.           42MAST##
+043270             15  M-II-INT-PO     PIC S9(5)V99        COMP-3.      42MAST##
+043275             15  M-II-DLR-RATE   PIC SV9(7)          COMP-3.      42MAST##
+043280             15  M-II-DUE-INS  REDEFINES M-II-DLR-RATE            42MAST##
+043285                                 PIC S9(5)V99        COMP-3.      42MAST##
+043290     05  M-FINAL-DATE            PIC S9(7)                COMP-3. 42MASTHU
+043295     05  PMT-SCHED2-8.                                            42MASTIF
+043300        07  PMT-SCHED   OCCURS 8 TIMES.                           42MASTIF
+043305         10  PS28-SCHED          PIC 9.                           42MASTIF
+043310         10  PS28-NO-PMT         PIC S9(3)       COMP-3.          42MASTIF
+043315         10  PS28-STRT-DT        PIC S9(7)       COMP-3.          42MASTIF
+043320         10  PS28-AMT            PIC S9(9)V99    COMP-3.          42MASTIF
+043325         10  PS28-PAT-NO         PIC 9.                           42MASTIF
+043330         10  PS28-REPEAT-NO      PIC 99.                          42MASTIF
+043500     05  M-FUNDS-APPLD-IND       PIC X(1).                        42MASTIA
+043510     05  M-FUNDS-APPLD-AMT       PIC S9(9)V99 COMP-3.             42MASTIA
+043520     05  M-FUNDS-RECOVERED-AMT   PIC S9(9)V99 COMP-3.             42MASTIA
+043530     05  M-LOAN-RECOVERY-AMT     PIC S9(9)V99 COMP-3.             42MASTIA
+043540     05  M-PART-CHGOFF-RESV-AMT  PIC S9(9)V99 COMP-3.             42MASTIA
+043550     05  M-NET-BANK-ASSET-VALUE  PIC S9(9)V99 COMP-3.             42MASTIA
+043600     05  M-LAST-CYCLE-BILLED-AMT PIC S9(9)V99 COMP-3.             43--ZZ01
+043610     05  M-AMORT-LN-BAL          PIC S9(9)V99 COMP-3.             49----MF
+043620     05  M-PRIN-BILLED-AMT       PIC S9(9)V99 COMP-3.             49----MF
+043630     05  M-PRIN-BNP-AMT          PIC S9(9)V99 COMP-3.             49----MF
+043640     05  M-INT-BILLED-AMT        PIC S9(9)V99 COMP-3.             49----MF
+043650     05  M-FTLO-TOT-PRIN-BILLED-AMT PIC S9(9)V99 COMP-3.          49----MF
+043660     05  M-FTLO-TOT-PBNP-AMT     PIC S9(9)V99 COMP-3.             49----MF
+043670     05  M-FTLO-TOT-INT-BILLED-AMT PIC S9(9)V99 COMP-3.           49----MF
+043680     05  M-FTLO-TOT-IBNP-AMT     PIC S9(9)V99 COMP-3.             49----MF
+043690     05  M-FTLO-TOT-BILLED-AMT   PIC S9(9)V99 COMP-3.             49----MF
+043700     05  M-FTLO-TOT-PO-AMT       PIC S9(9)V99 COMP-3.             49----MF
+043710     05  M-PLC-INTRVLS OCCURS 5 TIMES.                            49----MG
+043720         10  M-PLC-PYMT-TYPE-INTRVL      PIC X(01).               49----MG
+043730         10  M-PLC-MODE-INTRVL           PIC 9(01).               49----MG
+043740         10  M-PLC-NUM-CYC-INTRVL        PIC S9(03) COMP-3.       49----MG
+043750         10  M-PLC-USED-NUM-CYC-INTRVL   PIC S9(03) COMP-3.       49----MG
+043760     05  M-PLC-REPYMT-TYPE       PIC X(01).                       49----MG
+043770     05  M-PLC-REPYMT-MODE       PIC 9(01).                       49----MG
+043780     05  M-PLC-LST-TERMS-CHG-DT  PIC S9(7)       COMP-3.          49----MG
+043790     05  M-BOR-BASE-AMT          PIC S9(9)V99 COMP-3.             49----MG
+043800     05  M-LGD                   PIC S9V9(3)  COMP-3.             49----MG
+043810     05  M-COLL-ZIP-CD           PIC S9(5)    COMP-3.             49----MG
+043820     05  M-CQR-CHG-REA           PIC X(03).                       49----MG
+043830     05  M-COLL-VALUE            PIC S9(11)V99   COMP-3.          49----MG
+043832     05  FILLER                  PIC X(001).                      02111150
+043833     05  M-PLC-MAX-NOT-HELD-AMT  PIC S9(9)V99 COMP-3.             02111150
+043834     05  M-USER-FIELDS3          PIC X(091).                      01143750
+043836     05  M-USER-FIELDS3X       REDEFINES M-USER-FIELDS3.          01143750
+043838         10  M-UF-ALPHA1-7       PIC X.                           01143750
+BBT018         10  M-BBT-OVERRIDE        REDEFINES  M-UF-ALPHA1-7
+BBT018                                 PIC X.
+043840         10  M-UF-ALPHA1-8       PIC X.                           01143750
+BBT018         10  M-BBT-LN-PLATFORM     REDEFINES  M-UF-ALPHA1-8
+BBT018                                 PIC X.
+043842         10  M-UF-ALPHA1-9       PIC X.                           01143750
+BBT024         10  M-BBT-REAL-ESTATE-CODE REDEFINES M-UF-ALPHA1-9
+BBT024                                 PIC X.
+BBT024         10  M-BBT-ELITE-CODE       REDEFINES M-UF-ALPHA1-9
+BBT024                                 PIC X.
+043843         10  M-UF-ALPHA1-10      PIC X.                           01143750
+BBT030         10  M-BBT-IMPAIRED-FLAG   REDEFINES  M-UF-ALPHA1-10
+BBT030                                 PIC X.
+043844         10  M-UF-ALPHA2-1       PIC X(02).                       01143750
+BBT018         10  M-BBT-USER-1          REDEFINES  M-UF-ALPHA2-1
+BBT018                                 PIC X(02).
+043846         10  M-UF-ALPHA2-2       PIC X(02).                       01143750
+BBT018         10  M-BBT-MARKETING-CODE  REDEFINES  M-UF-ALPHA2-2
+BBT018                                 PIC X(02).
+043848         10  M-UF-ALPHA2-3       PIC X(02).                       01143750
+BBT018         10  M-BBT-DEALER-ST       REDEFINES  M-UF-ALPHA2-3
+BBT018                                 PIC X(02).
+043850         10  M-UF-ALPHA2-4       PIC X(02).                       01143750
+BBT018         10  M-BBT-REFER-CODE      REDEFINES  M-UF-ALPHA2-4
+BBT018                                 PIC X(02).
+BBT018*  THE NEXT 6 3-BYTE FIELDS ARE USED TO FOR THE QTRLY BEACON SCORES
+BBT018*  THEY ARE NORMALLY ACCESSED AS A GROUP.  SHAW WILL ACCESS THEM
+BBT018*  SEPERATELY.  THEREFORE, THIS IS WHY THESE FIELDS ARE REDEFINED
+BBT018*  AS A GROUP AND KEPT IN A SEPERATE STATE.  WEA
+BBT018         10  M-UF-ALPHA3-3-8.
+043852             15  M-UF-ALPHA3-3       PIC X(3).                    01143750
+043854             15  M-UF-ALPHA3-4       PIC X(3).                    01143750
+043856             15  M-UF-ALPHA3-5       PIC X(3).                    01143750
+043858             15  M-UF-ALPHA3-6       PIC X(3).                    01143750
+043860             15  M-UF-ALPHA3-7       PIC X(3).                    01143750
+043862             15  M-UF-ALPHA3-8       PIC X(3).                    01143750
+BBT018* 1ST OCCURRENCE IS THE LATEST SCORE AND THE 6TH IS THE OLDEST
+BBT018         10  FILLER     REDEFINES  M-UF-ALPHA3-3-8.
+BBT018             15  M-BBT-BEACON-REFRESH  OCCURS  6  TIMES.
+BBT018                 20  M-BBT-BEACON-REFRSH-SCR        PIC X(3).
+043864         10  M-UF-ALPHA6-2       PIC X(6).                        01143750
+BBT018         10  M-BBT-SELL-OFFICER    REDEFINES  M-UF-ALPHA6-2
+BBT018                                 PIC X(06).
+043866         10  M-UF-ALPHA6-3       PIC X(6).                        01143750
+BBT018         10  M-BBT-REFER-OFFICER   REDEFINES  M-UF-ALPHA6-3
+BBT018                                 PIC X(06).
+043888         10  M-UF-NUM7-1         PIC S9(7)       COMP-3.          01143750
+BBT018         10  M-BBT-LOAN-APPL-DTE   REDEFINES  M-UF-NUM7-1
+BBT018                                 PIC S9(07)      COMP-3.
+043890         10  M-UF-NUM7-2         PIC S9(7)       COMP-3.          01143750
+BBT018         10  M-BBT-TRACKER-CNTRL-NBR REDEFINES  M-UF-NUM7-2
+BBT018                                 PIC S9(07)      COMP-3.
+043892         10  M-UF-NUM9-1         PIC S9(9)       COMP-3.          01143750
+BBT018         10  M-BBT-RECON-NUM       REDEFINES  M-UF-NUM9-1
+BBT018                                 PIC S9(09)      COMP-3.
+043894         10  M-UF-NUM12-1        PIC S9V99       COMP-3.          01143750
+BBT018         10  M-BBT-DEBT-RATIO      REDEFINES  M-UF-NUM12-1
+BBT018                                 PIC S9V99       COMP-3.
+043896         10  M-UF-NUM72-6        PIC S9(7)V99    COMP-3.          01143750
+BBT018         10  M-BBT-CRDT-LIMIT-CHG  REDEFINES  M-UF-NUM72-6
+BBT018                                 PIC S9(07)V99   COMP-3.
+043898         10  M-UF-NUM72-7        PIC S9(7)V99    COMP-3.          01143750
+BBT018*  THE NEXT 6 UF-DATE FIELDS ARE USED FOR THE  QTRLY BEACON SCORES DATES
+BBT018*  THEY ARE NORMALLY ACCESSED AS A GROUP.  SHAW WILL ACCESS THEM
+BBT018*  SEPERATELY.  THEREFORE, THIS IS WHY THESE FIELDS ARE REDEFINED
+BBT018*  AS A GROUP AND KEPT IN A SEPERATE STATE.  WEA
+BBT018         10  M-UF-DATE-6-11.
+043900             15  M-UF-DATE-6         PIC S9(7)       COMP-3.      01143750
+043902             15  M-UF-DATE-7         PIC S9(7)       COMP-3.      01143750
+043904             15  M-UF-DATE-8         PIC S9(7)       COMP-3.      01143750
+043906             15  M-UF-DATE-9         PIC S9(7)       COMP-3.      01143750
+043908             15  M-UF-DATE-10        PIC S9(7)       COMP-3.      01143750
+043910             15  M-UF-DATE-11        PIC S9(7)       COMP-3.      01143750
+BBT018* 1ST OCCURRENCE IS THE LATEST SCORE DATE  AND THE 6TH IS THE OLDEST
+BBT018         10  FILLER          REDEFINES  M-UF-DATE-6-11.
+BBT018             15  M-BBT-BEACON-REFRESH-DATES OCCURS  6  TIMES.
+BBT018                 20  M-BBT-BEACON-REFRSH-DTE  PIC S9(7) COMP-3.
+043912     05  LPI-INS-FLDS.                                            02061750
+043914        07  LPI-INS     OCCURS 7 TIMES.                           02061750
+043916         10  M-LTD-LPI-ACCR      PIC S9(7)V99 COMP-3.             02061750
+043918         10  M-LTD-LPI-PD        PIC S9(7)V99 COMP-3.             02061750
+043920         10  M-LPI-TYP-CD        PIC X(04).                       02061750
+BBT018     05  M-BBT-CONV-NO           PIC S9(11)  COMP-3.
+043922     05  M-NFPS-SCHED-IND        PIC X.                           02062551
+043924     05  UPF-INS-ROUND-OPTION.                                    020628
+043926        07  UPF-INS-RND-OPTS OCCURS 7 TIMES.                      020628
+043928         10  M-INS-ROUND-OPTION  PIC X.                           020628
+043932     05  FILLER                  PIC X(05).                       020629
+043934     05  M-DP-IND               PIC X(01).                        020629
+043936     05  M-DP-PRIN-YTD          PIC S9(9)V99 COMP-3.              020629
+043938     05  M-DP-PRIN-PRIOR        PIC S9(9)V99 COMP-3.              020629
+043940     05  M-DP-INT-YTD           PIC S9(7)V99 COMP-3.              020629
+043942     05  M-DP-INT-PRIOR         PIC S9(7)V99 COMP-3.              020629
+043944     05  M-DP-TOT-FEE-OWE       PIC S9(7)V99 COMP-3.              020629
+043946     05  M-MANUF-DLR-NUM         PIC S9(5)    COMP-3.             020632
+043948     05  M-SUBSIDY-CD            PIC X(06).                       020632
+043950     05  M-SUBSIDY-START-DT      PIC S9(7)    COMP-3.             020632
+043952     05  M-SUBSIDY-END-DT        PIC S9(7)    COMP-3.             020632
+043954     05  M-SUBSIDY-INT-ACCR      PIC S9(7)V99 COMP-3.             020632
+043956     05  M-PAR-MANUF-DLR-NUM     PIC S9(5)    COMP-3.             020632
+043958     05  M-EFLR-CURTAIL-CD       PIC X(03).                       020632
+043960*BBT 05  FILLER                  PIC X(42).                       020632
+BBT018     05  FILLER-111              PIC X(36).
+043962     05  M-YTD-FEES-CHGD         PIC S9(5)V99    COMP-3.          000155
+043964     05  M-YTD-INT-CHGD          PIC S9(7)V99    COMP-3.          000155
+043966     05  M-ME-PRIN-BAL           PIC S9(9)V99    COMP-3.          026701
+043967     05  M-LAST-LATE-ASSMNT-AMT  PIC S9(7)V99 COMP-3.             RET-543
+043968     05  M-DRAFT-STRT-DTE        PIC S9(7)       COMP-3.          000303
+043969     05  FILLER                  PIC X(02).                       000303
+043970     05  M-ACQUIRED-DATE         PIC S9(07)      COMP-3.          000303
+043971     05  M-ACQUIRED-FAIR-MRKT-VAL                                 000303
+043972                                 PIC S9(11)      COMP-3.          000245
+043974     05  M-ACQUIRED-GROSS-CONT-REC                                000245
+043976                                 PIC S9(11)      COMP-3.          000245
+043978     05  M-ACQUIRED-CASH-FLOW-LOSS                                000245
+043980                                 PIC S9(11)      COMP-3.          000245
+043982     05  M-SUBSIDY-RATE-OPT      PIC X(01).                       020632A
+043984     05  M-ACH-PRIN-DIR          PIC X(01).                       020637
+043986     05  M-OUT-APRV-AMT          PIC S9(9)V99 COMP-3.             020632B
+043988     05  M-CTD-LATE-CHGS         PIC S9(5)V99 COMP-3.             020632C
+043990     05  M-YTD-LCHRGS            PIC S9(5)V99 COMP-3.             020632C
+043992     05  M-MILEAGE               PIC 9(06).                       020639
+043994     05  M-TMP-INC-AMT           PIC S9(9)V99 COMP-3.             020640
+043996     05  M-TMP-INC-EXP-DT        PIC S9(7)    COMP-3.             020640
+044000     05  M-TDR-IND               PIC X(01).                       000293
+044002     05  M-TDR-DTE               PIC S9(07)   COMP-3.             000265
+044004     05  M-ALLLL-IND             PIC X(01).                       000265
+044006     05  M-ALLLL-DTE             PIC S9(07)   COMP-3.             000265
+044008     05  M-PRMOD-RATE            PIC SV9(07)  COMP-3.             000265
+044010     05  M-PRMOD-RATE-P REDEFINES M-PRMOD-RATE                    000265
+044012                                 PIC S9(02)V9(05) COMP-3.         000265
+044014     05  M-PRMOD-TERM            PIC S9(03)   COMP-3.             000265
+044016     05  M-PRMOD-NAV             PIC S9(9)V99 COMP-3.             000265
+044018     05  M-DEF-INT-IND           PIC X(01).                       026601
+044020     05  M-DEF-INT-NUM-CYC       PIC S9(03)   COMP-3.             026601
+044022     05  M-DEF-INT-EXP-DTE       PIC S9(07)   COMP-3.             026601
+044024     05  M-DEF-INT-ACCR-AMT      PIC S9(9)V99 COMP-3.             026601
+044026     05  M-DEF-INT-ACCR-CTD      PIC S9(9)V99 COMP-3.             026601
+044028     05  FILLER                  PIC X(01).                       026601
+044030     05  M-TDR-CURED-DTE         PIC S9(07)   COMP-3.             000265
+044032     05  M-TDR-REAS-CD           PIC X(03).                       000265
+044034     05  M-TDR-MOD-TYPE          PIC X(03).                       000265
+044036     05  M-SCRA-IND              PIC X(01).                       000293
+044038     05  REGZ-CFPB-FLDS.                                          000287
+044040        07  REGZ-CFPB-DATA             OCCURS 12 TIMES.           000287
+044042            10  M-DATE-SATISFIED    PIC S9(7)     COMP-3.         000287
+044044            10  M-ELC-PAYMENT-UNPD  PIC S9(9)V99  COMP-3.         000287
+044046        07  M-YTD-PRIN-PD           PIC S9(9)V99 COMP-3.          000287
+044048        07  M-YTD-LCHG-PD           PIC S9(7)V99 COMP-3.          000287
+044050        07  M-YTD-FEES-PD           PIC S9(7)V99 COMP-3.          000287
+044052        07  M-YTD-ESCR-PD           PIC S9(7)V99 COMP-3.          000287
+044053     05  M-PREV-CHG-OFF-CD       PIC X(1).                        RET-1146
+BBT036*    05  FILLER                     PIC X(300).                   RET-1146
+BBT036     05  FILLER                  PIC X(282).
+BBT036     05  M-BBT-GAP-PREMIUM-AMT   PIC S9(07)V9(2) COMP-3.
+BBT036     05  M-BBT-GAP-END-DT        PIC S9(07)      COMP-3.
+BBT036     05  M-BBT-WARR-PREMIUM-AMT  PIC S9(07)V9(2) COMP-3.
+BBT036     05  M-BBT-WARR-END-DT       PIC S9(07)      COMP-3.
+045000                                                                  42MASTH5
+045100    02  MD-DEALER-TOTAL-RECORD  REDEFINES   M-LOAN-RECORD.        42MASTH5
+045200     05  FILLER                  PIC X.                           42MASTH5
+045300     05  MD-ILMAST-KEY           PIC X(17).                       42MASTH5
+045400     05  MD-CUS-SHORT-NAM        PIC X(15).                       42MASTH5
+045500     05  FILLER                  PIC XX.                          42MASTH5
+045600     05  MD-NOTICE               PIC X.                           42MASTH5
+045700     05  MD-TYPE--X              PIC X.                           42MASTH5
+045800     05  FILLER                  PIC X.                           42MASTH5
+045900     05  MD-PRIN-SCH             PIC X.                           42MASTH5
+046000     05  FILLER                  PIC X.                           42MASTH5
+046100     05  MD-CLOS                 PIC X.                           42MASTH5
+046200     05  MD-PGM-CD               PIC X(03).                       42MASTH5
+046300     05  MD-ACCOUNTING-UNIT      PIC 9(07).                       45MASTKM
+046305     05  FILLER                  PIC X(05).                       45MASTKM
+046400     05  MD-OL-ACTV              PIC X.                           42MASTH5
+046500     05  FILLER                  PIC X.                           42MASTH5
+046600     05  MD-CONTROL1             PIC X(3).                        42MASTH5
+046700     05  MD-CONTROL2             PIC X(3).                        42MASTH5
+046800     05  MD-CONTROL3             PIC X(3).                        42MASTH5
+046900     05  FILLER                  PIC X(13).                       42MASTH5
+047000     05  MD-COLL                 PIC 9(4).                        42MASTH5
+047100     05  MD-DEPT                 PIC 99.                          42MASTH5
+047200*BBT 05  MD-CLASS                PIC 99.  NEW REL CODE CHG ALPHA  42MASTH5
+BBTNRL     05  MD-CLASS                PIC XX.
+047300     05  FILLER                  PIC XX.                          42MASTH5
+047400     05  MD-BOR-CODE             PIC XXX.                         42MASTH5
+047500     05  FILLER                  PIC XX.                          42MASTH5
+047600     05  MD-RPT-BR-NO            PIC S9(4)       COMP-3.          42MASTH5
+047700     05  FILLER                  PIC X(3).                        42MASTH5
+047800     05  MD-REM                  PIC X.                           42MASTH5
+047900     05  MD-REMARKS              PIC X(30).                       42MASTH5
+048000     05  MD-LNROT-DTE            PIC S9(7)       COMP-3.          42MASTH5
+048100     05  FILLER                  PIC X(4).                        42MASTH5
+048200     05  MD-NOTE-DTE             PIC S9(7)       COMP-3.          42MASTH5
+048300     05  FILLER                  PIC X(12).                       42MASTH5
+048400     05  MD-DTE-LAST             PIC S9(7)       COMP-3.          42MASTH5
+048500     05  FILLER                  PIC X(32).                       42MASTH5
+048600     05  MD-ORG-PROCESS-DTE      PIC S9(7)       COMP-3.          42MASTH5
+048700     05  FILLER                  PIC X(16).                       42MASTH5
+048800     05  MD-SELL-ABA             PIC S9(7)       COMP-3.          42MASTH5
+048900     05  MD-TERM                 PIC S9(3)       COMP-3.          42MASTH5
+049000     05  MD-RATE1                PIC SV9(7)      COMP-3.          42MASTH5
+049100     05  MD-RATE2                PIC SV9(7)      COMP-3.          42MASTH5
+049200     05  MD-RATE3                PIC SV9(7)      COMP-3.          42MASTH5
+049300     05  MD-MIN-REQ-RESV1        PIC S9(7)V99    COMP-3.          42MASTH5
+049400     05  MD-MIN-REQ-RESV2        PIC S9(7)V99    COMP-3.          42MASTH5
+049500     05  MD-MIN-REQ-RESV3        PIC S9(7)V99    COMP-3.          42MASTH5
+049600     05  MD-PMO-RESERVES2        PIC S9(7)V99    COMP-3.          42MASTH5
+049700     05  MD-PMO-RESERVES3        PIC S9(7)V99    COMP-3.          42MASTH5
+049800     05  FILLER                  PIC X(16).                       42MASTH5
+049900     05  MD-RATE-HOLD            PIC SV9(7)      COMP-3.          42MASTH5
+050000     05  MD-MIN-REQ-HOLD         PIC S9(7)V99    COMP-3.          42MASTH5
+050100     05  MD-HOLDBACK             PIC S9(7)V99    COMP-3.          42MASTH5
+050200     05  MD-PMO-HOLDBACK         PIC S9(7)V99    COMP-3.          42MASTH5
+050300     05  FILLER                  PIC X(52).                       42MASTH5
+050400                                                                  42MASTH5
+050500     05  MD-RESERVES1            PIC S9(7)V99    COMP-3.          42MASTH5
+050600     05  MD-PMO-RESERVES         PIC S9(7)V99    COMP-3.          42MASTH5
+050700     05  MD-RESERVES2            PIC S9(7)V99    COMP-3.          42MASTH5
+050800     05  MD-RESERVES3            PIC S9(7)V99    COMP-3.          42MASTH5
+050900     05  MD-RESERVES4            PIC S9(9)V99    COMP-3.          00015350
+051000     05  MD-RESERVES5            PIC S9(7)V99    COMP-3.          42MASTH5
+051100     05  MD-RESERVES6            PIC S9(7)V99    COMP-3.          42MASTH5
+051200     05  MD-PMO-RESERVES4        PIC S9(9)V99    COMP-3.          00015350
+051300     05  MD-PMO-RESERVES5        PIC S9(7)V99    COMP-3.          42MASTH5
+051400     05  MD-PMO-RESERVES6        PIC S9(7)V99    COMP-3.          42MASTH5
+051500     05  FILLER                  PIC X(2).                        00015350
+051600                                                                  42MASTH5
+051700     05  DEALER-DAILY-MTD-TOTALS.                                 42MASTH5
+051800         10  MD-MTD-DLR-ACC      PIC S9(5)V9(4)  COMP-3.          42MASTH5
+051900         10  MD-MTD-BK-ACC       PIC S9(7)V9(4)  COMP-3.          42MASTH5
+052000         10  MD-MTD-NET-LNBAL    PIC S9(11)V99   COMP-3.          42MASTH5
+052100         10  MD-MTD-AGG-LNBAL    PIC S9(11)V99   COMP-3.          42MASTH5
+052200         10  MD-MTD-NO-NEW-LN    PIC S9(5)       COMP-3.          42MASTH5
+052300         10  MD-MTD-NEW-LNBAL    PIC S9(9)V99    COMP-3.          42MASTH5
+052400         10  MD-MTD-NO-USE-LN    PIC S9(5)       COMP-3.          42MASTH5
+052500         10  MD-MTD-USE-LNBAL    PIC S9(9)V99    COMP-3.          42MASTH5
+052600         10  MD-MTD-NO-CO        PIC S9(3)       COMP-3.          42MASTH5
+052700         10  MD-MTD-CO-LNBAL     PIC S9(9)V99    COMP-3.          42MASTH5
+052800         10  MD-MTD-NO-REPO      PIC S9(5)       COMP-3.          42MASTH5
+052900         10  MD-MTD-REPO-LNBAL   PIC S9(9)V99    COMP-3.          42MASTH5
+053000         10  MD-DLY-NO-LN        PIC S9(5)       COMP-3.          42MASTH5
+053100         10  MD-DLY-LNBAL        PIC S9(11)V99   COMP-3.          42MASTH5
+053200         10  MD-DLY-REBATES      PIC S9(7)V9(4)  COMP-3.          42MASTH5
+053300         10  MD-DLY-NO-DELQ1     PIC S9(5)       COMP-3.          42MASTH5
+053400         10  MD-DLY-DELQ-LNBAL1  PIC S9(9)V99    COMP-3.          42MASTH5
+053500         10  MD-DLY-NO-DELQ2     PIC S9(5)       COMP-3.          42MASTH5
+053600         10  MD-DLY-DELQ-LNBAL2  PIC S9(9)V99    COMP-3.          42MASTH5
+053700         10  MD-DLY-REC-LNBAL    PIC S9(11)V99   COMP-3.          42MASTH5
+053800         10  MD-MTD-DLR-ACC1     PIC S9(5)V9(4)  COMP-3.          42MASTH5
+053900         10  MD-MTD-DLR-ACC2     PIC S9(5)V9(4)  COMP-3.          42MASTH5
+054000         10  MD-MTD-DLR-ACC3     PIC S9(5)V9(4)  COMP-3.          42MASTH5
+054100         10  MD-DLY-REBATES2     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+054200         10  MD-DLY-REBATES3     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+054300     05  FILLER                  PIC XX.                          42MASTH5
+054400                                                                  42MASTH5
+054500     05  DEALER-YTD-TOTALS.                                       42MASTH5
+054600         10  MD-YTD-DLR-ACC      PIC S9(7)V9(4)  COMP-3.          42MASTH5
+054700         10  MD-YTD-BK-ACC       PIC S9(7)V9(4)  COMP-3.          42MASTH5
+054800         10  MD-YTD-NET-LNBAL    PIC S9(11)V99   COMP-3.          42MASTH5
+054900         10  MD-YTD-AGG-LNBAL    PIC S9(11)V99   COMP-3.          42MASTH5
+055000         10  MD-YTD-NO-NEW-LN    PIC S9(5)       COMP-3.          42MASTH5
+055100         10  MD-YTD-NEW-LNBAL    PIC S9(9)V99    COMP-3.          42MASTH5
+055200         10  MD-YTD-NO-USE-LN    PIC S9(5)       COMP-3.          42MASTH5
+055202                                                                  42MASTH5
+055204                                                                  42MASTH5
+055206                                                                  42MASTH5
+055208                                                                  42MASTH5
+055210                                                                  42MASTH5
+055212                                                                  42MASTH5
+055214                                                                  42MASTH5
+055216                                                                  42MASTH5
+055300         10  MD-YTD-USE-LNBAL    PIC S9(9)V99    COMP-3.          42MASTH5
+055400         10  MD-YTD-NO-CO        PIC S9(5)       COMP-3.          42MASTH5
+055500         10  MD-YTD-CO-LNBAL     PIC S9(9)V99    COMP-3.          42MASTH5
+055600         10  MD-YTD-NO-REPO      PIC S9(5)       COMP-3.          42MASTH5
+055700         10  MD-YTD-REPO-LNBAL   PIC S9(9)V99    COMP-3.          42MASTH5
+055800         10  MD-YTD-NO-LN        PIC S9(7)       COMP-3.          42MASTH5
+055900         10  MD-YTD-LNBAL        PIC S9(11)V99   COMP-3.          42MASTH5
+056000         10  MD-YTD-REBATES      PIC S9(7)V9(4)  COMP-3.          42MASTH5
+056100         10  MD-YTD-REQ-RESV     PIC S9(9)V99    COMP-3.          42MASTH5
+056200         10  MD-YTD-ACT-RESV     PIC S9(9)V99    COMP-3.          42MASTH5
+056300         10  MD-YTD-NO-DELQ1     PIC S9(5)       COMP-3.          42MASTH5
+056400         10  MD-YTD-DELQ-LNBAL1  PIC S9(9)V99    COMP-3.          42MASTH5
+056500         10  MD-YTD-NO-DELQ2     PIC S9(5)       COMP-3.          42MASTH5
+056600         10  MD-YTD-DELQ-LNBAL2  PIC S9(9)V99    COMP-3.          42MASTH5
+056700         10  MD-YTD-HOLDBACK     PIC S9(9)V99    COMP-3.          42MASTH5
+056800         10  MD-YTD-REC-LNBAL    PIC S9(11)V99   COMP-3.          42MASTH5
+056900         10  MD-YTD-DLR-ACC1     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+057000         10  MD-YTD-DLR-ACC2     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+057100         10  MD-YTD-DLR-ACC3     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+057200         10  MD-YTD-REQ-RESV2    PIC S9(9)V99    COMP-3.          42MASTH5
+057300         10  MD-YTD-REQ-RESV3    PIC S9(9)V99    COMP-3.          42MASTH5
+057400         10  MD-YTD-ACT-RESV2    PIC S9(9)V99    COMP-3.          42MASTH5
+057500         10  MD-YTD-ACT-RESV3    PIC S9(9)V99    COMP-3.          42MASTH5
+057600         10  MD-YTD-REBATES2     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+057700         10  MD-YTD-REBATES3     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+057800         10  MD-YTD-REQ-HOLD     PIC S9(9)V99    COMP-3.          42MASTH5
+057900         10  MD-YTD-ACT-HOLD     PIC S9(9)V99    COMP-3.          42MASTH5
+058000     05  FILLER                  PIC X(27).                       42MASTH5
+058100     05  MD-USER-FIELDS          PIC X(50).                       42MASTH5
+058200     05  FILLER                  PIC X(117).                      42MASTH5
+058300     05  MD-ACCT-TYPE            PIC X.                           42MASTH5
+058400     05  MD-DLR-CK-ACCT          PIC X(17).                       42MASTH5
+058500     05  MD-TRANSIT              PIC S9(09)      COMP-3.          42MASTH5
+058600     05  FILLER                  PIC X(53).                       42MASTH5
+058700     05  MD-DLR-NUM              PIC S9(5)       COMP-3.          42MASTH5
+058800     05  MD-SIDL-MTD-YTD.                                         42MASTH5
+058900         10  MD-DLY-REBATES4     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+059000         10  MD-DLY-REBATES5     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+059100         10  MD-DLY-REBATES6     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+059200         10  MD-MTD-DLR-ACC4     PIC S9(5)V9(4)  COMP-3.          42MASTH5
+059300         10  MD-MTD-DLR-ACC5     PIC S9(5)V9(4)  COMP-3.          42MASTH5
+059400         10  MD-MTD-DLR-ACC6     PIC S9(5)V9(4)  COMP-3.          42MASTH5
+059500         10  MD-YTD-DLR-ACC4     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+059600         10  MD-YTD-DLR-ACC5     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+059700         10  MD-YTD-DLR-ACC6     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+059800         10  MD-YTD-REQ-RESV4    PIC S9(9)V99    COMP-3.          42MASTH5
+059900         10  MD-YTD-REQ-RESV5    PIC S9(9)V99    COMP-3.          42MASTH5
+060000         10  MD-YTD-REQ-RESV6    PIC S9(9)V99    COMP-3.          42MASTH5
+060100         10  MD-YTD-ACT-RESV4    PIC S9(9)V99    COMP-3.          42MASTH5
+060200         10  MD-YTD-ACT-RESV5    PIC S9(9)V99    COMP-3.          42MASTH5
+060300         10  MD-YTD-ACT-RESV6    PIC S9(9)V99    COMP-3.          42MASTH5
+060400         10  MD-YTD-REBATES4     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+060500         10  MD-YTD-REBATES5     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+060600         10  MD-YTD-REBATES6     PIC S9(7)V9(4)  COMP-3.          42MASTH5
+060700     05  FILLER                  PIC X(158).                      42MASTH5
+060800     05  MD-OFFICER              PIC X(6).                        42MASTH5
+060900     05  FILLER                  PIC X(27).                       42MASTH5
+061000     05  MD-OL-PRINCIPAL-ACTV    PIC S9(9)V99    COMP-3.          42MASTH5
+061100     05  MD-OL-OTHER-ACTV        PIC S9(9)V99    COMP-3.          42MASTH5
+061200     05  MD-CHAIN.                                                42MASTH5
+061300         10  MD-CHAIN-BATCH      PIC X(3).                        49----MS
+061400         10  MD-CHAIN-SEQ        PIC S9(4)       COMP.            42MASTH5
+061500     05  MD-RESERVES7            PIC S9(7)V99    COMP-3.          42MASTH5
+061600     05  MD-PMO-RESERVES7        PIC S9(9)V99    COMP-3.          42MASTH5
+061700     05  MD-YTD-ACT-RESV7        PIC S9(9)V99    COMP-3.          42MASTH5
+061800     05  MD-RESERVES8            PIC S9(7)V99    COMP-3.          42MASTH5
+061900     05  MD-PMO-RESERVES8        PIC S9(9)V99    COMP-3.          42MASTH5
+062000     05  MD-YTD-ACT-RESV8        PIC S9(9)V99    COMP-3.          42MASTH5
+062100     05  MD-RET-LINE-CREDIT      PIC S9(9)V99    COMP-3.          42MASTH5
+062200     05  MD-REP-GRACE-PERIOD     PIC S9(3)       COMP-3.          42MASTH5
+062210     05  MD-DLR-PART-PERCENT REDEFINES MD-REP-GRACE-PERIOD        46MASTL6
+062220                                 PIC S9(3)       COMP-3.          46MASTL6
+062300     05  MD-ADDON-LNBAL          PIC S9(11)V99   COMP-3.          42MASTH5
+062400     05  MD-PAYGO-LNBAL          PIC S9(11)V99   COMP-3.          42MASTH5
+062500     05  MD-UPFRONT-LNBAL        PIC S9(11)V99   COMP-3.          42MASTH5
+062600     05  MD-ADDON-NO             PIC S9(5)       COMP-3.          42MASTH5
+062700     05  MD-PAYGO-NO             PIC S9(5)       COMP-3.          42MASTH5
+062800     05  MD-UPFRONT-NO           PIC S9(5)       COMP-3.          42MASTH5
+062900     05  MD-RESV-REQ-OPT-ADDON   PIC 9.                           42MASTH5
+063000     05  MD-RESV-REQ-OPT-PAYGO   PIC 9.                           42MASTH5
+063100     05  MD-FP-FIELDS.                                            44MASTK5
+063200         10  MD-FP-DISB-IND           PIC X(3).                   44MASTK5
+063300         10  MD-FP-BUS-LVL-2-CODE     PIC 9(05).                  44MASTKI
+063400         10  MD-FP-BUS-LVL-3-CODE     PIC 9(05).                  44MASTKI
+063500         10  MD-FP-WCL-BUS-LVL-CODE   PIC 9(01).                  44MASTKI
+063600         10  MD-FP-WCL-REV-CR-CODE    PIC 9(01).                  44MASTKI
+063700         10  MD-FP-WCL-AMT            PIC S9(11)V99  COMP-3.      44MASTKI
+063800         10  MD-FP-WCL-USED-AMT       PIC S9(11)V99  COMP-3.      44MASTKI
+063900         10  MD-FP-MIN-REQ-BAL-AMT    PIC S9(11)V99  COMP-3.      44MASTKI
+064000         10  FILLER                   PIC X(7).                   44MASTKI
+064100         10  MD-FP-DLY-NO-LN          PIC S9(7)      COMP-3.      44MASTKI
+064200         10  MD-FP-DLY-LNBAL          PIC S9(11)V99  COMP-3.      44MASTKI
+064300         10  MD-FP-DLY-INT-OWE-AMT    PIC S9(11)V99  COMP-3.      44MASTKI
+064400         10  MD-FP-DLY-NO-DELQ1       PIC S9(7)      COMP-3.      44MASTKI
+064500         10  MD-FP-DLY-DELQ-LNBAL1    PIC S9(11)V99  COMP-3.      44MASTKI
+064600         10  MD-FP-DLY-NO-DELQ2       PIC S9(7)      COMP-3.      44MASTKI
+064700         10  MD-FP-DLY-DELQ-LNBAL2    PIC S9(11)V99  COMP-3.      44MASTKI
+064800         10  MD-FP-MTD-EARN-AMT       PIC S9(11)V9(4) COMP-3.     44MASTKI
+064900         10  MD-FP-MTD-BULK-EARN-AMT  PIC S9(11)V9(4) COMP-3.     44MASTKI
+065000         10  MD-FP-MTD-INT-PAID-AMT   PIC S9(11)V99  COMP-3.      44MASTKI
+065100         10  MD-FP-MTD-FEE-PAID-AMT   PIC S9(11)V99  COMP-3.      44MASTKI
+065200         10  MD-FP-MTD-AGG-LNBAL      PIC S9(11)V99  COMP-3.      44MASTKI
+065300         10  MD-FP-MTD-NO-NEW-LN      PIC S9(7)      COMP-3.      44MASTKI
+065400         10  MD-FP-MTD-NEW-LNBAL      PIC S9(11)V99  COMP-3.      44MASTKI
+065500         10  MD-FP-MTD-NO-CO          PIC S9(7)      COMP-3.      44MASTKI
+065600         10  MD-FP-MTD-CO-LNBAL       PIC S9(11)V99  COMP-3.      44MASTKI
+065700         10  MD-FP-MTD-NO-XFER-IN     PIC S9(7)      COMP-3.      44MASTKI
+065800         10  MD-FP-MTD-XFER-IN-LNBAL  PIC S9(11)V99  COMP-3.      44MASTKI
+065900         10  MD-FP-MTD-NO-XFER-OUT    PIC S9(7)      COMP-3.      44MASTKI
+066000         10  MD-FP-MTD-XFER-OUT-LNBAL PIC S9(11)V99  COMP-3.      44MASTKI
+066100         10  MD-FP-MTD-AVG-LNBAL      PIC S9(11)V99  COMP-3.      44MASTKI
+066200         10  FILLER                   PIC X(26).                  44MASTKI
+066300         10  MD-FP-YTD-EARN-AMT       PIC S9(11)V9(4) COMP-3.     44MASTKI
+066400         10  MD-FP-YTD-BULK-EARN-AMT  PIC S9(11)V9(4) COMP-3.     44MASTKI
+066500         10  MD-FP-YTD-INT-PAID-AMT   PIC S9(11)V99  COMP-3.      44MASTKI
+066600         10  MD-FP-YTD-INT-PREV-AMT   PIC S9(11)V99  COMP-3.      44MASTKI
+066700         10  MD-FP-YTD-FEE-PAID-AMT   PIC S9(11)V99  COMP-3.      44MASTKI
+066800         10  MD-FP-YTD-AGG-LNBAL      PIC S9(11)V99  COMP-3.      44MASTKI
+066900         10  MD-FP-YTD-NO-NEW-LN      PIC S9(7)      COMP-3.      44MASTKI
+067000         10  MD-FP-YTD-NEW-LNBAL      PIC S9(11)V99  COMP-3.      44MASTKI
+067100         10  MD-FP-YTD-NO-CO          PIC S9(7)      COMP-3.      44MASTKI
+067200         10  MD-FP-YTD-CO-LNBAL       PIC S9(11)V99  COMP-3.      44MASTKI
+067300         10  MD-FP-YTD-NO-XFER-IN     PIC S9(7)      COMP-3.      44MASTKI
+067400         10  MD-FP-YTD-XFER-IN-LNBAL  PIC S9(11)V99  COMP-3.      44MASTKI
+067500         10  MD-FP-YTD-NO-XFER-OUT    PIC S9(7)      COMP-3.      44MASTKI
+067600         10  MD-FP-YTD-XFER-OUT-LNBAL PIC S9(11)V99  COMP-3.      44MASTKI
+067700         10  MD-FP-YTD-AVG-LNBAL      PIC S9(11)V99  COMP-3.      44MASTKI
+067800         10  MD-FP-YTD-INT-OWE-AMT    PIC S9(11)V99  COMP-3.      44MASTKI
+067900         10  MD-FP-YTD-NO-DELQ1       PIC S9(7)      COMP-3.      44MASTKI
+068000         10  MD-FP-YTD-DELQ-LNBAL1    PIC S9(11)V99  COMP-3.      44MASTKI
+068100         10  MD-FP-YTD-NO-DELQ2       PIC S9(7)      COMP-3.      44MASTKI
+068200         10  MD-FP-YTD-DELQ-LNBAL2    PIC S9(11)V99  COMP-3.      44MASTKI
+068300         10  MD-FP-YTD-NO-LNS         PIC S9(7)      COMP-3.      44MASTKI
+068304         10  MD-FP-ALT-NA-IND         PIC X.                      47----LQ
+068306         10  MD-FP-TEXT-1             PIC 99.                     47----LQ
+068308         10  MD-FP-TEXT-2             PIC 99.                     47----LQ
+068310         10  MD-FP-TEXT-3             PIC 99.                     47----LQ
+068312         10  MD-MIN-CHK-AMT           PIC S9(4)V99   COMP-3.      02061450
+068330     05  MD-PRM-BULK-ACCT-CD          PIC 9(02).                  02062251
+068340     05  MD-SEC-BULK-ACCT-CODES OCCURS 9 TIMES.                   02062251
+068350         10  MD-SEC-BULK-ACCT-CD      PIC 9(02).                  02062251
+068360     05  MD-EF-FIELDS.                                            020632
+068370         10  MD-PAR-MANUF-EARN-MTD    PIC S9(07)V99  COMP-3.      020632
+068380         10  MD-PAR-MANUF-EARN-YTD    PIC S9(07)V99  COMP-3.      020632
+068390         10  MD-PAR-MAN-DLR-RATE      PIC SV9(7)     COMP-3.      020632
+068400         10  MD-MANUF-HOLD-CD         PIC X(01).                  020632
+068410         10  MD-PAR-MANUF-DLR-NUM     PIC S9(05)     COMP-3.      020632
+068420     05  FILLER                       PIC X(2252).                000305
