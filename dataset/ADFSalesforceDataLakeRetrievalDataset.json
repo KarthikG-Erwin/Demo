@@ -1,0 +1,29 @@
+{
+	"name": "ADFSalesforceDataLakeRetrievalDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Salesforce1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"sinktablename": {
+				"type": "string",
+				"defaultValue": "Account"
+			},
+			"issuename": {
+				"type": "string",
+				"defaultValue": "issuename"
+			}
+		},
+		"annotations": [],
+		"type": "SalesforceObject",
+		"schema": [],
+		"typeProperties": {
+			"objectApiName": {
+				"value": "@dataset().sinktablename",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

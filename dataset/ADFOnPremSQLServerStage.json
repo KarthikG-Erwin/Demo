@@ -1,0 +1,17 @@
+{
+	"name": "ADFOnPremSQLServerStage",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADFOnPremStagingDatabaseConnector",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Publications"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

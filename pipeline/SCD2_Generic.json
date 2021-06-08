@@ -1,0 +1,184 @@
+{
+	"name": "SCD2_Generic",
+	"properties": {
+		"description": "Using byNames to fully parameterize a Slowly Change Dimension Type 2 patter",
+		"activities": [
+			{
+				"name": "GenericSCDType2_Delta_Generic",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "PrimeDeltaTable_Generic",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "GenericSCDType2_Delta_Generic",
+						"type": "DataFlowReference",
+						"parameters": {
+							"PrimaryKey": {
+								"value": "'@{pipeline().parameters.PrimaryKey}'",
+								"type": "Expression"
+							},
+							"Columns": {
+								"value": "'@{pipeline().parameters.ColumnNames}'",
+								"type": "Expression"
+							},
+							"ActiveStartTimeField": {
+								"value": "'@{pipeline().parameters.ActiveStartTimeField}'",
+								"type": "Expression"
+							},
+							"ActiveEndTimeField": {
+								"value": "'@{pipeline().parameters.ActiveEndTimeField}'",
+								"type": "Expression"
+							},
+							"ActiveFlagField": {
+								"value": "'@{pipeline().parameters.ActiveFlagField}'",
+								"type": "Expression"
+							},
+							"SKKeyField": {
+								"value": "'@{pipeline().parameters.SKKeyField}'",
+								"type": "Expression"
+							},
+							"CurrentDimSource": {
+								"value": "'@{pipeline().parameters.CurrentDimensionFolder}'",
+								"type": "Expression"
+							},
+							"RunId": "toString(currentTimestamp(),'yyyyMMddHHmmss')"
+						},
+						"datasetParameters": {
+							"GenericInput": {
+								"TempFolder": {
+									"value": "@pipeline().parameters.TempFolder",
+									"type": "Expression"
+								}
+							},
+							"InsertSink": {
+								"Insert_Folder": {
+									"value": "@pipeline().parameters.NewInsertsFolder",
+									"type": "Expression"
+								}
+							},
+							"UpdatesSink": {
+								"Update_Folder": {
+									"value": "@pipeline().parameters.NewUpdatesFolder",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "PrimeDeltaTable_Generic",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "PrimeDeltaTable_Generic",
+						"type": "DataFlowReference",
+						"parameters": {
+							"CurrentDimSource": {
+								"value": "'@{concat(pipeline().parameters.Target_Folder,'/delta')}'",
+								"type": "Expression"
+							}
+						},
+						"datasetParameters": {
+							"TempInput": {
+								"TempFolder": {
+									"value": "@pipeline().parameters.TempFolder",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"PrimaryKey": {
+				"type": "string",
+				"defaultValue": "CDOCTYP"
+			},
+			"ColumnNames": {
+				"type": "string",
+				"defaultValue": "LDOCTYPNDL,LDOCTYPFRA,LDOCTYPANG"
+			},
+			"NewInsertsFolder": {
+				"type": "string",
+				"defaultValue": "DOCTYP/insert"
+			},
+			"NewUpdatesFolder": {
+				"type": "string",
+				"defaultValue": "DOCTYP/update"
+			},
+			"CurrentDimensionFolder": {
+				"type": "string",
+				"defaultValue": "DOCTYP/delta"
+			},
+			"TempFolder": {
+				"type": "string",
+				"defaultValue": "DOCTYP/temp"
+			},
+			"Target_Entity": {
+				"type": "string",
+				"defaultValue": "TBYDMADFIOCFMDOCTYP"
+			},
+			"Target_Folder": {
+				"type": "string",
+				"defaultValue": "DOCTYP"
+			},
+			"ActiveStartTimeField": {
+				"type": "string",
+				"defaultValue": "'DDEBSIT'"
+			},
+			"ActiveEndTimeField": {
+				"type": "string",
+				"defaultValue": "'DFINSIT'"
+			},
+			"SKKeyField": {
+				"type": "string",
+				"defaultValue": "RowID"
+			},
+			"ActiveFlagField": {
+				"type": "string",
+				"defaultValue": "BSITCOU"
+			}
+		},
+		"folder": {
+			"name": "GenericSCD2_Pipeline"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-08-19T11:52:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

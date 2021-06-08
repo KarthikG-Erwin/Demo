@@ -1,0 +1,50 @@
+{
+	"name": "TBYDWHTFIOOPFMVT_og",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Fact"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TBYDWHTFIOOPFMVT.parquet",
+				"folderPath": "Fact",
+				"fileSystem": "agi"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "CTYPPRD",
+				"type": "UTF8"
+			},
+			{
+				"name": "CPRD",
+				"type": "UTF8"
+			},
+			{
+				"name": "NCMPFIOCMPTIE",
+				"type": "INT32"
+			},
+			{
+				"name": "CCMPFIOCMPTIE",
+				"type": "UTF8"
+			},
+			{
+				"name": "CDEVFIOCMPTIE",
+				"type": "UTF8"
+			},
+			{
+				"name": "DCREFIOOPFMVT",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

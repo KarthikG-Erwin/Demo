@@ -1,0 +1,54 @@
+{
+	"name": "TestFlow2",
+	"properties": {
+		"folder": {
+			"name": "DataStage_Bala"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "bala_blobstoarge",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "bala_output",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "bala_output",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "ConditionalSplit1"
+				},
+				{
+					"name": "Select1"
+				},
+				{
+					"name": "DerivedColumn2"
+				},
+				{
+					"name": "Filter1"
+				}
+			],
+			"script": "source(output(\n\t\tregistration_dttm as string,\n\t\tid as string,\n\t\tfirst_name as string,\n\t\tlast_name as string,\n\t\temail as string,\n\t\tgender as string,\n\t\tip_address as string,\n\t\tcc as string,\n\t\tcountry as string,\n\t\tbirthdate as string,\n\t\tsalary as string,\n\t\ttitle as string,\n\t\tcomments as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> source1\nsource1 derive(FullName = concatWS('--',first_name, last_name)) ~> DerivedColumn1\nDerivedColumn1 split(id > '600',\n\tdisjoint: false) ~> ConditionalSplit1@(output1, output2)\nConditionalSplit1@output1 select(mapColumn(\n\t\tmyregistration_dttm = registration_dttm,\n\t\tmyid = id,\n\t\tfirst_name,\n\t\tlast_name,\n\t\tmyemail = email,\n\t\tgender,\n\t\tip_address,\n\t\tcc,\n\t\tcountry,\n\t\tbirthdate,\n\t\tsalary,\n\t\ttitle,\n\t\tFullName\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 derive(first_name = ltrim('N',first_name),\n\t\tlast_name = upper(last_name)) ~> DerivedColumn2\nConditionalSplit1@output2 filter(gender=='Male') ~> Filter1\nFilter1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flow2.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> sink1\nDerivedColumn2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['flow1.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> sink2"
+		}
+	}
+}

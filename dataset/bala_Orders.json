@@ -1,0 +1,51 @@
+{
+	"name": "bala_Orders",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServerbala",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bala"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "orderNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "orderDate",
+				"type": "date"
+			},
+			{
+				"name": "requiredDate",
+				"type": "date"
+			},
+			{
+				"name": "shippedDate",
+				"type": "date"
+			},
+			{
+				"name": "status",
+				"type": "varchar"
+			},
+			{
+				"name": "comments",
+				"type": "text"
+			},
+			{
+				"name": "customerNumber",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "orders"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

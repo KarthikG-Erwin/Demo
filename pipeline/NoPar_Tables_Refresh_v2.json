@@ -1,0 +1,293 @@
+{
+	"name": "NoPar_Tables_Refresh_v2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Waiit_For_DW_Success",
+				"type": "Until",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals('Succeeded',body('Lookup_Success_Value_DW')?.output.firstRow.PE_Status)",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Lookup_Success_Value_DW",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": "WITH PE_Results_Daily AS\n(\n\nSELECT \n1 as Ordering,PackageExecutionEndTime as TDate,\nPackageExecutionStatusDescription as PE_Status\nFROM [SNHUETLLog].[dbo].[PackageExecution]\nWHERE PackageName = 'AARDW Master Refresh'\nAND CAST(PackageExecutionStartTime AS DATE) = CAST(GETDATE()   AS DATE) \nUNION \nSELECT 2 as Ordering,CAST(GETDATE()   AS DATE) as TDate,\n'UNKNOWN' as PE_Status\n)\nSelect Top 1 PE_Status FROM  PE_Results_Daily\nORDER BY Ordering ,TDate Desc",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "COCE_BI_AARDA_LookupNoPar",
+									"type": "DatasetReference",
+									"parameters": {
+										"SQLServerName": {
+											"value": "@pipeline().parameters.SNHUSQLServer",
+											"type": "Expression"
+										},
+										"DatabaseName": {
+											"value": "@pipeline().parameters.SHNUDatabase",
+											"type": "Expression"
+										}
+									}
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "Wait_5_minutes",
+							"type": "Wait",
+							"dependsOn": [
+								{
+									"activity": "Lookup_Success_Value_DW",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 10
+							}
+						}
+					],
+					"timeout": "7.00:00:00"
+				}
+			},
+			{
+				"name": "Send-Success",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Copy_All_NPAR_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-30.eastus2.logic.azure.com:443/workflows/fce88819c3434f05bb0219e6b2084baf/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=EqOkVYYjh85bDcCXBaJ5b84gMMoVEvebU2jCwCn-wzw",
+					"method": "POST",
+					"body": {
+						"DataFactoryName": "@{pipeline().DataFactory}",
+						"PipelineName": "@{pipeline().Pipeline}",
+						"EmailTo": "@{pipeline().parameters.Emailto}"
+					}
+				}
+			},
+			{
+				"name": "On Prem to Azure Copy Fail",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Copy_All_NPAR_Tables",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-13.eastus2.logic.azure.com:443/workflows/1ed0be93017d461780f2d11e310a5ac6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FoOTuYdhUcntQP1NBN-eBEa8pk92DHjbQ8owFGptTKM",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "{\n    \"DataFactoryName\":\n        \"@{pipeline().DataFactory}\",\n    \"PipelineName\":\n        \"@{pipeline().Pipeline}\",\n    \"ErrorMessage\":\n        \"Copy For Each Table Failed\",\n    \"EmailTo\":\n      \" @{pipeline().parameters.Emailto}\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Copy_All_NPAR_Tables",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get_NPAR_TABLES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get_NPAR_TABLES').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "All_NPAR_Tables",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "@{Concat('Truncate Table NPAR.' , item().Table_Name)}",
+										"type": "Expression"
+									},
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"parallelCopies": 2
+							},
+							"inputs": [
+								{
+									"referenceName": "COCE_BI_AARDA_SourceNoPar",
+									"type": "DatasetReference",
+									"parameters": {
+										"SQLServerName": {
+											"value": "@pipeline().parameters.SNHUSQLServer",
+											"type": "Expression"
+										},
+										"DatabaseName": {
+											"value": "@pipeline().parameters.SHNUDatabase",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureNoPar",
+									"type": "DatasetReference",
+									"parameters": {
+										"AzureSQLServer": {
+											"value": "@pipeline().parameters.AzureSQLServer",
+											"type": "Expression"
+										},
+										"AzureSQLDatabaseName": {
+											"value": "@pipeline().parameters.AzureDatabase",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Get_NPAR_TABLES",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Waiit_For_DW_Success",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT Table_Name AS Table_Name \n   FROM information_Schema.tables where table_Schema = 'dbo' and table_name like '%NONPAR%';",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "COCE_BI_AARDA_LookupNoPar",
+						"type": "DatasetReference",
+						"parameters": {
+							"SQLServerName": {
+								"value": "@pipeline().parameters.SNHUSQLServer",
+								"type": "Expression"
+							},
+							"DatabaseName": {
+								"value": "@pipeline().parameters.SHNUDatabase",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"EmailTo": {
+				"type": "string",
+				"defaultValue": "debarshi.nandan@quest.com"
+			},
+			"SNHUSQLServer": {
+				"type": "string",
+				"defaultValue": "localhost"
+			},
+			"AzureSQLServer": {
+				"type": "string",
+				"defaultValue": "erwindbserver.database.windows.net"
+			},
+			"SHNUDatabase": {
+				"type": "string",
+				"defaultValue": "AARDA"
+			},
+			"AzureDatabase": {
+				"type": "string",
+				"defaultValue": "SNHU_COCE_ML_DEV"
+			},
+			"Trigger_Pipeline_FilePath": {
+				"type": "string",
+				"defaultValue": "snhumlcontainer/SNHU-COCE-ML-DEV"
+			}
+		},
+		"folder": {
+			"name": "SNHU_v2"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-04-12T11:42:16Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

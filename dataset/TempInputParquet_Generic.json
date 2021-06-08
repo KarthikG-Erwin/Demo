@@ -1,0 +1,32 @@
+{
+	"name": "TempInputParquet_Generic",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TempFolder": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "PRD"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat('agi_poc/',dataset().TempFolder)",
+					"type": "Expression"
+				},
+				"fileSystem": "agi"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

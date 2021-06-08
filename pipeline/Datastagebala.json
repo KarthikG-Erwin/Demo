@@ -1,0 +1,59 @@
+{
+	"name": "Datastagebala",
+	"properties": {
+		"activities": [
+			{
+				"name": "myLookup",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT o.customerNumber, o.status\nFROM orders as o\nINNER JOIN customers as c\nON o.customerNumber=c.customerNumber",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SqlServerbala",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": true
+				}
+			},
+			{
+				"name": "myfilter",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "myLookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('myLookup').output.firstRow.status",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@startswith(item(),'S')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-01-21T14:35:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

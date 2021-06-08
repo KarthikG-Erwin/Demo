@@ -1,0 +1,756 @@
+{
+	"name": "BLOB_to_Stage_to_DW",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy BLOB data",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "IsDeleted",
+									"type": "String"
+								},
+								"sink": {
+									"name": "IsDeleted",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MasterRecordId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MasterRecordId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Type",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Type",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ParentId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ParentId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BillingStreet",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BillingStreet",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BillingCity",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BillingCity",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BillingState",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BillingState",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BillingPostalCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BillingPostalCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BillingCountry",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BillingCountry",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BillingLatitude",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BillingLatitude",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BillingLongitude",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BillingLongitude",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BillingGeocodeAccuracy",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BillingGeocodeAccuracy",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShippingStreet",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShippingStreet",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShippingCity",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShippingCity",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShippingState",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShippingState",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShippingPostalCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShippingPostalCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShippingCountry",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShippingCountry",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShippingLatitude",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShippingLatitude",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShippingLongitude",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShippingLongitude",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ShippingGeocodeAccuracy",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ShippingGeocodeAccuracy",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Phone",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Phone",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Fax",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Fax",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountNumber",
+									"type": "String"
+								},
+								"sink": {
+									"name": "AccountNumber",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Website",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Website",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PhotoUrl",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PhotoUrl",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Sic",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Sic",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Industry",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Industry",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AnnualRevenue",
+									"type": "String"
+								},
+								"sink": {
+									"name": "AnnualRevenue",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "NumberOfEmployees",
+									"type": "String"
+								},
+								"sink": {
+									"name": "NumberOfEmployees",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Ownership",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Ownership",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TickerSymbol",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TickerSymbol",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Description",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Description",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Rating",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Rating",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Site",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Site",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OwnerId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OwnerId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CreatedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CreatedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CreatedById",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CreatedById",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastModifiedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastModifiedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastModifiedById",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastModifiedById",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SystemModstamp",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SystemModstamp",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastActivityDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastActivityDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastViewedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastViewedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastReferencedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastReferencedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Jigsaw",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Jigsaw",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "JigsawCompanyId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "JigsawCompanyId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CleanStatus",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CleanStatus",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountSource",
+									"type": "String"
+								},
+								"sink": {
+									"name": "AccountSource",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DunsNumber",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DunsNumber",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Tradestyle",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Tradestyle",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "NaicsCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "NaicsCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "NaicsDesc",
+									"type": "String"
+								},
+								"sink": {
+									"name": "NaicsDesc",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "YearStarted",
+									"type": "String"
+								},
+								"sink": {
+									"name": "YearStarted",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SicDesc",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SicDesc",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DandbCompanyId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DandbCompanyId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerPriority__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CustomerPriority__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SLA__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SLA__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Active__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Active__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "NumberofLocations__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "NumberofLocations__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "UpsellOpportunity__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UpsellOpportunity__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SLASerialNumber__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SLASerialNumber__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SLAExpirationDate__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SLAExpirationDate__c",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DelimitedText6",
+						"type": "DatasetReference",
+						"parameters": {
+							"Input_File_Name": {
+								"value": "@pipeline().parameters.Input_File_Name",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SqlServerTable2",
+						"type": "DatasetReference",
+						"parameters": {
+							"SINK_Table_Name": {
+								"value": "@pipeline().parameters.SINK_Table_Name",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Stored Procedure1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Copy BLOB data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[uspLoadDW]",
+					"storedProcedureParameters": {
+						"SRC": {
+							"value": {
+								"value": "@pipeline().parameters.SINK_Table_Name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"TGT": {
+							"value": {
+								"value": "@pipeline().parameters.DW_Table_Name",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "SqlServerOnPrem",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"Input_File_Name": {
+				"type": "string",
+				"defaultValue": "Account.txt"
+			},
+			"SINK_Table_Name": {
+				"type": "string",
+				"defaultValue": "dbo.Account"
+			},
+			"DW_Table_Name": {
+				"type": "string",
+				"defaultValue": "dbo.DimAccount"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-10-21T08:12:53Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

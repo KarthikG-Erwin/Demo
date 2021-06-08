@@ -1,0 +1,42 @@
+{
+	"name": "data",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bala_AzureBlobStorage2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "dataflowmap.csv",
+				"folderPath": "demo/csv",
+				"container": "home"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "MB_RCT_CEDE_TERM_ID",
+				"type": "String"
+			},
+			{
+				"name": "CEDE_EDW_TERM_DATE",
+				"type": "String"
+			},
+			{
+				"name": "CEDE_TERM_NAME",
+				"type": "String"
+			},
+			{
+				"name": "CEDE_TERM_COUNTRY",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,67 @@
+{
+	"name": "testflow_123",
+	"properties": {
+		"folder": {
+			"name": "Test"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "employeedata",
+						"type": "DatasetReference"
+					},
+					"name": "EmployeeData"
+				},
+				{
+					"dataset": {
+						"referenceName": "deptdata",
+						"type": "DatasetReference"
+					},
+					"name": "DeptData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "sinkdata",
+						"type": "DatasetReference"
+					},
+					"name": "sinkData"
+				},
+				{
+					"dataset": {
+						"referenceName": "sinkdata",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "JoinEmpdataDeptdata"
+				},
+				{
+					"name": "SelectData"
+				},
+				{
+					"name": "Filter1"
+				},
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "Split1"
+				},
+				{
+					"name": "Sort1"
+				},
+				{
+					"name": "Rank1"
+				}
+			],
+			"script": "source(output(\n\t\tEname as string,\n\t\tempid as string,\n\t\tAge as string,\n\t\tJoining as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> EmployeeData\nsource(output(\n\t\tdid as string,\n\t\tdname as string,\n\t\taddress as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> DeptData\nEmployeeData, DeptData join(empid == did,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> JoinEmpdataDeptdata\nFilter1 select(skipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectData\nJoinEmpdataDeptdata filter(empid>='1002' || Age>='26') ~> Filter1\nSelectData derive(Ename = upper(Ename)) ~> DerivedColumn1\nDerivedColumn1 split(Age >= '26',\n\tdisjoint: false) ~> Split1@(Age, others)\nSplit1@Age sort(asc(dname, true)) ~> Sort1\nSort1 rank(asc(dname, true),\n\toutput(rank as long)) ~> Rank1\nRank1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string,\n\t\tColumn_5 as string\n\t),\n\tpartitionFileNames:['mysinkdata.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> sinkData\nSelectData sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string,\n\t\tColumn_5 as string\n\t),\n\tpartitionFileNames:['outdata.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> sink1"
+		}
+	}
+}

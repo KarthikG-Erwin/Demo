@@ -1,0 +1,7 @@
+{
+	"name": "IR-erwin",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "Self hosted IR for Deb's local"
+	}
+}

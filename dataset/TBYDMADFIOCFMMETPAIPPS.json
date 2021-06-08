@@ -1,0 +1,70 @@
+{
+	"name": "TBYDMADFIOCFMMETPAIPPS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "CFMMETPAIPPS"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "part-00000-9b81df75-ccb4-4c75-aae7-758ba2c409ce-c000.snappy.parquet",
+				"folderPath": "agi_poc/CFMMETPAIPPS/delta",
+				"fileSystem": "agi"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "SIDNFIOCFMMETPAIPPS",
+				"type": "INT64"
+			},
+			{
+				"name": "CMETPAIPPS",
+				"type": "UTF8"
+			},
+			{
+				"name": "LMETPAIPPSNDL",
+				"type": "UTF8"
+			},
+			{
+				"name": "LMETPAIPPSFRA",
+				"type": "UTF8"
+			},
+			{
+				"name": "LMETPAIPPSANG",
+				"type": "UTF8"
+			},
+			{
+				"name": "DNUMLOT",
+				"type": "INT96"
+			},
+			{
+				"name": "AIDNAUD",
+				"type": "INT32"
+			},
+			{
+				"name": "DDEBSIT",
+				"type": "INT96"
+			},
+			{
+				"name": "DFINSIT",
+				"type": "INT96"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "INT32"
+			},
+			{
+				"name": "RowID",
+				"type": "INT32"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

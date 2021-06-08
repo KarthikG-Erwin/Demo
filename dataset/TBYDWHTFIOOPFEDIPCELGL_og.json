@@ -1,0 +1,78 @@
+{
+	"name": "TBYDWHTFIOOPFEDIPCELGL_og",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Fact"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TBYDWHTFIOOPFEDIPCELGL.parquet",
+				"folderPath": "Fact",
+				"fileSystem": "agi"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "AIDNFIOEDIPCELGL",
+				"type": "INT32"
+			},
+			{
+				"name": "CDOC",
+				"type": "INT_16"
+			},
+			{
+				"name": "CSTU",
+				"type": "INT_16"
+			},
+			{
+				"name": "CDEVEDI",
+				"type": "UTF8"
+			},
+			{
+				"name": "DEDIORI",
+				"type": "INT96"
+			},
+			{
+				"name": "NCMP001",
+				"type": "INT32"
+			},
+			{
+				"name": "CCMP001",
+				"type": "UTF8"
+			},
+			{
+				"name": "CDEVCMPTIE001",
+				"type": "UTF8"
+			},
+			{
+				"name": "DCRE001",
+				"type": "INT96"
+			},
+			{
+				"name": "NCMP",
+				"type": "INT32"
+			},
+			{
+				"name": "CCMP",
+				"type": "UTF8"
+			},
+			{
+				"name": "CLGN",
+				"type": "UTF8"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "INT32"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,74 @@
+{
+	"name": "test_map",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bala_AzureBlobStorage2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "student2.csv",
+				"folderPath": "demo/csv",
+				"container": "home"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "EFFECTIVE_DATE",
+				"type": "String"
+			},
+			{
+				"name": "CREATED_BY",
+				"type": "String"
+			},
+			{
+				"name": "INTERACTION_ID",
+				"type": "String"
+			},
+			{
+				"name": "HPHC_OOA_STUDENT_ID",
+				"type": "String"
+			},
+			{
+				"name": "TERM_DATE",
+				"type": "String"
+			},
+			{
+				"name": "CREATED_DATE",
+				"type": "String"
+			},
+			{
+				"name": "UPDATED_BY",
+				"type": "String"
+			},
+			{
+				"name": "UPDATED_DATE",
+				"type": "String"
+			},
+			{
+				"name": "POLICY_NO",
+				"type": "String"
+			},
+			{
+				"name": "ACTIVITY_ID",
+				"type": "String"
+			},
+			{
+				"name": "MEMBER_NO",
+				"type": "String"
+			},
+			{
+				"name": "VOIDED",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

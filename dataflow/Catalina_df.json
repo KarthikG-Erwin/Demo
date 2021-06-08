@@ -1,0 +1,35 @@
+{
+	"name": "Catalina_df",
+	"properties": {
+		"folder": {
+			"name": "Test_Catalina"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "catalina_src",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDWHTLIBSTCCOD"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Select1"
+				}
+			],
+			"script": "parameters{\n\taidn as long (1290066)\n}\nsource(output(\n\t\tId as string,\n\t\tIsDeleted as string,\n\t\tMasterRecordId as string,\n\t\tAccountId as string,\n\t\tLastName as string,\n\t\tFirstName as string,\n\t\tSalutation as string,\n\t\tName as string,\n\t\tOtherStreet as string,\n\t\tOtherCity as string,\n\t\tOtherState as string,\n\t\tOtherPostalCode as string,\n\t\tOtherCountry as string,\n\t\tOtherLatitude as string,\n\t\tOtherLongitude as string,\n\t\tOtherGeocodeAccuracy as string,\n\t\tMailingStreet as string,\n\t\tMailingCity as string,\n\t\tMailingState as string,\n\t\tMailingPostalCode as string,\n\t\tMailingCountry as string,\n\t\tMailingLatitude as string,\n\t\tMailingLongitude as string,\n\t\tMailingGeocodeAccuracy as string,\n\t\tPhone as string,\n\t\tFax as string,\n\t\tMobilePhone as string,\n\t\tHomePhone as string,\n\t\tOtherPhone as string,\n\t\tAssistantPhone as string,\n\t\tReportsToId as string,\n\t\tEmail as string,\n\t\tTitle as string,\n\t\tDepartment as string,\n\t\tAssistantName as string,\n\t\tLeadSource as string,\n\t\tBirthdate as string,\n\t\tDescription as string,\n\t\tOwnerId as string,\n\t\tCreatedDate as string,\n\t\tCreatedById as string,\n\t\tLastModifiedDate as string,\n\t\tLastModifiedById as string,\n\t\tSystemModstamp as string,\n\t\tLastActivityDate as string,\n\t\tLastCURequestDate as string,\n\t\tLastCUUpdateDate as string,\n\t\tLastViewedDate as string,\n\t\tLastReferencedDate as string,\n\t\tEmailBouncedReason as string,\n\t\tEmailBouncedDate as string,\n\t\tIsEmailBounced as string,\n\t\tPhotoUrl as string,\n\t\tJigsaw as string,\n\t\tJigsawContactId as string,\n\t\tCleanStatus as string,\n\t\tIndividualId as string,\n\t\tLevel__c as string,\n\t\tLanguages__c as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> TBYDWHTLIBSTCCOD\nTBYDWHTLIBSTCCOD select(mapColumn(\n\t\tId,\n\t\tIsDeleted,\n\t\tMasterRecordId,\n\t\tAccountId,\n\t\tLastName,\n\t\tFirstName,\n\t\tSalutation,\n\t\tName,\n\t\tOtherStreet,\n\t\tOtherCity,\n\t\tOtherState,\n\t\tOtherPostalCode,\n\t\tOtherCountry,\n\t\tOtherLatitude,\n\t\tOtherLongitude,\n\t\tOtherGeocodeAccuracy,\n\t\tMailingStreet,\n\t\tMailingCity,\n\t\tMailingState,\n\t\tMailingPostalCode,\n\t\tMailingCountry,\n\t\tMailingLatitude,\n\t\tMailingLongitude,\n\t\tMailingGeocodeAccuracy,\n\t\tPhone,\n\t\tFax,\n\t\tMobilePhone,\n\t\tHomePhone,\n\t\tOtherPhone,\n\t\tAssistantPhone,\n\t\tReportsToId,\n\t\tEmail,\n\t\tTitle,\n\t\tDepartment,\n\t\tAssistantName,\n\t\tLeadSource,\n\t\tBirthdate,\n\t\tDescription,\n\t\tOwnerId,\n\t\tCreatedDate,\n\t\tCreatedById,\n\t\tLastModifiedDate,\n\t\tLastModifiedById,\n\t\tSystemModstamp,\n\t\tLastActivityDate,\n\t\tLastCURequestDate,\n\t\tLastCUUpdateDate,\n\t\tLastViewedDate,\n\t\tLastReferencedDate,\n\t\tEmailBouncedReason,\n\t\tEmailBouncedDate,\n\t\tIsEmailBounced,\n\t\tPhotoUrl,\n\t\tIndividualId,\n\t\tLanguages__c\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tcontainer: 'erwintest',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('dynamicRange', 2,\n\t\tERROR_FUNCTION('')\n\t)) ~> sink1"
+		}
+	}
+}

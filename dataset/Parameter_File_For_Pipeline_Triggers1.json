@@ -1,0 +1,56 @@
+{
+	"name": "Parameter_File_For_Pipeline_Triggers1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Run_PipeLine_File_Path": {
+				"type": "string"
+			},
+			"PipeLineFileTrigger": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "PeerMentoring"
+		},
+		"annotations": [],
+		"type": "AzureBlob",
+		"structure": [
+			{
+				"name": "CopyData",
+				"type": "String"
+			},
+			{
+				"name": "Prior",
+				"type": "String"
+			},
+			{
+				"name": "Post",
+				"type": "String"
+			}
+		],
+		"typeProperties": {
+			"format": {
+				"type": "TextFormat",
+				"columnDelimiter": ",",
+				"rowDelimiter": "",
+				"nullValue": "\\N",
+				"treatEmptyAsNull": true,
+				"skipLineCount": 0,
+				"firstRowAsHeader": true
+			},
+			"fileName": {
+				"value": "@dataset().PipeLineFileTrigger",
+				"type": "Expression"
+			},
+			"folderPath": {
+				"value": "@dataset().Run_PipeLine_File_Path",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

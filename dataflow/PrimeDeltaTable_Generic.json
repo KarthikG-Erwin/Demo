@@ -1,0 +1,41 @@
+{
+	"name": "PrimeDeltaTable_Generic",
+	"properties": {
+		"folder": {
+			"name": "Generic_SCD2"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "TempInputParquet_Generic",
+						"type": "DatasetReference"
+					},
+					"name": "TempInput"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "DeltaSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filter1"
+				},
+				{
+					"name": "AlterRow1"
+				},
+				{
+					"name": "DerivedColumn1"
+				}
+			],
+			"script": "parameters{\n\tCurrentDimSource as string (concat('PRD/','delta'))\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TempInput\nTempInput filter(1==0) ~> Filter1\nDerivedColumn1 alterRow(insertIf(true())) ~> AlterRow1\nFilter1 derive(BSITCOU = toInteger(null()),\n\t\tDDEBSIT = toTimestamp(toString(null())),\n\t\tDFINSIT = toTimestamp(toString(null())),\n\t\tRowID = toInteger(null())) ~> DerivedColumn1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcontainer: 'agi',\n\tfolderPath: (concat('agi_poc/', $CurrentDimSource)\r\n\r\n\r\n),\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> DeltaSink"
+		}
+	}
+}

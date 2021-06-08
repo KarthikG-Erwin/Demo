@@ -1,0 +1,39 @@
+{
+	"name": "Fact",
+	"properties": {
+		"activities": [
+			{
+				"name": "JSBI8DMAFFIOSTQEDI_test",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "JSBI8DMAFFIOSTQEDI_test_v2",
+						"type": "DataFlowReference",
+						"parameters": {
+							"DATEDEB": "toTimestamp(addDays(lastDayOfMonth(addMonths($ODATE,-1)),1))",
+							"DATEFIN": "toTimestamp(lastDayOfMonth(toDate($DATEDEB)))",
+							"ODATE": "toTimestamp(21-07-2019)"
+						}
+					},
+					"compute": {
+						"coreCount": 32,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2020-08-21T12:48:59Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,265 @@
+{
+	"name": "catalina_src_copy3",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Catalina_Sources"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Orangedata.csv",
+				"folderPath": "source",
+				"fileSystem": "catalina"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Id",
+				"type": "String"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "String"
+			},
+			{
+				"name": "MasterRecordId",
+				"type": "String"
+			},
+			{
+				"name": "AccountId",
+				"type": "String"
+			},
+			{
+				"name": "LastName",
+				"type": "String"
+			},
+			{
+				"name": "FirstName",
+				"type": "String"
+			},
+			{
+				"name": "Salutation",
+				"type": "String"
+			},
+			{
+				"name": "Name",
+				"type": "String"
+			},
+			{
+				"name": "OtherStreet",
+				"type": "String"
+			},
+			{
+				"name": "OtherCity",
+				"type": "String"
+			},
+			{
+				"name": "OtherState",
+				"type": "String"
+			},
+			{
+				"name": "OtherPostalCode",
+				"type": "String"
+			},
+			{
+				"name": "OtherCountry",
+				"type": "String"
+			},
+			{
+				"name": "OtherLatitude",
+				"type": "String"
+			},
+			{
+				"name": "OtherLongitude",
+				"type": "String"
+			},
+			{
+				"name": "OtherGeocodeAccuracy",
+				"type": "String"
+			},
+			{
+				"name": "MailingStreet",
+				"type": "String"
+			},
+			{
+				"name": "MailingCity",
+				"type": "String"
+			},
+			{
+				"name": "MailingState",
+				"type": "String"
+			},
+			{
+				"name": "MailingPostalCode",
+				"type": "String"
+			},
+			{
+				"name": "MailingCountry",
+				"type": "String"
+			},
+			{
+				"name": "MailingLatitude",
+				"type": "String"
+			},
+			{
+				"name": "MailingLongitude",
+				"type": "String"
+			},
+			{
+				"name": "MailingGeocodeAccuracy",
+				"type": "String"
+			},
+			{
+				"name": "Phone",
+				"type": "String"
+			},
+			{
+				"name": "Fax",
+				"type": "String"
+			},
+			{
+				"name": "MobilePhone",
+				"type": "String"
+			},
+			{
+				"name": "HomePhone",
+				"type": "String"
+			},
+			{
+				"name": "OtherPhone",
+				"type": "String"
+			},
+			{
+				"name": "AssistantPhone",
+				"type": "String"
+			},
+			{
+				"name": "ReportsToId",
+				"type": "String"
+			},
+			{
+				"name": "Email",
+				"type": "String"
+			},
+			{
+				"name": "Title",
+				"type": "String"
+			},
+			{
+				"name": "Department",
+				"type": "String"
+			},
+			{
+				"name": "AssistantName",
+				"type": "String"
+			},
+			{
+				"name": "LeadSource",
+				"type": "String"
+			},
+			{
+				"name": "Birthdate",
+				"type": "String"
+			},
+			{
+				"name": "Description",
+				"type": "String"
+			},
+			{
+				"name": "OwnerId",
+				"type": "String"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "String"
+			},
+			{
+				"name": "CreatedById",
+				"type": "String"
+			},
+			{
+				"name": "LastModifiedDate",
+				"type": "String"
+			},
+			{
+				"name": "LastModifiedById",
+				"type": "String"
+			},
+			{
+				"name": "SystemModstamp",
+				"type": "String"
+			},
+			{
+				"name": "LastActivityDate",
+				"type": "String"
+			},
+			{
+				"name": "LastCURequestDate",
+				"type": "String"
+			},
+			{
+				"name": "LastCUUpdateDate",
+				"type": "String"
+			},
+			{
+				"name": "LastViewedDate",
+				"type": "String"
+			},
+			{
+				"name": "LastReferencedDate",
+				"type": "String"
+			},
+			{
+				"name": "EmailBouncedReason",
+				"type": "String"
+			},
+			{
+				"name": "EmailBouncedDate",
+				"type": "String"
+			},
+			{
+				"name": "IsEmailBounced",
+				"type": "String"
+			},
+			{
+				"name": "PhotoUrl",
+				"type": "String"
+			},
+			{
+				"name": "Jigsaw",
+				"type": "String"
+			},
+			{
+				"name": "JigsawContactId",
+				"type": "String"
+			},
+			{
+				"name": "CleanStatus",
+				"type": "String"
+			},
+			{
+				"name": "IndividualId",
+				"type": "String"
+			},
+			{
+				"name": "Level__c",
+				"type": "String"
+			},
+			{
+				"name": "Languages__c",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

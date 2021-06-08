@@ -1,0 +1,400 @@
+{
+	"name": "ADFSalesforceAccountPipeline",
+	"properties": {
+		"description": "Account",
+		"activities": [
+			{
+				"name": "Get Posting Group Detail",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderStoredProcedureName": "[pg].[usp_GetPostingGroupChild]",
+						"storedProcedureParameters": {
+							"pChildPostingGroupCode": {
+								"type": "String",
+								"value": {
+									"value": "@variables('PostingGroupChildCode')",
+									"type": "Expression"
+								}
+							},
+							"pETLExecutionId": {
+								"type": "Int32",
+								"value": "-1"
+							},
+							"pPathId": {
+								"type": "Int32",
+								"value": "-1"
+							},
+							"pPostingGroupBatchId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.ParentPostingGroupBatchId",
+									"type": "Expression"
+								}
+							},
+							"pPostingGroupBatchSeq": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.ParentPostingGroupBatchSeq",
+									"type": "Expression"
+								}
+							},
+							"pPostingGroupId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.ParentPostingGroupId",
+									"type": "Expression"
+								}
+							},
+							"pVerbose": {
+								"type": "Boolean",
+								"value": "False"
+							}
+						},
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ADFOnPremStagingDatabaseDataset",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Load Data",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Stage Data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[salesforce].[usp_LoadAccount]",
+					"storedProcedureParameters": {
+						"pETLExecutionId": {
+							"value": {
+								"value": "@pipeline().parameters.ETLExecutionID",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"pPathId": {
+							"value": "-1",
+							"type": "Int32"
+						},
+						"pPostingGroupProcessingId": {
+							"value": {
+								"value": "@activity('Get Posting Group Detail').output.firstrow.ParentPostingGroupProcessingId",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"pVerbose": {
+							"value": "False",
+							"type": "Boolean"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ADFOnPremStagingDatabaseConnector",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Stage Data",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Get Posting Group Detail",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SalesforceSource",
+						"readBehavior": "query"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"preCopyScript": "TRUNCATE TABLE BPI_DW_STAGE.salesforce.Account"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Account_Status__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Account_Status__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountNumber",
+									"type": "String"
+								},
+								"sink": {
+									"name": "AccountNumber",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Company_ID__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Company_ID__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Contact__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Contact__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CreatedById",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CreatedById",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CreatedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CreatedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "External_ID__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "External_ID__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "IsDeleted",
+									"type": "String"
+								},
+								"sink": {
+									"name": "IsDeleted",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastModifiedById",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastModifiedById",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastModifiedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastModifiedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MasterRecordId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MasterRecordId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OwnerId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OwnerId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ParentId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ParentId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RecordTypeId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "RecordTypeId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SystemModstamp",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SystemModstamp",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Type",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Type",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Industry",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Industry",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ADFSalesforceDataLakeRetrievalDataset",
+						"type": "DatasetReference",
+						"parameters": {
+							"sinktablename": "Account",
+							"issuename": {
+								"value": "@concat(activity('Get Posting Group Detail').output.firstrow.IssueName,'.txt')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADFOnPremStagingAccountDataset",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "dbo.Account"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"ParentPostingGroupBatchId": {
+				"type": "string",
+				"defaultValue": "-1"
+			},
+			"ParentPostingGroupBatchSeq": {
+				"type": "string",
+				"defaultValue": "-1"
+			},
+			"ParentPostingGroupId": {
+				"type": "string",
+				"defaultValue": "-1"
+			},
+			"ETLExecutionID": {
+				"type": "string",
+				"defaultValue": "-1"
+			}
+		},
+		"variables": {
+			"PostingGroupChildCode": {
+				"type": "String",
+				"defaultValue": "SF-EDL-SF-ACCOUNT"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-02-23T09:41:52Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,25 @@
+{
+	"name": "catalina_output_upd",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Catalina_Sources"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "part-00000-678b3956-c4fd-4bae-b7bb-680c0eb9c29f-c000.snappy.parquet",
+				"folderPath": "Layer1/Subject1/SystemX/Entity I/CONTACT",
+				"container": "catalina"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

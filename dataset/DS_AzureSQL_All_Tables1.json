@@ -1,0 +1,29 @@
+{
+	"name": "DS_AzureSQL_All_Tables1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"AzureSQLServer": {
+				"type": "string"
+			},
+			"AzureSQLDatabaseName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "SNHU_DS"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"typeProperties": {
+			"tableName": {
+				"value": "@{item().Table_Name}",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

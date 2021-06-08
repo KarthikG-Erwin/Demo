@@ -1,0 +1,56 @@
+{
+	"name": "SqlServerTable2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServerOnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SINK_Table_Name": {
+				"type": "string",
+				"defaultValue": "dbo.Account"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "CustomerID",
+				"type": "varchar"
+			},
+			{
+				"name": "Store Number",
+				"type": "varchar"
+			},
+			{
+				"name": "Customer Segment",
+				"type": "varchar"
+			},
+			{
+				"name": "Responder",
+				"type": "varchar"
+			},
+			{
+				"name": "First Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Last Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Address",
+				"type": "varchar"
+			},
+			{
+				"name": "City",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Account"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

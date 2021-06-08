@@ -1,0 +1,262 @@
+{
+	"name": "output_catalina_copy3",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Catalina_Sources"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "part-00000-24f05985-ceea-4f83-9b0b-7ff2606df1f7-c000.snappy.parquet",
+				"folderPath": "Layer1/Subject1/SystemX/Entity I/CONTACT",
+				"container": "catalina"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "Id",
+				"type": "UTF8"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "UTF8"
+			},
+			{
+				"name": "MasterRecordId",
+				"type": "UTF8"
+			},
+			{
+				"name": "AccountId",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastName",
+				"type": "UTF8"
+			},
+			{
+				"name": "FirstName",
+				"type": "UTF8"
+			},
+			{
+				"name": "Salutation",
+				"type": "UTF8"
+			},
+			{
+				"name": "Name",
+				"type": "UTF8"
+			},
+			{
+				"name": "OtherStreet",
+				"type": "UTF8"
+			},
+			{
+				"name": "OtherCity",
+				"type": "UTF8"
+			},
+			{
+				"name": "OtherState",
+				"type": "UTF8"
+			},
+			{
+				"name": "OtherPostalCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "OtherCountry",
+				"type": "UTF8"
+			},
+			{
+				"name": "OtherLatitude",
+				"type": "UTF8"
+			},
+			{
+				"name": "OtherLongitude",
+				"type": "UTF8"
+			},
+			{
+				"name": "OtherGeocodeAccuracy",
+				"type": "UTF8"
+			},
+			{
+				"name": "MailingStreet",
+				"type": "UTF8"
+			},
+			{
+				"name": "MailingCity",
+				"type": "UTF8"
+			},
+			{
+				"name": "MailingState",
+				"type": "UTF8"
+			},
+			{
+				"name": "MailingPostalCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "MailingCountry",
+				"type": "UTF8"
+			},
+			{
+				"name": "MailingLatitude",
+				"type": "UTF8"
+			},
+			{
+				"name": "MailingLongitude",
+				"type": "UTF8"
+			},
+			{
+				"name": "MailingGeocodeAccuracy",
+				"type": "UTF8"
+			},
+			{
+				"name": "Phone",
+				"type": "UTF8"
+			},
+			{
+				"name": "Fax",
+				"type": "UTF8"
+			},
+			{
+				"name": "MobilePhone",
+				"type": "UTF8"
+			},
+			{
+				"name": "HomePhone",
+				"type": "UTF8"
+			},
+			{
+				"name": "OtherPhone",
+				"type": "UTF8"
+			},
+			{
+				"name": "AssistantPhone",
+				"type": "UTF8"
+			},
+			{
+				"name": "ReportsToId",
+				"type": "UTF8"
+			},
+			{
+				"name": "Email",
+				"type": "UTF8"
+			},
+			{
+				"name": "Title",
+				"type": "UTF8"
+			},
+			{
+				"name": "Department",
+				"type": "UTF8"
+			},
+			{
+				"name": "AssistantName",
+				"type": "UTF8"
+			},
+			{
+				"name": "LeadSource",
+				"type": "UTF8"
+			},
+			{
+				"name": "Birthdate",
+				"type": "UTF8"
+			},
+			{
+				"name": "Description",
+				"type": "UTF8"
+			},
+			{
+				"name": "OwnerId",
+				"type": "UTF8"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "CreatedById",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastModifiedDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastModifiedById",
+				"type": "UTF8"
+			},
+			{
+				"name": "SystemModstamp",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastActivityDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastCURequestDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastCUUpdateDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastViewedDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastReferencedDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "EmailBouncedReason",
+				"type": "UTF8"
+			},
+			{
+				"name": "EmailBouncedDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "IsEmailBounced",
+				"type": "UTF8"
+			},
+			{
+				"name": "PhotoUrl",
+				"type": "UTF8"
+			},
+			{
+				"name": "Jigsaw",
+				"type": "UTF8"
+			},
+			{
+				"name": "JigsawContactId",
+				"type": "UTF8"
+			},
+			{
+				"name": "CleanStatus",
+				"type": "UTF8"
+			},
+			{
+				"name": "IndividualId",
+				"type": "UTF8"
+			},
+			{
+				"name": "Level__c",
+				"type": "UTF8"
+			},
+			{
+				"name": "Languages__c",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,63 @@
+{
+	"name": "testflow_adf",
+	"properties": {
+		"folder": {
+			"name": "Test"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "employeedata",
+						"type": "DatasetReference"
+					},
+					"name": "EmployeeData"
+				},
+				{
+					"dataset": {
+						"referenceName": "deptdata",
+						"type": "DatasetReference"
+					},
+					"name": "DeptData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "sinkdata",
+						"type": "DatasetReference"
+					},
+					"name": "sinkData"
+				}
+			],
+			"transformations": [
+				{
+					"name": "JoinEmpdataDeptdata"
+				},
+				{
+					"name": "SelectData"
+				},
+				{
+					"name": "Union1"
+				},
+				{
+					"name": "Exists1"
+				},
+				{
+					"name": "Lookup1"
+				},
+				{
+					"name": "SurrogateKey1"
+				},
+				{
+					"name": "Aggregate1"
+				},
+				{
+					"name": "Select1"
+				}
+			],
+			"script": "source(output(\n\t\tEname as string,\n\t\tempid as string,\n\t\tAge as string,\n\t\tJoining as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> EmployeeData\nsource(output(\n\t\tdid as string,\n\t\tdname as string,\n\t\taddress as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> DeptData\nEmployeeData, DeptData join(empid == did,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> JoinEmpdataDeptdata\nJoinEmpdataDeptdata select(mapColumn(\n\t\tempid,\n\t\tEname,\n\t\tAge,\n\t\tJoining,\n\t\tdid,\n\t\tdname,\n\t\taddress\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectData\nSelectData, DeptData union(byName: true)~> Union1\nUnion1, DeptData exists(empid == DeptData@did,\n\tnegate:false,\n\tbroadcast: 'auto')~> Exists1\nExists1, DeptData lookup(empid == DeptData@did,\n\tmultiple: false,\n\tpickup: 'first',\n\tasc(DeptData@did, true),\n\tbroadcast: 'auto')~> Lookup1\nSelect1 keyGenerate(output(empkey as long),\n\tstartAt: 1L) ~> SurrogateKey1\nSurrogateKey1 aggregate(groupBy(Ename),\n\ttotal = count(Ename)) ~> Aggregate1\nLookup1 select(mapColumn(\n\t\tempid,\n\t\tEname,\n\t\tAge,\n\t\tJoining,\n\t\tdname = Union1@dname,\n\t\taddress = Union1@address,\n\t\tdid = Union1@did,\n\t\tdid = DeptData@did,\n\t\tdname = DeptData@dname,\n\t\taddress = DeptData@address\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nAggregate1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string,\n\t\tColumn_5 as string\n\t),\n\tpartitionFileNames:['mysinkdata.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> sinkData"
+		}
+	}
+}

@@ -1,0 +1,71 @@
+{
+	"name": "bala_Customers",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServerbala",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bala"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "customerNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "customerName",
+				"type": "varchar"
+			},
+			{
+				"name": "contactLastName",
+				"type": "varchar"
+			},
+			{
+				"name": "contactFirstName",
+				"type": "varchar"
+			},
+			{
+				"name": "phone",
+				"type": "varchar"
+			},
+			{
+				"name": "addressLine1",
+				"type": "varchar"
+			},
+			{
+				"name": "addressLine2",
+				"type": "varchar"
+			},
+			{
+				"name": "city",
+				"type": "varchar"
+			},
+			{
+				"name": "state",
+				"type": "varchar"
+			},
+			{
+				"name": "postalCode",
+				"type": "varchar"
+			},
+			{
+				"name": "country",
+				"type": "varchar"
+			},
+			{
+				"name": "salesRepEmployeeNumber",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "customers"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

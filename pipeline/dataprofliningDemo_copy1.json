@@ -1,0 +1,74 @@
+{
+	"name": "dataprofliningDemo_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Notebook2",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/TvsWithPythonBala",
+					"baseParameters": {
+						"parameters": {
+							"value": "@string(pipeline().parameters.parameters)",
+							"type": "Expression"
+						},
+						"saasurl": {
+							"value": "@string(pipeline().parameters.saasurl)",
+							"type": "Expression"
+						},
+						"containerName": {
+							"value": "@string(pipeline().parameters.containerName)",
+							"type": "Expression"
+						},
+						"functionlist": {
+							"value": "@string(pipeline().parameters.functionlist)",
+							"type": "Expression"
+						},
+						"fileContent": {
+							"value": "@string(pipeline().parameters.fileContent)",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks1",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"parameters": {
+				"type": "object",
+				"defaultValue": "defaultParam"
+			},
+			"saasurl": {
+				"type": "string",
+				"defaultValue": "https://tvsmooghulkprod.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rl&se=2021-01-21T19:49:59Z&st=2021-01-12T11:49:59Z&spr=https&sig=P%2FmmO34271Ypb4Ynp1w3%2Fhl2BsBs%2BxM3wnqQ2W6lyhE%3D"
+			},
+			"containerName": {
+				"type": "string",
+				"defaultValue": "defaultName"
+			},
+			"functionlist": {
+				"type": "object",
+				"defaultValue": "flist"
+			},
+			"fileContent": {
+				"type": "string",
+				"defaultValue": "defaultContent"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-01-13T08:52:42Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

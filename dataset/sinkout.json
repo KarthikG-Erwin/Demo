@@ -1,0 +1,45 @@
+{
+	"name": "sinkout",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bala_AzureBlobStorage2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "demo/csv",
+				"container": "home"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "id",
+				"type": "String"
+			},
+			{
+				"name": "title",
+				"type": "String"
+			},
+			{
+				"name": "author",
+				"type": "String"
+			},
+			{
+				"name": "format",
+				"type": "String"
+			},
+			{
+				"name": "price",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

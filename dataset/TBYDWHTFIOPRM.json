@@ -1,0 +1,61 @@
+{
+	"name": "TBYDWHTFIOPRM",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Fact"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TBYDWHTFIOPRM.csv",
+				"folderPath": "Fact",
+				"fileSystem": "agi"
+			},
+			"columnDelimiter": "|",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CCDIFIOPRM",
+				"type": "String"
+			},
+			{
+				"name": "CMETPAIPPSFIOPRM",
+				"type": "String"
+			},
+			{
+				"name": "DDEBFIOPRM",
+				"type": "integer"
+			},
+			{
+				"name": "DFIN",
+				"type": "integer"
+			},
+			{
+				"name": "LVLR",
+				"type": "long"
+			},
+			{
+				"name": "AIDNAUD",
+				"type": "long"
+			},
+			{
+				"name": "LNOMFIOPRM",
+				"type": "String"
+			},
+			{
+				"name": "URVT",
+				"type": "integer"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

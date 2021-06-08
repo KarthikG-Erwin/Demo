@@ -1,0 +1,81 @@
+{
+	"name": "celgl",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Fact"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TBYDWHTFIOOPFEDIPCELGL.csv",
+				"folderPath": "Fact",
+				"fileSystem": "agi"
+			},
+			"columnDelimiter": "|",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "AIDNFIOEDIPCELGL",
+				"type": "integer"
+			},
+			{
+				"name": "CDOC",
+				"type": "short"
+			},
+			{
+				"name": "CSTU",
+				"type": "short"
+			},
+			{
+				"name": "CDEVEDI",
+				"type": "String"
+			},
+			{
+				"name": "DEDIORI",
+				"type": "timestamp"
+			},
+			{
+				"name": "NCMP001",
+				"type": "integer"
+			},
+			{
+				"name": "CCMP001",
+				"type": "String"
+			},
+			{
+				"name": "CDEVCMPTIE001",
+				"type": "String"
+			},
+			{
+				"name": "DCRE001",
+				"type": "timestamp"
+			},
+			{
+				"name": "NCMP",
+				"type": "integer"
+			},
+			{
+				"name": "CCMP",
+				"type": "String"
+			},
+			{
+				"name": "CLGN",
+				"type": "String"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "integer"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

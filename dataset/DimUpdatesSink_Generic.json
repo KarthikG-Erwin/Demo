@@ -1,0 +1,35 @@
+{
+	"name": "DimUpdatesSink_Generic",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Update_Folder": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "PRD"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat('agi_poc/',dataset().Update_Folder)",
+					"type": "Expression"
+				},
+				"fileSystem": "agi"
+			},
+			"columnDelimiter": "|",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

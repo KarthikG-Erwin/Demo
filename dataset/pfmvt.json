@@ -1,0 +1,53 @@
+{
+	"name": "pfmvt",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Fact"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TBYDWHTFIOOPFMVT.csv",
+				"folderPath": "Fact",
+				"fileSystem": "agi"
+			},
+			"columnDelimiter": "|",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CTYPPRD",
+				"type": "String"
+			},
+			{
+				"name": "CPRD",
+				"type": "String"
+			},
+			{
+				"name": "NCMPFIOCMPTIE",
+				"type": "String"
+			},
+			{
+				"name": "CCMPFIOCMPTIE",
+				"type": "String"
+			},
+			{
+				"name": "CDEVFIOCMPTIE",
+				"type": "String"
+			},
+			{
+				"name": "DCREFIOOPFMVT",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

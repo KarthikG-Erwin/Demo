@@ -1,0 +1,38 @@
+{
+	"name": "deptdataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bala_AzureBlobStorage2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "department.csv",
+				"folderPath": "demo/csv",
+				"container": "home"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "did",
+				"type": "String"
+			},
+			{
+				"name": "dname",
+				"type": "String"
+			},
+			{
+				"name": "address",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

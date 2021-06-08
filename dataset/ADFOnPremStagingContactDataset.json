@@ -1,0 +1,17 @@
+{
+	"name": "ADFOnPremStagingContactDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServerOnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Contact"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

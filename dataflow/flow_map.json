@@ -1,0 +1,45 @@
+{
+	"name": "flow_map",
+	"properties": {
+		"folder": {
+			"name": "Test"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "flow_map",
+						"type": "DatasetReference"
+					},
+					"name": "Dept"
+				},
+				{
+					"dataset": {
+						"referenceName": "flow",
+						"type": "DatasetReference"
+					},
+					"name": "Emp"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "flow_map1",
+						"type": "DatasetReference"
+					},
+					"name": "demoreport"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ReportWidJoin"
+				},
+				{
+					"name": "MultipleConditions"
+				}
+			],
+			"script": "source(output(\n\t\tDeptno as string,\n\t\tDname as string,\n\t\tLoc as string,\n\t\tDummy as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Dept\nsource(output(\n\t\tDept as string,\n\t\tEmpno as string,\n\t\tMgr as string,\n\t\tHiredate as string,\n\t\tJob as string,\n\t\tComm as string,\n\t\tEname as string,\n\t\tSal as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Emp\nDept, Emp join(Deptno == Empno,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> ReportWidJoin\nReportWidJoin filter(Dept >= '101' && Sal <= '45000') ~> MultipleConditions\nMultipleConditions sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tid as string,\n\t\ttitle as string,\n\t\tauthor as string,\n\t\tformat as string,\n\t\tprice as string\n\t),\n\tpartitionFileNames:['flow_map.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> demoreport"
+		}
+	}
+}

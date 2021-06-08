@@ -1,0 +1,49 @@
+{
+	"name": "gopf",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Fact"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TBYDWHTFIOCLEETGOPF.csv",
+				"folderPath": "Fact",
+				"fileSystem": "agi"
+			},
+			"columnDelimiter": "|",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "AIDNFIOAANOPF",
+				"type": "integer"
+			},
+			{
+				"name": "NAANFIOAANOPF",
+				"type": "short"
+			},
+			{
+				"name": "CTYPFKESDD",
+				"type": "string"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "integer"
+			},
+			{
+				"name": "LVLRFKESDD",
+				"type": "string"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

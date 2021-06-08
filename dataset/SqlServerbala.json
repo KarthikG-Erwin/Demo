@@ -1,0 +1,52 @@
+{
+	"name": "SqlServerbala",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServerbala",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "employeeNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "lastName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "firstName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "extension",
+				"type": "nvarchar"
+			},
+			{
+				"name": "email",
+				"type": "nvarchar"
+			},
+			{
+				"name": "officeCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "reportsTo",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "jobTitle",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "employees"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

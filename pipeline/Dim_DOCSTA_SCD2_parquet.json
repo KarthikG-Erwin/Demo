@@ -1,0 +1,115 @@
+{
+	"name": "Dim_DOCSTA_SCD2_parquet",
+	"properties": {
+		"description": "Using byNames to fully parameterize a Slowly Change Dimension Type 2 patter",
+		"activities": [
+			{
+				"name": "JSBI8DMADFIOCFMDOCSTA_test",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "JSBI8DMADFIOCFMDOCSTA_test",
+						"type": "DataFlowReference",
+						"parameters": {
+							"aidn": "1290066"
+						},
+						"datasetParameters": {
+							"TBYDMADFIOCFMDOCSTA": {
+								"TempFolder": "DOCSTA/temp"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Generic_SCD2",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "JSBI8DMADFIOCFMDOCSTA_test",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "SCD2_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PrimaryKey": "CDOCSTA",
+						"ColumnNames": "LDOCSTANDL,LDOCSTAFRA,LDOCSTAANG",
+						"IncomingDimensionFolder": "current",
+						"NewInsertsFolder": "DOCSTA/insert",
+						"NewUpdatesFolder": "DOCSTA/update",
+						"CurrentDimensionFolder": "DOCSTA/delta",
+						"TempFolder": "DOCSTA/temp",
+						"Target_Entity": "TBYDMADFIOCFMDOCSTA",
+						"Target_Folder": "DOCSTA",
+						"ActiveStartTimeField": "DDEBSIT",
+						"ActiveEndTimeField": "DFINSIT",
+						"SKKeyField": "RowID",
+						"ActiveFlagField": "BSITCOU"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"PrimaryKey": {
+				"type": "string",
+				"defaultValue": "CDOCSTA"
+			},
+			"ColumnNames": {
+				"type": "string",
+				"defaultValue": "LDOCSTANDL,LDOCSTAFRA,LDOCSTAANG"
+			},
+			"NewInsertsFolder": {
+				"type": "string",
+				"defaultValue": "DOCSTA/insert"
+			},
+			"NewUpdatesFolder": {
+				"type": "string",
+				"defaultValue": "DOCSTA/update"
+			},
+			"CurrentDimensionFolder": {
+				"type": "string",
+				"defaultValue": "DOCSTA/delta"
+			},
+			"TempFolder": {
+				"type": "string",
+				"defaultValue": "DOCSTA/temp"
+			},
+			"TimeStampFormat": {
+				"type": "string",
+				"defaultValue": "yyyyMMdd_HHmmss"
+			},
+			"DateFormat": {
+				"type": "string",
+				"defaultValue": "yyyyMMdd"
+			}
+		},
+		"folder": {
+			"name": "GenericSCD2_Pipeline"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-08-19T16:39:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

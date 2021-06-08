@@ -1,0 +1,89 @@
+{
+	"name": "TBYDMADFIOCFMPRD_v2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "PRD"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "agi_poc/PRD/delta",
+				"fileSystem": "agi"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "SIDNFIOCFMPRD",
+				"type": "INT64"
+			},
+			{
+				"name": "CPRD",
+				"type": "UTF8"
+			},
+			{
+				"name": "LPRDNDL",
+				"type": "UTF8"
+			},
+			{
+				"name": "LPRDFRA",
+				"type": "UTF8"
+			},
+			{
+				"name": "LPRDANG",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUNV",
+				"type": "UTF8"
+			},
+			{
+				"name": "LUNVNDL",
+				"type": "UTF8"
+			},
+			{
+				"name": "LUNVFRA",
+				"type": "UTF8"
+			},
+			{
+				"name": "LUNVANG",
+				"type": "UTF8"
+			},
+			{
+				"name": "BPAC",
+				"type": "INT_16"
+			},
+			{
+				"name": "DNUMLOT",
+				"type": "INT96"
+			},
+			{
+				"name": "AIDNAUD",
+				"type": "INT32"
+			},
+			{
+				"name": "DDEBSIT",
+				"type": "INT96"
+			},
+			{
+				"name": "DFINSIT",
+				"type": "INT96"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "INT32"
+			},
+			{
+				"name": "RowID",
+				"type": "INT32"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

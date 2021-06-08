@@ -1,0 +1,1625 @@
+{
+	"name": "ADFSalesforceContactPipeline_Copy1",
+	"properties": {
+		"description": "Test to replicate the scenario of not having a datatype for a column in mappings of a copy activity\n",
+		"activities": [
+			{
+				"name": "Get Posting Group Detail",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderStoredProcedureName": "[pg].[usp_GetPostingGroupChild]",
+						"storedProcedureParameters": {
+							"pChildPostingGroupCode": {
+								"type": "String",
+								"value": {
+									"value": "@variables('ContactPostingGroupChildCode')",
+									"type": "Expression"
+								}
+							},
+							"pETLExecutionId": {
+								"type": "Int32",
+								"value": "-1"
+							},
+							"pPathId": {
+								"type": "Int32",
+								"value": "-1"
+							},
+							"pPostingGroupBatchId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.ParentPostingGroupBatchId",
+									"type": "Expression"
+								}
+							},
+							"pPostingGroupBatchSeq": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.ParentPostingGroupBatchSeq",
+									"type": "Expression"
+								}
+							},
+							"pPostingGroupId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.ParentPostingGroupId",
+									"type": "Expression"
+								}
+							},
+							"pVerbose": {
+								"type": "Boolean",
+								"value": "False"
+							}
+						},
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ADFOnPremStagingDatabaseDataset",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Stage Data",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Get Posting Group Detail",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SalesforceSource",
+						"additionalColumns": [
+							{
+								"name": "IssueID",
+								"value": {
+									"value": "@activity('Get Posting Group Detail').output.firstrow.IssueId",
+									"type": "Expression"
+								}
+							}
+						],
+						"readBehavior": "query"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"preCopyScript": "TRUNCATE TABLE BPI_DW_STAGE.salesforce.Contact"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Academic_Advisor__c"
+								},
+								"sink": {
+									"name": "Academic_Advisor__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "AccountId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Assigned_DRC__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Assigned_DRC__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AssistantName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "AssistantName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AssistantPhone",
+									"type": "String"
+								},
+								"sink": {
+									"name": "AssistantPhone",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Birthdate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Birthdate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "c2g__CollectionsCommunicationContact__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "c2g__CollectionsCommunicationContact__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "c2g__CollectionsCommunicationPreference__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "c2g__CollectionsCommunicationPreference__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "c2g__EnableEmailNotification__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "c2g__EnableEmailNotification__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "City__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "City__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Community_Provision__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Community_Provision__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CreatedById",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CreatedById",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CreatedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CreatedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Date__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Date__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Department",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Department",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Description",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Description",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DoNotCall",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DoNotCall",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Email",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Email",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailBouncedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "EmailBouncedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailBouncedReason",
+									"type": "String"
+								},
+								"sink": {
+									"name": "EmailBouncedReason",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Enrollment_Services_Advisor__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Enrollment_Services_Advisor__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "External_ID__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "External_ID__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Fax",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Fax",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Financial_Services_Advisor__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Financial_Services_Advisor__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "FirstName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FirstName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "HasOptedOutOfEmail",
+									"type": "String"
+								},
+								"sink": {
+									"name": "HasOptedOutOfEmail",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "HasOptedOutOfFax",
+									"type": "String"
+								},
+								"sink": {
+									"name": "HasOptedOutOfFax",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__AlternateEmail__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__AlternateEmail__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Chosen_Full_Name__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Chosen_Full_Name__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Citizenship__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Citizenship__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Country_of_Origin__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Country_of_Origin__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Current_Address__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Current_Address__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Deceased__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Deceased__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Do_Not_Contact__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Do_Not_Contact__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Dual_Citizenship__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Dual_Citizenship__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Ethnicity__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Ethnicity__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Exclude_from_Household_Formal_Greeting__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Exclude_from_Household_Formal_Greeting__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Exclude_from_Household_Informal_Greeting__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Exclude_from_Household_Informal_Greeting__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Exclude_from_Household_Name__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Exclude_from_Household_Name__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__FERPA__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__FERPA__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Financial_Aid_Applicant__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Financial_Aid_Applicant__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Gender__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Gender__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__HIPAA__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__HIPAA__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__HIPAA_Detail__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__HIPAA_Detail__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__is_Address_Override__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__is_Address_Override__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Military_Background__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Military_Background__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Military_Service__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Military_Service__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Naming_Exclusions__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Naming_Exclusions__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Preferred_Email__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Preferred_Email__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__PreferredPhone__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__PreferredPhone__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Primary_Address_Type__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Primary_Address_Type__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Primary_Household__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Primary_Household__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Primary_Language__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Primary_Language__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Primary_Organization__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Primary_Organization__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Race__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Race__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Religion__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Religion__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Secondary_Address_Type__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Secondary_Address_Type__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Social_Security_Number__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Social_Security_Number__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__UniversityEmail__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__UniversityEmail__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__Work_Address__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__Work_Address__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__WorkEmail__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__WorkEmail__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "hed__WorkPhone__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "hed__WorkPhone__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Home_Address_1__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Home_Address_1__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Home_Address_2__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Home_Address_2__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "HomePhone",
+									"type": "String"
+								},
+								"sink": {
+									"name": "HomePhone",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Important_Notes__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Important_Notes__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "IndividualId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "IndividualId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "IsDeleted",
+									"type": "String"
+								},
+								"sink": {
+									"name": "IsDeleted",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "IsEmailBounced",
+									"type": "String"
+								},
+								"sink": {
+									"name": "IsEmailBounced",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Jigsaw",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Jigsaw",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "JigsawContactId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "JigsawContactId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastActivityDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastActivityDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastCURequestDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastCURequestDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastCUUpdateDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastCUUpdateDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastModifiedById",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastModifiedById",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastModifiedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastModifiedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastReferencedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastReferencedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastViewedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastViewedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LeadSource",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LeadSource",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LinkedIn_URL__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LinkedIn_URL__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Maiden_Name__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Maiden_Name__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MailingCity",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MailingCity",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MailingCountry",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MailingCountry",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MailingCountryCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MailingCountryCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MailingGeocodeAccuracy",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MailingGeocodeAccuracy",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MailingLatitude",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MailingLatitude",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MailingLongitude",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MailingLongitude",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MailingPostalCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MailingPostalCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MailingState",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MailingState",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MailingStateCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MailingStateCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MailingStreet",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MailingStreet",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MasterRecordId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MasterRecordId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MiddleName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MiddleName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MobilePhone",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MobilePhone",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Month_and_Year__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Month_and_Year__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Org_Code__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Org_Code__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherCity",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherCity",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherCountry",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherCountry",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherCountryCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherCountryCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherGeocodeAccuracy",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherGeocodeAccuracy",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherLatitude",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherLatitude",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherLongitude",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherLongitude",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherPhone",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherPhone",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherPostalCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherPostalCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherState",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherState",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherStateCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherStateCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OtherStreet",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OtherStreet",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OwnerId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OwnerId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Personal_Mobile__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Personal_Mobile__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Phone",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Phone",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Phone_Text__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Phone_Text__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PhotoUrl",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PhotoUrl",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Primary_Academic_Program__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Primary_Academic_Program__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Primary_Account_Location__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Primary_Account_Location__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Primary_Department__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Primary_Department__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Primary_Educational_Institution__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Primary_Educational_Institution__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Primary_Membership__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Primary_Membership__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Primary_POC__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Primary_POC__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Primary_Sports_Organization__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Primary_Sports_Organization__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RecordTypeId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "RecordTypeId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ReportsToId",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ReportsToId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Salutation",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Salutation",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "School_Status__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "School_Status__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "School_Status_Effective_Date__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "School_Status_Effective_Date__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "State__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "State__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Student_ID__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Student_ID__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Student_Number__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Student_Number__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Student_On_Hold__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Student_On_Hold__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Student_Type__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Student_Type__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Suffix",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Suffix",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SystemModstamp",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SystemModstamp",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Title",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Title",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Unique_Student_ID__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Unique_Student_ID__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "X18DigitID__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "X18DigitID__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ZES_Status__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ZES_Status__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ZES_Type__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ZES_Type__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Zip__c",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Zip__c",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "IssueID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "IssueID",
+									"type": "Int32"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ADFSalesforceDataLakeRetrievalDataset",
+						"type": "DatasetReference",
+						"parameters": {
+							"sinktablename": "Contact",
+							"issuename": {
+								"value": "@concat(activity('Get Posting Group Detail').output.firstrow.IssueName,'.txt')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADFOnPremStagingContactDataset",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load Data",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Stage Data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[salesforce].[usp_LoadContact]",
+					"storedProcedureParameters": {
+						"pETLExecutionId": {
+							"value": {
+								"value": "@pipeline().parameters.ETLExecutionID",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"pPathId": {
+							"value": "-1",
+							"type": "Int32"
+						},
+						"pPostingGroupProcessingId": {
+							"value": {
+								"value": "@activity('Get Posting Group Detail').output.firstrow.ParentPostingGroupProcessingId",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"pVerbose": {
+							"value": "False",
+							"type": "Boolean"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ADFOnPremStagingDatabaseConnector",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"ParentPostingGroupBatchId": {
+				"type": "string",
+				"defaultValue": "-1"
+			},
+			"ParentPostingGroupBatchSeq": {
+				"type": "string",
+				"defaultValue": "-1"
+			},
+			"ParentPostingGroupId": {
+				"type": "string",
+				"defaultValue": "-1"
+			},
+			"ETLExecutionID": {
+				"type": "string",
+				"defaultValue": "-1"
+			}
+		},
+		"variables": {
+			"ContactPostingGroupChildCode": {
+				"type": "String",
+				"defaultValue": "SF-EDL-SF-CONTACT"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-03-22T11:37:05Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

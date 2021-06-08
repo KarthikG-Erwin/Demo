@@ -1,0 +1,114 @@
+{
+	"name": "Dim_CFMMETPAIPPS_SCD2",
+	"properties": {
+		"description": "Using byNames to fully parameterize a Slowly Change Dimension Type 2 patter",
+		"activities": [
+			{
+				"name": "JSBI8DMADFIOCFMMETPAIPPS",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "JSBI8DMADFIOCFMMETPAIPPS",
+						"type": "DataFlowReference",
+						"parameters": {
+							"aidn": "1290066"
+						},
+						"datasetParameters": {
+							"TBYDMADFIOCFMMETPAIPPS": {
+								"TempFolder": "CFMMETPAIPPS/temp"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Generic_SCD2",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "JSBI8DMADFIOCFMMETPAIPPS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "SCD2_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PrimaryKey": "CMETPAIPPS",
+						"ColumnNames": "LMETPAIPPSNDL,LMETPAIPPSFRA,LMETPAIPPSANG",
+						"NewInsertsFolder": "CFMMETPAIPPS/insert",
+						"NewUpdatesFolder": "CFMMETPAIPPS/update",
+						"CurrentDimensionFolder": "CFMMETPAIPPS/delta",
+						"TempFolder": "CFMMETPAIPPS/temp",
+						"Target_Entity": "TBYDMADFIOCFMMETPAIPPS",
+						"Target_Folder": "CFMMETPAIPPS",
+						"ActiveStartTimeField": "DDEBSIT",
+						"ActiveEndTimeField": "DFINSIT",
+						"SKKeyField": "RowID",
+						"ActiveFlagField": "BSITCOU"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"PrimaryKey": {
+				"type": "string",
+				"defaultValue": "CMETPAIPPS"
+			},
+			"ColumnNames": {
+				"type": "string",
+				"defaultValue": "LMETPAIPPSNDL,LMETPAIPPSFRA,LMETPAIPPSANG"
+			},
+			"NewInsertsFolder": {
+				"type": "string",
+				"defaultValue": "CFMMETPAIPPS/insert"
+			},
+			"NewUpdatesFolder": {
+				"type": "string",
+				"defaultValue": "CFMMETPAIPPS/update"
+			},
+			"CurrentDimensionFolder": {
+				"type": "string",
+				"defaultValue": "CFMMETPAIPPS/delta"
+			},
+			"TempFolder": {
+				"type": "string",
+				"defaultValue": "CFMMETPAIPPS/temp"
+			},
+			"TimeStampFormat": {
+				"type": "string",
+				"defaultValue": "yyyyMMdd_HHmmss"
+			},
+			"DateFormat": {
+				"type": "string",
+				"defaultValue": "yyyyMMdd"
+			}
+		},
+		"folder": {
+			"name": "GenericSCD2_Pipeline"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-08-19T11:52:15Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

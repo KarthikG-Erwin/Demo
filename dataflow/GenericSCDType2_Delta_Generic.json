@@ -1,0 +1,125 @@
+{
+	"name": "GenericSCDType2_Delta_Generic",
+	"properties": {
+		"folder": {
+			"name": "Generic_SCD2"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "TempInputParquet_Generic",
+						"type": "DatasetReference"
+					},
+					"name": "GenericInput"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "ExistingDimensionTable"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "DimInsertsSink_Generic",
+						"type": "DatasetReference"
+					},
+					"name": "InsertSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "DimUpdatesSink_Generic",
+						"type": "DatasetReference"
+					},
+					"name": "UpdatesSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "NewAndUpdatedRows"
+				},
+				{
+					"name": "AddHashInput"
+				},
+				{
+					"name": "AddHashExisting"
+				},
+				{
+					"name": "GetMaxSurrogateKey"
+				},
+				{
+					"name": "AddKey"
+				},
+				{
+					"name": "JoinWithMaxSurrogateKey"
+				},
+				{
+					"name": "FilterForUpdatedValues"
+				},
+				{
+					"name": "UpdateObsolete"
+				},
+				{
+					"name": "DropUnwantedColsInput"
+				},
+				{
+					"name": "DropUnwantedColumns"
+				},
+				{
+					"name": "FilterForActive"
+				},
+				{
+					"name": "RenameOldActiveFlags"
+				},
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "DerivedColumn2"
+				},
+				{
+					"name": "ReOrderColumns"
+				},
+				{
+					"name": "ReorderColumns2"
+				},
+				{
+					"name": "AlterRow1"
+				},
+				{
+					"name": "AlterRow2"
+				},
+				{
+					"name": "Union1"
+				},
+				{
+					"name": "GetMaxSurrogateKeyNullCheck"
+				},
+				{
+					"name": "LookupNewEndDate"
+				},
+				{
+					"name": "SelectNewStartDate"
+				},
+				{
+					"name": "Select1"
+				},
+				{
+					"name": "Select2"
+				}
+			],
+			"script": "parameters{\n\tPrimaryKey as string ('CPRD'),\n\tColumns as string ('CPRD,LPRDNDL,LPRDFRA,LPRDANG,LUNVNDL,LUNVFRA,LUNVANG'),\n\tActiveStartTimeField as string ('DDEBSIT'),\n\tActiveEndTimeField as string ('DFINSIT'),\n\tActiveFlagField as string ('BSITCOU'),\n\tSKKeyField as string ('RowID'),\n\tCurrentDimSource as string (concat('PRD/','delta')),\n\tRunId as string (toString(currentTimestamp(),'yyyyMMddHHmmss'))\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tpurgeFiles: true,\n\tformat: 'parquet') ~> GenericInput\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Optimal',\n\tcontainer: 'agi',\n\tfolderPath: (concat('agi_poc/', $CurrentDimSource))) ~> ExistingDimensionTable\nAddHashInput, AddHashExisting exists(AddHashInput@id_hash == AddHashExisting@id_hash\n\t&& AddHashInput@columns_hash == AddHashExisting@columns_hash,\n\tnegate:true,\n\tbroadcast: 'auto')~> NewAndUpdatedRows\nGenericInput derive(id_hash = md5(byNames(split($PrimaryKey,','))),\n\t\tcolumns_hash = md5(byNames(split($Columns,',')))) ~> AddHashInput\nFilterForActive derive(id_hash = md5(byNames(split($PrimaryKey,','))),\n\t\tcolumns_hash = md5(byNames(split($Columns,',')))) ~> AddHashExisting\nAddHashExisting aggregate(MaxSurrogateKey = max(toInteger(byName($SKKeyField)))) ~> GetMaxSurrogateKey\nNewAndUpdatedRows keyGenerate(output(Key as long),\n\tstartAt: 1L) ~> AddKey\nAddKey, GetMaxSurrogateKeyNullCheck join(Key == MaxSurrogateKey || true(),\n\tjoinType:'cross',\n\tbroadcast: 'right')~> JoinWithMaxSurrogateKey\nAddHashExisting, NewAndUpdatedRows exists(AddHashExisting@id_hash == AddHashInput@id_hash,\n\tnegate:false,\n\tbroadcast: 'auto')~> FilterForUpdatedValues\nRenameOldActiveFlags derive(each(match(name==concat($ActiveFlagField,'_old')), concat($ActiveFlagField,'') = 0),\n\t\teach(match(name==concat($ActiveEndTimeField,'_old')), concat($ActiveEndTimeField,'') = byName(concat('oldvals_',$ActiveStartTimeField)))) ~> UpdateObsolete\nDerivedColumn2 select(mapColumn(\n\t\teach(match(!in(['id_hash','columns_hash','MaxSurrogateKey','Key'],name)))\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> DropUnwantedColsInput\nUpdateObsolete select(mapColumn(\n\t\teach(match(!in(['id_hash','columns_hash','MaxSurrogateKey',concat($ActiveEndTimeField,'_old'),concat($ActiveFlagField,'_old')],name)&&!startsWith(name,'oldvals_')))\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> DropUnwantedColumns\nExistingDimensionTable filter(toInteger(byName($ActiveFlagField)) == 1) ~> FilterForActive\nLookupNewEndDate select(mapColumn(\n\t\teach(match(name==$ActiveEndTimeField),\n\t\t\tconcat($ActiveEndTimeField,'_old') = $$),\n\t\teach(match(name==$ActiveFlagField),\n\t\t\tconcat($ActiveFlagField,'_old') = $$),\n\t\teach(match(!in([$ActiveEndTimeField,$ActiveFlagField],name)))\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> RenameOldActiveFlags\nJoinWithMaxSurrogateKey derive(each(match(name=='id_hash'), $$ = $$, concat($SKKeyField,'') = MaxSurrogateKey+Key)) ~> DerivedColumn1\nDerivedColumn1 derive(each(match(name=='id_hash'), concat($ActiveFlagField,'') = 1)) ~> DerivedColumn2\nDropUnwantedColsInput select(mapColumn(\n\t\teach(match(name==$SKKeyField),\n\t\t\t$SKKeyField = $$),\n\t\teach(match(!in([$SKKeyField,$ActiveStartTimeField,$ActiveEndTimeField,$ActiveFlagField],name))),\n\t\teach(match(name==$ActiveStartTimeField),\n\t\t\t$ActiveStartTimeField = $$),\n\t\teach(match(name==$ActiveEndTimeField),\n\t\t\t$ActiveEndTimeField = $$),\n\t\teach(match(name==$ActiveFlagField),\n\t\t\t$ActiveFlagField = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> ReOrderColumns\nDropUnwantedColumns select(mapColumn(\n\t\teach(match(name==$SKKeyField),\n\t\t\t$SKKeyField = $$),\n\t\teach(match(!in([$SKKeyField,$ActiveStartTimeField,$ActiveEndTimeField,$ActiveFlagField],name))),\n\t\teach(match(name==$ActiveStartTimeField),\n\t\t\t$ActiveStartTimeField = $$),\n\t\teach(match(name==$ActiveEndTimeField),\n\t\t\t$ActiveEndTimeField = $$),\n\t\teach(match(name==$ActiveFlagField),\n\t\t\t$ActiveFlagField = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> ReorderColumns2\nReOrderColumns alterRow(insertIf(true())) ~> AlterRow1\nReorderColumns2 alterRow(updateIf(true())) ~> AlterRow2\nAlterRow1, AlterRow2 union(byName: true)~> Union1\nGetMaxSurrogateKey derive(MaxSurrogateKey = iifNull(MaxSurrogateKey, 0)) ~> GetMaxSurrogateKeyNullCheck\nFilterForUpdatedValues, SelectNewStartDate lookup(id_hash == oldvals_id_hash,\n\tmultiple: false,\n\tpickup: 'last',\n\tasc($ActiveStartTimeField, true),\n\tbroadcast: 'auto')~> LookupNewEndDate\nNewAndUpdatedRows select(mapColumn(\n\t\teach(match(in(['id_hash',$ActiveStartTimeField],name)),\n\t\t\tconcat('oldvals_',$$) = $$)\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectNewStartDate\nReOrderColumns select(mapColumn(\n\t\teach(match(name!=$SKKeyField))\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nReorderColumns2 select(mapColumn(\n\t\teach(match(name!=$SKKeyField))\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nUnion1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcontainer: 'agi',\n\tfolderPath: (concat('agi_poc/', $CurrentDimSource)),\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:[($SKKeyField),(iif(length(reduce(split($PrimaryKey, ','),'',#acc+'1',#result))>=1,split($PrimaryKey, ',')[1],split($PrimaryKey, ',')[1])),(iif(length(reduce(split($PrimaryKey, ','),'',#acc+'1',#result))>=2,split($PrimaryKey, ',')[2],split($PrimaryKey, ',')[1])),(iif(length(reduce(split($PrimaryKey, ','),'',#acc+'1',#result))>=3,split($PrimaryKey, ',')[3],split($PrimaryKey, ',')[1])),(iif(length(reduce(split($PrimaryKey, ','),'',#acc+'1',#result))>=4,split($PrimaryKey, ',')[4],split($PrimaryKey, ',')[1])),(iif(length(reduce(split($PrimaryKey, ','),'',#acc+'1',#result))>=5,split($PrimaryKey, ',')[5],split($PrimaryKey, ',')[1]))],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 3) ~> sink1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat('inserts_',$RunId,'.csv'))],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tpartitionBy('hash', 1)) ~> InsertSink\nSelect2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat('updates_',$RunId,'.csv'))],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\tpartitionBy('hash', 1)) ~> UpdatesSink"
+		}
+	}
+}

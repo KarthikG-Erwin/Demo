@@ -1,0 +1,116 @@
+{
+	"name": "Dim_PRD_SCD2",
+	"properties": {
+		"description": "Using byNames to fully parameterize a Slowly Change Dimension Type 2 patter",
+		"activities": [
+			{
+				"name": "Generic_SCD2",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "JSBI8DMADFIOCFMPRD",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "SCD2_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PrimaryKey": "CPRD",
+						"ColumnNames": "CPRD,LPRDNDL,LPRDFRA,LPRDANG,LUNVNDL,LUNVFRA,LUNVANG",
+						"NewInsertsFolder": "PRD/insert",
+						"NewUpdatesFolder": "PRD/update",
+						"CurrentDimensionFolder": "PRD/delta",
+						"TempFolder": "PRD/temp",
+						"Target_Entity": "TBYDMADFIOCFMPRD\n",
+						"Target_Folder": "PRD",
+						"ActiveStartTimeField": "DDEBSIT",
+						"ActiveEndTimeField": "DFINSIT",
+						"SKKeyField": "RowID",
+						"ActiveFlagField": "BSITCOU"
+					}
+				}
+			},
+			{
+				"name": "JSBI8DMADFIOCFMPRD",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "JSBI8DMADFIOCFMPRD",
+						"type": "DataFlowReference",
+						"parameters": {
+							"etls_begdate": "currentTimestamp()",
+							"etls_enddate": "toTimestamp('9999-12-31 23:59:59','yyyy-MM-dd HH:mm:ss')",
+							"aidn": "1290066"
+						},
+						"datasetParameters": {
+							"TBYDMADFIOCFMPRD": {
+								"TempFolder": "PRD/temp"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"PrimaryKey": {
+				"type": "string",
+				"defaultValue": "CPRD"
+			},
+			"ColumnNames": {
+				"type": "string",
+				"defaultValue": "CPRD,LPRDNDL,LPRDFRA,LPRDANG,LUNVNDL,LUNVFRA,LUNVANG"
+			},
+			"NewInsertsFolder": {
+				"type": "string",
+				"defaultValue": "PRD/insert"
+			},
+			"NewUpdatesFolder": {
+				"type": "string",
+				"defaultValue": "PRD/update"
+			},
+			"CurrentDimensionFolder": {
+				"type": "string",
+				"defaultValue": "PRD/delta"
+			},
+			"TempFolder": {
+				"type": "string",
+				"defaultValue": "PRD/temp"
+			},
+			"TimeStampFormat": {
+				"type": "string",
+				"defaultValue": "yyyyMMdd_HHmmss"
+			},
+			"DateFormat": {
+				"type": "string",
+				"defaultValue": "yyyyMMdd"
+			}
+		},
+		"folder": {
+			"name": "GenericSCD2_Pipeline"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-08-19T11:52:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

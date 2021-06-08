@@ -1,0 +1,942 @@
+{
+	"name": "ADFSalesforcePublicationPipeline_original",
+	"properties": {
+		"description": "Publication Pipeline",
+		"activities": [
+			{
+				"name": "GetPublications",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderStoredProcedureName": "[ctl].[usp_GetPublicationList_DataFactory]",
+						"storedProcedureParameters": {
+							"pETLExecutionId": {
+								"type": "Int32",
+								"value": "-1"
+							},
+							"pPathId": {
+								"type": "Int32",
+								"value": "-1"
+							},
+							"pPublisherCode": {
+								"type": "String",
+								"value": "SF"
+							},
+							"pVerbose": {
+								"type": "Boolean",
+								"value": "False"
+							}
+						},
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ADFOnPremSQLServerStage",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "IteratePublications",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetPublications",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "GetReportTime",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetPublications').output.value",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 20,
+					"activities": [
+						{
+							"name": "GetPeriodStartTime",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderStoredProcedureName": "[ctl].[GetTablePublicationList]",
+									"storedProcedureParameters": {
+										"pPublicationCode": {
+											"type": "String",
+											"value": {
+												"value": "@{item().PublicationCode}",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ADFOnPremSQLServerStage",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "GetPeriodEndTime",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SalesforceSource",
+									"query": {
+										"value": "SELECT MAX(LastModifiedDate) PeriodEndTime FROM @{item().SrcPublicationName} ",
+										"type": "Expression"
+									},
+									"readBehavior": "queryAll"
+								},
+								"dataset": {
+									"referenceName": "ADFSalesforceDatabaseDataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": "Account"
+									}
+								}
+							}
+						},
+						{
+							"name": "CreateLogEntry",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderStoredProcedureName": "[audit].[up_Event_Package_OnBegin]",
+									"storedProcedureParameters": {
+										"ExecutionGuid": {
+											"type": "Guid",
+											"value": {
+												"value": "@guid()",
+												"type": "Expression"
+											}
+										},
+										"MachineName": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().Pipeline",
+												"type": "Expression"
+											}
+										},
+										"PackageGuid": {
+											"type": "Guid",
+											"value": "4580CA1D-8168-4836-8CE9-FC365AAA0FC7"
+										},
+										"PackageName": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().DataFactory",
+												"type": "Expression"
+											}
+										},
+										"PackageLevelId": {
+											"type": "Int32",
+											"value": "0"
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ADFOnPremSQLServerStage",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "InsertNewIssue",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "CreateLogEntry",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "ConvertPeriodEndTimeToPST",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "ConvertPeriodStartTimeToUTC",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderStoredProcedureName": "[ctl].[usp_InsertNewIssue]",
+									"storedProcedureParameters": {
+										"pCreateBy": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().DataFactory",
+												"type": "Expression"
+											}
+										},
+										"pETLExecutionId": {
+											"type": "Int32",
+											"value": {
+												"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+												"type": "Expression"
+											}
+										},
+										"pFirstRecordChecksum": {
+											"type": "String",
+											"value": "N/A"
+										},
+										"pFirstRecordSeq": {
+											"type": "Int32",
+											"value": "0"
+										},
+										"pIssueId": {
+											"type": "Int32",
+											"value": "-1"
+										},
+										"pLastRecordChecksum": {
+											"type": "String",
+											"value": "N/A"
+										},
+										"pLastRecordSeq": {
+											"type": "Int32",
+											"value": "0"
+										},
+										"pPeriodStartTime": {
+											"type": "DateTime",
+											"value": {
+												"value": "@activity('GetPeriodStartTime').output.firstrow.PeriodStartTime",
+												"type": "Expression"
+											}
+										},
+										"pPublicationCode": {
+											"type": "String",
+											"value": {
+												"value": "@{item().PublicationCode}",
+												"type": "Expression"
+											}
+										},
+										"pRecordCount": {
+											"type": "Int32",
+											"value": "0"
+										},
+										"pStatusCode": {
+											"type": "String",
+											"value": "IP"
+										},
+										"pVerbose": {
+											"type": "Boolean",
+											"value": "False"
+										},
+										"pPeriodEndTime": {
+											"type": "DateTime",
+											"value": {
+												"value": "@activity('ConvertPeriodEndTimeToPST').output.firstrow.PST",
+												"type": "Expression"
+											}
+										},
+										"pSrcDFCreatedDate": {
+											"type": "DateTime",
+											"value": {
+												"value": "@activity('GetReportTime').output.firstrow.PST",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ADFOnPremSQLServerStage",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "GetIssue",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "InsertNewIssue",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderStoredProcedureName": "[ctl].[usp_GetIssueDetails]",
+									"storedProcedureParameters": {
+										"pETLExecutionId": {
+											"type": "Int32",
+											"value": {
+												"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+												"type": "Expression"
+											}
+										},
+										"pIssueId": {
+											"type": "Int32",
+											"value": {
+												"value": "@activity('InsertNewIssue').output.firstrow.IssueId",
+												"type": "Expression"
+											}
+										},
+										"pPathId": {
+											"type": "Int32",
+											"value": "-1"
+										},
+										"pVerbose": {
+											"type": "Boolean",
+											"value": "False"
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ADFOnPremSQLServerStage",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "UpdateIssue-IS",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "GetIssue",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[ctl].[usp_UpdateIssue]",
+								"storedProcedureParameters": {
+									"pETLExecutionId": {
+										"value": {
+											"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pIssueId": {
+										"value": {
+											"value": "@activity('GetIssue').output.firstrow.IssueId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pModifiedBy": {
+										"value": {
+											"value": "@pipeline().DataFactory",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pModifiedDtm": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"pStatusCode": {
+										"value": "IS",
+										"type": "String"
+									},
+									"pVerbose": {
+										"value": "False",
+										"type": "Boolean"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ADFOnPremStagingDatabaseConnector",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "LoadDataLake",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "UpdateIssue-IS",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.01:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SalesforceSource",
+									"query": {
+										"value": "SELECT * FROM @{item().SrcPublicationName}  WHERE LastModifiedDate > {ts'@{formatDateTime(activity('ConvertPeriodStartTimeToUTC').output.firstRow.UTC,'yyyy-MM-dd HH:mm:ss')}'} AND LastModifiedDate <= {ts'@{formatDateTime(activity('GetPeriodEndTime').output.firstRow.PeriodEndTime,'yyyy-MM-dd HH:mm:ss')}'} \n",
+										"type": "Expression"
+									},
+									"readBehavior": "queryAll"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ADFSalesforceDatabaseDataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": "Account"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ADFDataLakeStorage",
+									"type": "DatasetReference",
+									"parameters": {
+										"sinktablename": "Contact"
+									}
+								}
+							]
+						},
+						{
+							"name": "UpdateIssue-IL",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "LoadDataLake",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[ctl].[usp_UpdateIssue]",
+								"storedProcedureParameters": {
+									"pETLExecutionId": {
+										"value": {
+											"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pIssueId": {
+										"value": {
+											"value": "@activity('GetIssue').output.firstrow.IssueId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pModifiedBy": {
+										"value": {
+											"value": "@pipeline().DataFactory",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pModifiedDtm": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"pStatusCode": {
+										"value": "IL",
+										"type": "String"
+									},
+									"pVerbose": {
+										"value": "False",
+										"type": "Boolean"
+									},
+									"pRecordCount": {
+										"value": {
+											"value": "@activity('LoadDataLake').output.rowsCopied",
+											"type": "Expression"
+										},
+										"type": "int32"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ADFOnPremStagingDatabaseConnector",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "NotifySubscriberOfDistribution",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "UpdateIssue-IL",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[ctl].[usp_NotifySubscriberOfDistribution]",
+								"storedProcedureParameters": {
+									"pETLExecutionId": {
+										"value": {
+											"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pIssueId": {
+										"value": {
+											"value": "@activity('GetIssue').output.firstrow.IssueId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pIsDataHub": {
+										"value": "2",
+										"type": "Int32"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ADFOnPremStagingDatabaseConnector",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "UpdateLogEntry",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "NotifySubscriberOfDistribution",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderStoredProcedureName": "[audit].[up_Event_Package_OnEnd]",
+									"storedProcedureParameters": {
+										"logID": {
+											"type": "Int32",
+											"value": {
+												"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ADFOnPremSQLServerStage",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "HandleError-LoadDataLake",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "LoadDataLake",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ADFSalesforcePublicationErrorPipeline",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"IssueId": {
+										"value": "@activity('GetIssue').output.firstrow.IssueId",
+										"type": "Expression"
+									},
+									"ETLExecutionId": {
+										"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "HandleError-GetIssue",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "GetIssue",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ADFSalesforcePublicationErrorPipeline",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"IssueId": {
+										"value": "@activity('GetIssue').output.firstrow.IssueId",
+										"type": "Expression"
+									},
+									"ETLExecutionId": {
+										"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "HandleError-UpdateIssue_IS",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "UpdateIssue-IS",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ADFSalesforcePublicationErrorPipeline",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"IssueId": {
+										"value": "@activity('GetIssue').output.firstrow.IssueId",
+										"type": "Expression"
+									},
+									"ETLExecutionId": {
+										"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "HandleError-UpdateIssue-IL",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "UpdateIssue-IL",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ADFSalesforcePublicationErrorPipeline",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"IssueId": {
+										"value": "@activity('GetIssue').output.firstrow.IssueId",
+										"type": "Expression"
+									},
+									"ETLExecutionId": {
+										"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "HandleErorr-NotifySubscriberOfDistribution",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "NotifySubscriberOfDistribution",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ADFSalesforcePublicationErrorPipeline",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"IssueId": {
+										"value": "@activity('GetIssue').output.firstrow.IssueId",
+										"type": "Expression"
+									},
+									"ETLExecutionId": {
+										"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "ConvertPeriodEndTimeToPST",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "GetPeriodEndTime",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderStoredProcedureName": "[salesforce].[usp_ConvertUTCToPST]",
+									"storedProcedureParameters": {
+										"pUTC": {
+											"type": "DateTime",
+											"value": {
+												"value": "@activity('GetPeriodEndTime').output.firstrow.PeriodEndTime",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ADFOnPremSQLServerStage",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "ConvertPeriodStartTimeToUTC",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "GetPeriodStartTime",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderStoredProcedureName": "[salesforce].[usp_ConvertPSTToUTC]",
+									"storedProcedureParameters": {
+										"pPST": {
+											"type": "DateTime",
+											"value": {
+												"value": "@activity('GetPeriodStartTime').output.firstrow.PeriodStartTime",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ADFOnPremSQLServerStage",
+									"type": "DatasetReference"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "GetReportTime",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderStoredProcedureName": "[salesforce].[usp_ConvertUTCToPST]",
+						"storedProcedureParameters": {
+							"pUTC": {
+								"type": "DateTime",
+								"value": {
+									"value": "@string(formatDateTime(utcnow(),'yyyy-MM-dd HH:mm:ss'))",
+									"type": "Expression"
+								}
+							}
+						},
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ADFOnPremSQLServerStage",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "LoadReporting",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "IteratePublications",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ADFSalesforceReportingPipeline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-03-01T11:51:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

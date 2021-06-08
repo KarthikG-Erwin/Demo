@@ -1,0 +1,35 @@
+{
+	"name": "dataflow_map",
+	"properties": {
+		"folder": {
+			"name": "Test"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "data",
+						"type": "DatasetReference"
+					},
+					"name": "MBRCTCETERM"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dataflow_map1",
+						"type": "DatasetReference"
+					},
+					"name": "MBRCTCEDETERM"
+				}
+			],
+			"transformations": [
+				{
+					"name": "bldMbRctCedeTerm"
+				}
+			],
+			"script": "source(output(\n\t\tMB_RCT_CEDE_TERM_ID as string,\n\t\tCEDE_EDW_TERM_DATE as string,\n\t\tCEDE_TERM_NAME as string,\n\t\tCEDE_TERM_COUNTRY as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> MBRCTCETERM\nMBRCTCETERM derive(MB_RCT_CEDE_TERM_ID = concat('16185','1'),\n\t\tCEDE_EDW_TERM_DATE = replace(CEDE_EDW_TERM_DATE,'15-10-2017','15-3-2015'),\n\t\tCEDE_TERM_COUNTRY = CEDE_TERM_COUNTRY == 'Britain') ~> bldMbRctCedeTerm\nbldMbRctCedeTerm sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tid as string,\n\t\ttitle as string,\n\t\tauthor as string,\n\t\tformat as string,\n\t\tprice as string\n\t),\n\tpartitionFileNames:['dataflow_map.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> MBRCTCEDETERM"
+		}
+	}
+}

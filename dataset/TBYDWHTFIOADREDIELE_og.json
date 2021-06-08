@@ -1,0 +1,42 @@
+{
+	"name": "TBYDWHTFIOADREDIELE_og",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Fact"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TBYDWHTFIOADREDIELE.parquet",
+				"folderPath": "Fact",
+				"fileSystem": "agi"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "CLGN",
+				"type": "UTF8"
+			},
+			{
+				"name": "CCDI",
+				"type": "UTF8"
+			},
+			{
+				"name": "AIDNFIOOPFEDIPCELGL",
+				"type": "INT32"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "INT32"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

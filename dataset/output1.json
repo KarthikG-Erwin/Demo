@@ -1,0 +1,88 @@
+{
+	"name": "output1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimension"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "InputFile",
+				"fileSystem": "agi"
+			},
+			"columnDelimiter": "|",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "SIDNFIOCFMPRD",
+				"type": "long"
+			},
+			{
+				"name": "CPRD",
+				"type": "String"
+			},
+			{
+				"name": "LPRDNDL",
+				"type": "String"
+			},
+			{
+				"name": "LPRDFRA",
+				"type": "String"
+			},
+			{
+				"name": "LPRDANG",
+				"type": "String"
+			},
+			{
+				"name": "CUNV",
+				"type": "String"
+			},
+			{
+				"name": "LUNVNDL",
+				"type": "String"
+			},
+			{
+				"name": "LUNVFRA",
+				"type": "String"
+			},
+			{
+				"name": "LUNVANG",
+				"type": "String"
+			},
+			{
+				"name": "BPAC",
+				"type": "short"
+			},
+			{
+				"name": "DNUMLOT",
+				"type": "timestamp"
+			},
+			{
+				"name": "AIDNAUD",
+				"type": "long"
+			},
+			{
+				"name": "DDEBSIT",
+				"type": "timestamp"
+			},
+			{
+				"name": "DFINSIT",
+				"type": "timestamp"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "integer"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

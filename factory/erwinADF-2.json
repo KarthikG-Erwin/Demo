@@ -1,0 +1,9 @@
+{
+	"name": "erwinADF-2",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "2110bcf4-55d3-4c89-aad7-a8f12539cf29",
+		"tenantId": "ff946ad1-2019-44ee-9424-229594fc1e87"
+	}
+}

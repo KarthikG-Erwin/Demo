@@ -1,0 +1,29 @@
+{
+	"name": "DS_2014_1d_COCE_BI1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServerOnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SQLServerName": {
+				"type": "string"
+			},
+			"DatabaseName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "SNHU_DS"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"typeProperties": {
+			"tableName": {
+				"value": "@{item().Table_Name}",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,58 @@
+{
+	"name": "TestMap",
+	"properties": {
+		"folder": {
+			"name": "Test"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "testmap",
+						"type": "DatasetReference"
+					},
+					"name": "HPHCOOASTDNTS"
+				},
+				{
+					"dataset": {
+						"referenceName": "test_map",
+						"type": "DatasetReference"
+					},
+					"name": "HPHCOOASTDNTS2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText7",
+						"type": "DatasetReference"
+					},
+					"name": "HPHCOOASTUDENTS2"
+				},
+				{
+					"dataset": {
+						"referenceName": "DelimitedText7",
+						"type": "DatasetReference"
+					},
+					"name": "HPHCOOASTUDENTS"
+				}
+			],
+			"transformations": [
+				{
+					"name": "joinfltBlsStuds"
+				},
+				{
+					"name": "trnbldHphcOoaStudents"
+				},
+				{
+					"name": "fltbldHphcOoaStudents"
+				},
+				{
+					"name": "split"
+				}
+			],
+			"script": "source(output(\n\t\tEFFECTIVE_DATE as string,\n\t\tCREATED_BY as string,\n\t\tINTERACTION_ID as string,\n\t\tHPHC_OOA_STUDENT_ID as string,\n\t\tTERM_DATE as string,\n\t\tCREATED_DATE as string,\n\t\tUPDATED_BY as string,\n\t\tUPDATED_DATE as string,\n\t\tPOLICY_NO as string,\n\t\tACTIVITY_ID as string,\n\t\tMEMBER_NO as string,\n\t\tVOIDED as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> HPHCOOASTDNTS\nsource(output(\n\t\tEFFECTIVE_DATE as string,\n\t\tCREATED_BY as string,\n\t\tINTERACTION_ID as string,\n\t\tHPHC_OOA_STUDENT_ID as string,\n\t\tTERM_DATE as string,\n\t\tCREATED_DATE as string,\n\t\tUPDATED_BY as string,\n\t\tUPDATED_DATE as string,\n\t\tPOLICY_NO as string,\n\t\tACTIVITY_ID as string,\n\t\tMEMBER_NO as string,\n\t\tVOIDED as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> HPHCOOASTDNTS2\nHPHCOOASTDNTS, HPHCOOASTDNTS2 join(HPHCOOASTDNTS@HPHC_OOA_STUDENT_ID == HPHCOOASTDNTS2@HPHC_OOA_STUDENT_ID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> joinfltBlsStuds\njoinfltBlsStuds select(mapColumn(\n\t\tEFFECTIVE_DATE = HPHCOOASTDNTS@EFFECTIVE_DATE,\n\t\tHPHC_OOA_STUDENT_ID = HPHCOOASTDNTS@HPHC_OOA_STUDENT_ID,\n\t\tTERM_DATE = HPHCOOASTDNTS@TERM_DATE,\n\t\tPOLICY_NO = HPHCOOASTDNTS@POLICY_NO,\n\t\tMEMBER_NO = HPHCOOASTDNTS@MEMBER_NO\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> trnbldHphcOoaStudents\ntrnbldHphcOoaStudents derive(HPHC_OOA_STUDENT_ID = concat('27-09-1902','21-06-1957'),\n\t\tPOLICY_NO = replace(POLICY_NO,'02-01-1900','02-03-1970')) ~> fltbldHphcOoaStudents\nfltbldHphcOoaStudents split(MEMBER_NO >= 'ER 25',\n\tdisjoint: false) ~> split@(MEMBERNO, others)\nsplit@MEMBERNO sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string,\n\t\tColumn_5 as string\n\t),\n\tpartitionFileNames:['mapoutput.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> HPHCOOASTUDENTS2\nsplit@others sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string,\n\t\tColumn_5 as string\n\t),\n\tpartitionFileNames:['mapoutput1.csv'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> HPHCOOASTUDENTS"
+		}
+	}
+}

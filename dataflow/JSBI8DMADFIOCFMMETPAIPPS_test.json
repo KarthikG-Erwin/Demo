@@ -1,0 +1,80 @@
+{
+	"name": "JSBI8DMADFIOCFMMETPAIPPS_test",
+	"properties": {
+		"folder": {
+			"name": "CFMMETPAIPPS"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "COD_parq",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDWHTLIBSTCCOD"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "TempInputParquet_Generic",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDMADFIOCFMMETPAIPPS"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FIlterCombinedTYMTPY"
+				},
+				{
+					"name": "Aggregate"
+				},
+				{
+					"name": "UserWritten"
+				},
+				{
+					"name": "Join3"
+				},
+				{
+					"name": "Select5"
+				},
+				{
+					"name": "SurrogateKey"
+				},
+				{
+					"name": "Select4"
+				},
+				{
+					"name": "ConditionalSplit2"
+				},
+				{
+					"name": "DerivedColumn"
+				},
+				{
+					"name": "Filter1"
+				},
+				{
+					"name": "Select1"
+				},
+				{
+					"name": "Join1"
+				},
+				{
+					"name": "Select2"
+				},
+				{
+					"name": "Select3"
+				},
+				{
+					"name": "Join2"
+				},
+				{
+					"name": "DatatypeConversion"
+				}
+			],
+			"script": "parameters{\n\taidn as long (1290066)\n}\nsource(output(\n\t\tLSTCCOD as string,\n\t\tLVLRCOD as string,\n\t\tCLANLIB as string,\n\t\tOLD_CLANLIB as string,\n\t\tLLIB005 as string,\n\t\tLLIB012 as string,\n\t\tLLIB025 as string,\n\t\tLLIB065 as string,\n\t\tLLIBDSC as string,\n\t\tDNUMLOT as string,\n\t\tAIDNAUD as string,\n\t\tDDEBSIT as string,\n\t\tDFINSIT as string,\n\t\tBSITCOU as string,\n\t\tSIDNLIBSTCCOD as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDWHTLIBSTCCOD\nDatatypeConversion filter(LSTCCOD == 'TYMTPY' && BSITCOU==1 && (like(CLANLIB, '1%')||like(CLANLIB, '2%')||like(CLANLIB, 'F%'))) ~> FIlterCombinedTYMTPY\nSelect3 aggregate(groupBy(LVLRCOD),\n\tDNUMLOT = max(DNUMLOT)) ~> Aggregate\nSurrogateKey derive(CMETPAIPPS = LVLRCOD,\n\t\tSIDNFIOCFMMETPAIPPS = {_SIDN},\n\t\tAIDNAUD = $aidn) ~> UserWritten\nAggregate, Select3 join(Aggregate@LVLRCOD == Select3@LVLRCOD,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join3\nUserWritten select(mapColumn(\n\t\tDNUMLOT,\n\t\tAIDNAUD,\n\t\tDDEBSIT,\n\t\tDFINSIT,\n\t\tBSITCOU,\n\t\tLMETPAIPPSNDL,\n\t\tLMETPAIPPSFRA,\n\t\tLMETPAIPPSANG,\n\t\tCMETPAIPPS,\n\t\tSIDNFIOCFMMETPAIPPS\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select5\nSelect4 keyGenerate(output({_SIDN} as long),\n\tstartAt: 1L) ~> SurrogateKey\nJoin3 select(mapColumn(\n\t\tLVLRCOD = Aggregate@LVLRCOD,\n\t\tDNUMLOT = Aggregate@DNUMLOT,\n\t\tAIDNAUD,\n\t\tDDEBSIT,\n\t\tDFINSIT,\n\t\tBSITCOU,\n\t\tLMETPAIPPSNDL,\n\t\tLMETPAIPPSFRA,\n\t\tLMETPAIPPSANG\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select4\nFilter1 split(toString(case(like(CLANLIB, '1%'), LLIB065, ''))==LMETPAIPPSFRA,\n\ttoString(case(like(CLANLIB, '2%'), LLIB065, ''))==LMETPAIPPSNDL,\n\ttoString(case(like(CLANLIB, 'F%'), LLIB065, ''))==LMETPAIPPSANG,\n\tdisjoint: false) ~> ConditionalSplit2@(LMETPAIPPSFRA, LMETPAIPPSNDL, LMETPAIPPSANG)\nFIlterCombinedTYMTPY derive(LMETPAIPPSFRA = LLIB065,\n\t\tLMETPAIPPSNDL = LLIB065,\n\t\tLMETPAIPPSANG = LLIB065) ~> DerivedColumn\nDerivedColumn filter(!isNull(LMETPAIPPSFRA) && !isNull(LMETPAIPPSNDL) && !isNull(LMETPAIPPSANG)) ~> Filter1\nConditionalSplit2@LMETPAIPPSNDL select(mapColumn(\n\t\tLSTCCOD,\n\t\tLVLRCOD,\n\t\tCLANLIB,\n\t\tLLIB005,\n\t\tLLIB012,\n\t\tLLIB025,\n\t\tLLIB065,\n\t\tLLIBDSC,\n\t\tDNUMLOT,\n\t\tAIDNAUD,\n\t\tDDEBSIT,\n\t\tDFINSIT,\n\t\tBSITCOU,\n\t\tSIDNLIBSTCCOD,\n\t\tLMETPAIPPSFRA,\n\t\tLMETPAIPPSNDL\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1, ConditionalSplit2@LMETPAIPPSFRA join(Select1@LVLRCOD == ConditionalSplit2@LMETPAIPPSFRA@LVLRCOD,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nJoin1 select(mapColumn(\n\t\tLSTCCOD = Select1@LSTCCOD,\n\t\tLVLRCOD = Select1@LVLRCOD,\n\t\tCLANLIB = Select1@CLANLIB,\n\t\tLLIB005 = Select1@LLIB005,\n\t\tLLIB012 = Select1@LLIB012,\n\t\tLLIB025 = Select1@LLIB025,\n\t\tLLIB065 = Select1@LLIB065,\n\t\tLLIBDSC = Select1@LLIBDSC,\n\t\tDNUMLOT = Select1@DNUMLOT,\n\t\tAIDNAUD = Select1@AIDNAUD,\n\t\tDDEBSIT = Select1@DDEBSIT,\n\t\tDFINSIT = Select1@DFINSIT,\n\t\tBSITCOU = Select1@BSITCOU,\n\t\tSIDNLIBSTCCOD = Select1@SIDNLIBSTCCOD,\n\t\tLMETPAIPPSNDL = Select1@LMETPAIPPSNDL,\n\t\tLSTCCOD = ConditionalSplit2@LMETPAIPPSFRA@LSTCCOD,\n\t\tLVLRCOD = ConditionalSplit2@LMETPAIPPSFRA@LVLRCOD,\n\t\tCLANLIB = ConditionalSplit2@LMETPAIPPSFRA@CLANLIB,\n\t\tLLIB005 = ConditionalSplit2@LMETPAIPPSFRA@LLIB005,\n\t\tLLIB012 = ConditionalSplit2@LMETPAIPPSFRA@LLIB012,\n\t\tLLIB025 = ConditionalSplit2@LMETPAIPPSFRA@LLIB025,\n\t\tLLIB065 = ConditionalSplit2@LMETPAIPPSFRA@LLIB065,\n\t\tLLIBDSC = ConditionalSplit2@LMETPAIPPSFRA@LLIBDSC,\n\t\tDNUMLOT = ConditionalSplit2@LMETPAIPPSFRA@DNUMLOT,\n\t\tAIDNAUD = ConditionalSplit2@LMETPAIPPSFRA@AIDNAUD,\n\t\tDDEBSIT = ConditionalSplit2@LMETPAIPPSFRA@DDEBSIT,\n\t\tDFINSIT = ConditionalSplit2@LMETPAIPPSFRA@DFINSIT,\n\t\tBSITCOU = ConditionalSplit2@LMETPAIPPSFRA@BSITCOU,\n\t\tSIDNLIBSTCCOD = ConditionalSplit2@LMETPAIPPSFRA@SIDNLIBSTCCOD,\n\t\tLMETPAIPPSFRA = ConditionalSplit2@LMETPAIPPSFRA@LMETPAIPPSFRA\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nJoin2 select(mapColumn(\n\t\tLVLRCOD = Select2@LVLRCOD,\n\t\tLMETPAIPPSANG,\n\t\tDNUMLOT = Select2@DNUMLOT,\n\t\tAIDNAUD = Select2@AIDNAUD,\n\t\tDDEBSIT = Select2@DDEBSIT,\n\t\tDFINSIT = Select2@DFINSIT,\n\t\tBSITCOU = Select2@BSITCOU,\n\t\tLMETPAIPPSNDL = Select2@LMETPAIPPSNDL,\n\t\tLMETPAIPPSFRA = Select2@LMETPAIPPSFRA\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select3\nSelect2, ConditionalSplit2@LMETPAIPPSANG join(Select2@LVLRCOD == ConditionalSplit2@LMETPAIPPSANG@LVLRCOD,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join2\nTBYDWHTLIBSTCCOD derive(DNUMLOT = toTimestamp(DNUMLOT, 'ddMMMyyyy:HH:mm:ss'),\n\t\tDDEBSIT = toTimestamp(DDEBSIT, 'ddMMMyyyy:HH:mm:ss'),\n\t\tDFINSIT = toTimestamp(DFINSIT, 'ddMMMyyyy:HH:mm:ss'),\n\t\tAIDNAUD = toLong(AIDNAUD),\n\t\tBSITCOU = toInteger(BSITCOU),\n\t\tSIDNLIBSTCCOD = toLong(SIDNLIBSTCCOD)) ~> DatatypeConversion\nSelect5 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\tSIDNFIOCFMMETPAIPPS,\n\t\tCMETPAIPPS,\n\t\tLMETPAIPPSNDL,\n\t\tLMETPAIPPSFRA,\n\t\tLMETPAIPPSANG,\n\t\tDNUMLOT,\n\t\tAIDNAUD,\n\t\tDDEBSIT,\n\t\tDFINSIT,\n\t\tBSITCOU\n\t),\n\tpartitionBy('hash', 1)) ~> TBYDMADFIOCFMMETPAIPPS"
+		}
+	}
+}

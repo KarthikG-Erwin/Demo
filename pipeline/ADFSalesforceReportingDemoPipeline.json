@@ -1,0 +1,513 @@
+{
+	"name": "ADFSalesforceReportingDemoPipeline",
+	"properties": {
+		"description": "Pipeline description...",
+		"activities": [
+			{
+				"name": "LookupPostingGroupParent",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderStoredProcedureName": "[pg].[usp_GetPostingGroupParent]",
+						"storedProcedureParameters": {
+							"pETLExecutionId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.pETLExecutionId",
+									"type": "Expression"
+								}
+							},
+							"pPathId": {
+								"type": "Int32",
+								"value": "-1"
+							},
+							"pPostingGroupCode": {
+								"type": "String",
+								"value": "SF-EDL-REPORTING"
+							},
+							"pPostingGroupStatusCode": {
+								"type": "String",
+								"value": "PQ"
+							},
+							"pVerbose": {
+								"type": "Boolean",
+								"value": "False"
+							}
+						},
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ADFOnPremStagingDatabaseDataset",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ReadyToLoadReporting",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "LookupPostingGroupParent",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(activity('LookupPostingGroupParent').output.count, 0) \n",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "UpdatePGProcessingStatus_PP",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "CreateLogEntry",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[pg].[UpdatePostingGroupProcessingStatus]",
+								"storedProcedureParameters": {
+									"pPostingGroupBatchId": {
+										"value": {
+											"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pPostingGroupBatchSeq": {
+										"value": {
+											"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchSeq",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pPostingGroupId": {
+										"value": {
+											"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pPostingGroupStatusCode": {
+										"value": "PP",
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ADFOnPremStagingDatabaseConnector",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "UpdatePGProcessingStatus_PC",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "LoadContact",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "LoadAccount",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "LoadEmailTemplate",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[pg].[UpdatePostingGroupProcessingStatus]",
+								"storedProcedureParameters": {
+									"pPostingGroupBatchId": {
+										"value": {
+											"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pPostingGroupBatchSeq": {
+										"value": {
+											"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchSeq",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pPostingGroupId": {
+										"value": {
+											"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pPostingGroupStatusCode": {
+										"value": "PC",
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ADFOnPremStagingDatabaseConnector",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "CreateLogEntry",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderStoredProcedureName": "[audit].[up_Event_Package_OnBegin]",
+									"storedProcedureParameters": {
+										"ExecutionGuid": {
+											"type": "Guid",
+											"value": {
+												"value": "@guid()",
+												"type": "Expression"
+											}
+										},
+										"MachineName": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().Pipeline",
+												"type": "Expression"
+											}
+										},
+										"PackageGuid": {
+											"type": "Guid",
+											"value": "4580CA1D-8168-4836-8CE9-FC365AAA0FC7"
+										},
+										"PackageName": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().DataFactory",
+												"type": "Expression"
+											}
+										},
+										"PackageLevelId": {
+											"type": "Int32",
+											"value": "0"
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ADFOnPremStagingDatabaseDataset",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "UpdateLogEntry",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "ExecuteNextPGProcessing",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderStoredProcedureName": "[audit].[up_Event_Package_OnEnd]",
+									"storedProcedureParameters": {
+										"logID": {
+											"type": "Int32",
+											"value": {
+												"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ADFOnPremStagingDatabaseDataset",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "ExecuteNextPGProcessing",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "UpdatePGProcessingStatus_PC",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:15:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[pg].[ExecutePostingGroupProcessing]",
+								"storedProcedureParameters": {
+									"pPGBId": {
+										"value": {
+											"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pPGBatchSeq": {
+										"value": {
+											"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchSeq",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pPGId": {
+										"value": {
+											"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pIsDataHub": {
+										"value": "2",
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ADFOnPremStagingDatabaseConnector",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "LoadContact",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "UpdatePGProcessingStatus_PP",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ADFSalesforceContactPipeline",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"ParentPostingGroupBatchId": {
+										"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchId",
+										"type": "Expression"
+									},
+									"ParentPostingGroupBatchSeq": {
+										"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchSeq",
+										"type": "Expression"
+									},
+									"ParentPostingGroupId": {
+										"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupId",
+										"type": "Expression"
+									},
+									"ETLExecutionID": {
+										"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "LoadAccount",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "UpdatePGProcessingStatus_PP",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ADFSalesforceAccountPipeline",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"ParentPostingGroupBatchId": {
+										"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchId",
+										"type": "Expression"
+									},
+									"ParentPostingGroupBatchSeq": {
+										"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchSeq",
+										"type": "Expression"
+									},
+									"ParentPostingGroupId": {
+										"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupId",
+										"type": "Expression"
+									},
+									"ETLExecutionID": {
+										"value": "@activity('CreateLogEntry').output.firstrow.LogId",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "LoadEmailTemplate",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "UpdatePGProcessingStatus_PP",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ADFSalesforceEmailTemplatePipeline",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "PostingGroupFailure",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ReadyToLoadReporting",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ADFSalesforcePostingErrorPipeline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PostingGroupBatchId": {
+							"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchId",
+							"type": "Expression"
+						},
+						"PostingGroupBatchSeq": {
+							"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupBatchSeq",
+							"type": "Expression"
+						},
+						"PostingGroupID": {
+							"value": "@activity('LookupPostingGroupParent').output.value[0].ParentPostingGroupId",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"pETLExecutionId": {
+				"type": "int",
+				"defaultValue": -1
+			}
+		},
+		"variables": {
+			"PartnerPostingGroupChildCode": {
+				"type": "String",
+				"defaultValue": "SF-EDL-SF-PARTNERPLAN"
+			},
+			"UserPostingGroupChildCode": {
+				"type": "String",
+				"defaultValue": "SF-EDL-SF-USER"
+			},
+			"AccountPostingGroupChildCode": {
+				"type": "String",
+				"defaultValue": "SF-EDL-SF-ACCOUNT"
+			},
+			"RecordTypePostingGroupChildCode": {
+				"type": "String",
+				"defaultValue": "SF-EDL-SF-RECORDTYPE"
+			},
+			"LeadTypePostingGroupChildCode": {
+				"type": "String",
+				"defaultValue": "SF-EDL-SF-LEAD"
+			},
+			"TaskPostingGroupChildCode": {
+				"type": "String",
+				"defaultValue": "SF-EDL-SF-TASK"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-05-18T10:30:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

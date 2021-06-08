@@ -1,0 +1,62 @@
+{
+	"name": "UNV_parq",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimension"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "QID208809_20200629_85212_0_UNV.parq",
+				"folderPath": "InputFile",
+				"fileSystem": "agi"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "CPRD",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUNV",
+				"type": "UTF8"
+			},
+			{
+				"name": "BPAC",
+				"type": "INT_16"
+			},
+			{
+				"name": "DNUMLOT",
+				"type": "INT96"
+			},
+			{
+				"name": "AIDNAUD",
+				"type": "INT64"
+			},
+			{
+				"name": "DDEBSIT",
+				"type": "INT96"
+			},
+			{
+				"name": "DFINSIT",
+				"type": "INT96"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "INT32"
+			},
+			{
+				"name": "SIDNFIODRVPRDUNV",
+				"type": "INT64"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

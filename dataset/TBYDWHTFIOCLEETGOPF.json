@@ -1,0 +1,105 @@
+{
+	"name": "TBYDWHTFIOCLEETGOPF",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Fact"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TBYDWHTFIOCLEETGOPF.csv",
+				"folderPath": "Fact",
+				"fileSystem": "agi"
+			},
+			"columnDelimiter": "|",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "AIDNFIOEDIPCELGL",
+				"type": "integer"
+			},
+			{
+				"name": "CDOC",
+				"type": "short"
+			},
+			{
+				"name": "CSTU",
+				"type": "short"
+			},
+			{
+				"name": "CDEVEDI",
+				"type": "String"
+			},
+			{
+				"name": "DEDIORI",
+				"type": "integer"
+			},
+			{
+				"name": "NCMP001",
+				"type": "integer"
+			},
+			{
+				"name": "CCMP001",
+				"type": "String"
+			},
+			{
+				"name": "CDEVCMPTIE001",
+				"type": "String"
+			},
+			{
+				"name": "DCRE001",
+				"type": "integer"
+			},
+			{
+				"name": "NCMP",
+				"type": "integer"
+			},
+			{
+				"name": "CCMP",
+				"type": "String"
+			},
+			{
+				"name": "CCDI",
+				"type": "String"
+			},
+			{
+				"name": "CPRD",
+				"type": "String"
+			},
+			{
+				"name": "AIDNFIOAANOPF",
+				"type": "integer"
+			},
+			{
+				"name": "NAANFIOAANOPF",
+				"type": "short"
+			},
+			{
+				"name": "CTYPFKESDD",
+				"type": "string"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "integer"
+			},
+			{
+				"name": "LVLRFKESDD",
+				"type": "string"
+			},
+			{
+				"name": "REQ_SUBTOT",
+				"type": "integer"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

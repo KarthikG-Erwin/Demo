@@ -1,0 +1,82 @@
+{
+	"name": "COD_parq",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimension"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "QID210605_20200630_83558_1_COD.parquet",
+				"folderPath": "InputFile",
+				"fileSystem": "agi"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "LSTCCOD",
+				"type": "UTF8"
+			},
+			{
+				"name": "LVLRCOD",
+				"type": "UTF8"
+			},
+			{
+				"name": "CLANLIB",
+				"type": "UTF8"
+			},
+			{
+				"name": "LLIB005",
+				"type": "UTF8"
+			},
+			{
+				"name": "LLIB012",
+				"type": "UTF8"
+			},
+			{
+				"name": "LLIB025",
+				"type": "UTF8"
+			},
+			{
+				"name": "LLIB065",
+				"type": "UTF8"
+			},
+			{
+				"name": "LLIBDSC",
+				"type": "UTF8"
+			},
+			{
+				"name": "DNUMLOT",
+				"type": "INT96"
+			},
+			{
+				"name": "AIDNAUD",
+				"type": "INT64"
+			},
+			{
+				"name": "DDEBSIT",
+				"type": "INT96"
+			},
+			{
+				"name": "DFINSIT",
+				"type": "INT96"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "INT32"
+			},
+			{
+				"name": "SIDNLIBSTCCOD",
+				"type": "INT64"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

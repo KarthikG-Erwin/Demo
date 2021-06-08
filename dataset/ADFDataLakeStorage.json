@@ -1,0 +1,282 @@
+{
+	"name": "ADFDataLakeStorage",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"sinktablename": {
+				"type": "string",
+				"defaultValue": "Contact"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "salesforce"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Id",
+				"type": "String"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "String"
+			},
+			{
+				"name": "MasterRecordId",
+				"type": "String"
+			},
+			{
+				"name": "Name",
+				"type": "String"
+			},
+			{
+				"name": "Type",
+				"type": "String"
+			},
+			{
+				"name": "ParentId",
+				"type": "String"
+			},
+			{
+				"name": "BillingStreet",
+				"type": "String"
+			},
+			{
+				"name": "BillingCity",
+				"type": "String"
+			},
+			{
+				"name": "BillingState",
+				"type": "String"
+			},
+			{
+				"name": "BillingPostalCode",
+				"type": "String"
+			},
+			{
+				"name": "BillingCountry",
+				"type": "String"
+			},
+			{
+				"name": "BillingLatitude",
+				"type": "String"
+			},
+			{
+				"name": "BillingLongitude",
+				"type": "String"
+			},
+			{
+				"name": "BillingGeocodeAccuracy",
+				"type": "String"
+			},
+			{
+				"name": "ShippingStreet",
+				"type": "String"
+			},
+			{
+				"name": "ShippingCity",
+				"type": "String"
+			},
+			{
+				"name": "ShippingState",
+				"type": "String"
+			},
+			{
+				"name": "ShippingPostalCode",
+				"type": "String"
+			},
+			{
+				"name": "ShippingCountry",
+				"type": "String"
+			},
+			{
+				"name": "ShippingLatitude",
+				"type": "String"
+			},
+			{
+				"name": "ShippingLongitude",
+				"type": "String"
+			},
+			{
+				"name": "ShippingGeocodeAccuracy",
+				"type": "String"
+			},
+			{
+				"name": "Phone",
+				"type": "String"
+			},
+			{
+				"name": "Fax",
+				"type": "String"
+			},
+			{
+				"name": "AccountNumber",
+				"type": "String"
+			},
+			{
+				"name": "Website",
+				"type": "String"
+			},
+			{
+				"name": "PhotoUrl",
+				"type": "String"
+			},
+			{
+				"name": "Sic",
+				"type": "String"
+			},
+			{
+				"name": "Industry",
+				"type": "String"
+			},
+			{
+				"name": "AnnualRevenue",
+				"type": "String"
+			},
+			{
+				"name": "NumberOfEmployees",
+				"type": "String"
+			},
+			{
+				"name": "Ownership",
+				"type": "String"
+			},
+			{
+				"name": "TickerSymbol",
+				"type": "String"
+			},
+			{
+				"name": "Description",
+				"type": "String"
+			},
+			{
+				"name": "Rating",
+				"type": "String"
+			},
+			{
+				"name": "Site",
+				"type": "String"
+			},
+			{
+				"name": "OwnerId",
+				"type": "String"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "String"
+			},
+			{
+				"name": "CreatedById",
+				"type": "String"
+			},
+			{
+				"name": "LastModifiedDate",
+				"type": "String"
+			},
+			{
+				"name": "LastModifiedById",
+				"type": "String"
+			},
+			{
+				"name": "SystemModstamp",
+				"type": "String"
+			},
+			{
+				"name": "LastActivityDate",
+				"type": "String"
+			},
+			{
+				"name": "LastViewedDate",
+				"type": "String"
+			},
+			{
+				"name": "LastReferencedDate",
+				"type": "String"
+			},
+			{
+				"name": "Jigsaw",
+				"type": "String"
+			},
+			{
+				"name": "JigsawCompanyId",
+				"type": "String"
+			},
+			{
+				"name": "CleanStatus",
+				"type": "String"
+			},
+			{
+				"name": "AccountSource",
+				"type": "String"
+			},
+			{
+				"name": "DunsNumber",
+				"type": "String"
+			},
+			{
+				"name": "Tradestyle",
+				"type": "String"
+			},
+			{
+				"name": "NaicsCode",
+				"type": "String"
+			},
+			{
+				"name": "NaicsDesc",
+				"type": "String"
+			},
+			{
+				"name": "YearStarted",
+				"type": "String"
+			},
+			{
+				"name": "SicDesc",
+				"type": "String"
+			},
+			{
+				"name": "DandbCompanyId",
+				"type": "String"
+			},
+			{
+				"name": "CustomerPriority__c",
+				"type": "String"
+			},
+			{
+				"name": "SLA__c",
+				"type": "String"
+			},
+			{
+				"name": "Active__c",
+				"type": "String"
+			},
+			{
+				"name": "NumberofLocations__c",
+				"type": "String"
+			},
+			{
+				"name": "UpsellOpportunity__c",
+				"type": "String"
+			},
+			{
+				"name": "SLASerialNumber__c",
+				"type": "String"
+			},
+			{
+				"name": "SLAExpirationDate__c",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

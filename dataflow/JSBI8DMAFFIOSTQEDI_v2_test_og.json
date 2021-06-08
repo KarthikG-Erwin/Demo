@@ -1,0 +1,254 @@
+{
+	"name": "JSBI8DMAFFIOSTQEDI_v2_test_og",
+	"properties": {
+		"folder": {
+			"name": "Fact"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "TBYDWHTFIOOPFEDIPCELGL_og",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDWHTFIOOPFEDIPCELGL"
+				},
+				{
+					"dataset": {
+						"referenceName": "TBYDWHTFIOADREDIELE_og",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDWHTFIOADREDIELE"
+				},
+				{
+					"dataset": {
+						"referenceName": "TBYDWHTFIOOPFMVT_og",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDWHTFIOOPFMVT"
+				},
+				{
+					"dataset": {
+						"referenceName": "TBYDWHTFIOCLEETGOPF_og",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDWHTFIOCLEETGOPF"
+				},
+				{
+					"dataset": {
+						"referenceName": "TBYDWHTFIOPRM_og",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDWHTFIOPRM"
+				},
+				{
+					"dataset": {
+						"referenceName": "TBYDMADFIOCFMPRD",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDMADFIOCFMPRD"
+				},
+				{
+					"dataset": {
+						"referenceName": "TBYDMADFIOCFMDOCTYP",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDMADFIOCFMDOCTYP"
+				},
+				{
+					"dataset": {
+						"referenceName": "TBYDMADFIOCFMDOCSTA",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDMADFIOCFMDOCSTA"
+				},
+				{
+					"dataset": {
+						"referenceName": "TBYDMADFIOCFMDOCCDI",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDMADFIOCFMDOCCDI"
+				},
+				{
+					"dataset": {
+						"referenceName": "TBYDMADFIOCFMMETPAIPPS",
+						"type": "DatasetReference"
+					},
+					"name": "TBYDMADFIOCFMMETPAIPPS"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Fact_Output",
+						"type": "DatasetReference"
+					},
+					"name": "TestFactSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "BuildInitialSelection"
+				},
+				{
+					"name": "EnrichmentDelivery"
+				},
+				{
+					"name": "FilteringOnProducts"
+				},
+				{
+					"name": "Select8"
+				},
+				{
+					"name": "Aggregate1"
+				},
+				{
+					"name": "UNITRECOVERYCOST"
+				},
+				{
+					"name": "UNITPAYMENTCOST"
+				},
+				{
+					"name": "Aggregate3"
+				},
+				{
+					"name": "UNITDELIVERYCOST"
+				},
+				{
+					"name": "Aggregate2"
+				},
+				{
+					"name": "DerivedColumn4"
+				},
+				{
+					"name": "enrichment"
+				},
+				{
+					"name": "FilteringOnStandaloneProducts"
+				},
+				{
+					"name": "Filter1"
+				},
+				{
+					"name": "Select1"
+				},
+				{
+					"name": "EnrichmentDataRelatedToMandats"
+				},
+				{
+					"name": "Union1"
+				},
+				{
+					"name": "Select2"
+				},
+				{
+					"name": "AssigningConvertCodoValues"
+				},
+				{
+					"name": "AggregateKeepingLevelEdition"
+				},
+				{
+					"name": "GetRecoveryCost"
+				},
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "Filter2"
+				},
+				{
+					"name": "GetDeliveryCost"
+				},
+				{
+					"name": "DerivedColumn2"
+				},
+				{
+					"name": "Filter3"
+				},
+				{
+					"name": "GetPaymentCost"
+				},
+				{
+					"name": "DerivedColumn3"
+				},
+				{
+					"name": "Filter4"
+				},
+				{
+					"name": "ProductGetDimPKvalue"
+				},
+				{
+					"name": "Filter5"
+				},
+				{
+					"name": "Select3"
+				},
+				{
+					"name": "DocumentTypeGetDimPKvalue"
+				},
+				{
+					"name": "Filter6"
+				},
+				{
+					"name": "Select4"
+				},
+				{
+					"name": "DocumentStatusGetDimPKvalue"
+				},
+				{
+					"name": "Filter7"
+				},
+				{
+					"name": "Select5"
+				},
+				{
+					"name": "DeliveryChannelGetDimPKvalue"
+				},
+				{
+					"name": "Filter8"
+				},
+				{
+					"name": "Select6"
+				},
+				{
+					"name": "PaymentModeGetDimPKvalue"
+				},
+				{
+					"name": "Filter9"
+				},
+				{
+					"name": "Select7"
+				},
+				{
+					"name": "DimCompressCMETPAIPPS"
+				},
+				{
+					"name": "CompressCMETPAI"
+				},
+				{
+					"name": "CompressCPRD"
+				},
+				{
+					"name": "DimCompressCPRD"
+				},
+				{
+					"name": "CompressCCDI"
+				},
+				{
+					"name": "DimCompressCDOCCDI"
+				},
+				{
+					"name": "DerivedAIDNAUD3"
+				},
+				{
+					"name": "DerivedAIDNAUD2"
+				},
+				{
+					"name": "DerivedAIDNAUD1"
+				}
+			],
+			"script": "parameters{\n\tDATEDEB as timestamp (toTimestamp(addDays(lastDayOfMonth(addMonths($ODATE,-1)),1))),\n\tDATEFIN as timestamp (toTimestamp(lastDayOfMonth(toDate($DATEDEB)))),\n\tODATE as timestamp (toTimestamp(21-07-2019))\n}\nsource(output(\n\t\tAIDNFIOEDIPCELGL as integer,\n\t\tCDOC as short,\n\t\tCSTU as short,\n\t\tCDEVEDI as string,\n\t\tDEDIORI as timestamp,\n\t\tNCMP001 as integer,\n\t\tCCMP001 as string,\n\t\tCDEVCMPTIE001 as string,\n\t\tDCRE001 as timestamp,\n\t\tNCMP as integer,\n\t\tCCMP as string,\n\t\tCLGN as string,\n\t\tBSITCOU as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDWHTFIOOPFEDIPCELGL\nsource(output(\n\t\tCLGN as string,\n\t\tCCDI as string,\n\t\tAIDNFIOOPFEDIPCELGL as integer,\n\t\tBSITCOU as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDWHTFIOADREDIELE\nsource(output(\n\t\tCTYPPRD as string,\n\t\tCPRD as string,\n\t\tNCMPFIOCMPTIE as integer,\n\t\tCCMPFIOCMPTIE as string,\n\t\tCDEVFIOCMPTIE as string,\n\t\tDCREFIOOPFMVT as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDWHTFIOOPFMVT\nsource(output(\n\t\tAIDNFIOAANOPF as integer,\n\t\tNAANFIOAANOPF as integer,\n\t\tCTYPFKESDD as string,\n\t\tBSITCOU as integer,\n\t\tLVLRFKESDD as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDWHTFIOCLEETGOPF\nsource(output(\n\t\tCCDIFIOPRM as string,\n\t\tCMETPAIPPSFIOPRM as string,\n\t\tDDEBFIOPRM as timestamp,\n\t\tDFIN as timestamp,\n\t\tLVLR as long,\n\t\tLNOMFIOPRM as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDWHTFIOPRM\nsource(output(\n\t\tSIDNFIOCFMPRD as long,\n\t\tCPRD as string,\n\t\tLPRDNDL as string,\n\t\tLPRDFRA as string,\n\t\tLPRDANG as string,\n\t\tCUNV as string,\n\t\tLUNVNDL as string,\n\t\tLUNVFRA as string,\n\t\tLUNVANG as string,\n\t\tBPAC as short,\n\t\tDNUMLOT as timestamp,\n\t\tAIDNAUD as integer,\n\t\tDDEBSIT as timestamp,\n\t\tDFINSIT as timestamp,\n\t\tBSITCOU as integer,\n\t\tRowID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDMADFIOCFMPRD\nsource(output(\n\t\tSIDNFIOCFMDOCTYP as long,\n\t\tCDOCTYP as short,\n\t\tLDOCTYPNDL as string,\n\t\tLDOCTYPFRA as string,\n\t\tLDOCTYPANG as string,\n\t\tDNUMLOT as timestamp,\n\t\tAIDNAUD as integer,\n\t\tDDEBSIT as timestamp,\n\t\tDFINSIT as timestamp,\n\t\tBSITCOU as integer,\n\t\tRowID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDMADFIOCFMDOCTYP\nsource(output(\n\t\tSIDNFIOCFMDOCSTA as long,\n\t\tCDOCSTA as short,\n\t\tLDOCSTANDL as string,\n\t\tLDOCSTAFRA as string,\n\t\tLDOCSTAANG as string,\n\t\tDNUMLOT as timestamp,\n\t\tAIDNAUD as integer,\n\t\tDDEBSIT as timestamp,\n\t\tDFINSIT as timestamp,\n\t\tBSITCOU as integer,\n\t\tRowID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDMADFIOCFMDOCSTA\nsource(output(\n\t\tSIDNFIOCFMDOCCDI as long,\n\t\tCDOCCDI as string,\n\t\tLDOCCDINDL as string,\n\t\tLDOCCDIFRA as string,\n\t\tLDOCCDIANG as string,\n\t\tDNUMLOT as timestamp,\n\t\tAIDNAUD as integer,\n\t\tDDEBSIT as timestamp,\n\t\tDFINSIT as timestamp,\n\t\tBSITCOU as integer,\n\t\tRowID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDMADFIOCFMDOCCDI\nsource(output(\n\t\tSIDNFIOCFMMETPAIPPS as long,\n\t\tCMETPAIPPS as string,\n\t\tLMETPAIPPSNDL as string,\n\t\tLMETPAIPPSFRA as string,\n\t\tLMETPAIPPSANG as string,\n\t\tDNUMLOT as timestamp,\n\t\tAIDNAUD as integer,\n\t\tDDEBSIT as timestamp,\n\t\tDFINSIT as timestamp,\n\t\tBSITCOU as integer,\n\t\tRowID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> TBYDMADFIOCFMMETPAIPPS\nTBYDWHTFIOOPFEDIPCELGL filter((DEDIORI  >= $DATEDEB || DEDIORI  <= $DATEFIN) && in(array(1,2,31,32), CDOC)&& in(array(20,40,25), CSTU)&& BSITCOU==1) ~> BuildInitialSelection\nBuildInitialSelection, TBYDWHTFIOADREDIELE join(AIDNFIOEDIPCELGL == AIDNFIOOPFEDIPCELGL,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> EnrichmentDelivery\nDerivedColumn4 filter(CDOC==31) ~> FilteringOnProducts\nEnrichmentDelivery select(mapColumn(\n\t\tAIDNFIOEDIPCELGL,\n\t\tCDOC,\n\t\tCSTU,\n\t\tCDEVEDI,\n\t\tDEDIORI,\n\t\tNCMP001,\n\t\tCCMP001,\n\t\tCDEVCMPTIE001,\n\t\tDCRE001,\n\t\tNCMP,\n\t\tCCMP,\n\t\tCLGN = TBYDWHTFIOOPFEDIPCELGL@CLGN,\n\t\tCCDI\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select8\nDerivedAIDNAUD3 aggregate(groupBy(CCDIFIOPRM,\n\t\tCMETPAIPPSFIOPRM,\n\t\tDDEBFIOPRM,\n\t\tDFIN,\n\t\tLVLR),\n\tAIDNAUD = max(AIDNAUD)) ~> Aggregate1\nTBYDWHTFIOPRM filter(upper(LNOMFIOPRM)== 'UNIT RECOVERY COST') ~> UNITRECOVERYCOST\nTBYDWHTFIOPRM filter(upper(LNOMFIOPRM)== 'UNIT PAYMENT COST') ~> UNITPAYMENTCOST\nDerivedAIDNAUD2 aggregate(groupBy(CCDIFIOPRM,\n\t\tCMETPAIPPSFIOPRM,\n\t\tDDEBFIOPRM,\n\t\tDFIN,\n\t\tLVLR),\n\tAIDNAUD = max(AIDNAUD)) ~> Aggregate3\nTBYDWHTFIOPRM filter(upper(LNOMFIOPRM)== 'UNIT DELIVERY COST') ~> UNITDELIVERYCOST\nDerivedAIDNAUD1 aggregate(groupBy(CCDIFIOPRM,\n\t\tCMETPAIPPSFIOPRM,\n\t\tDDEBFIOPRM,\n\t\tDFIN,\n\t\tLVLR),\n\tAIDNAUD = max(AIDNAUD)) ~> Aggregate2\nSelect8 derive(AIDNFIOAANOPF = case((length(CLGN)>1 && upper(substring(CLGN,2,1)) == 'D'), 999999999, 0),\n\t\tNAANFIOAANOPF = 99) ~> DerivedColumn4\nTBYDWHTFIOCLEETGOPF filter(CTYPFKESDD == 'MVT' && NAANFIOAANOPF == 1 && BSITCOU == 1) ~> enrichment\nFilter1, TBYDWHTFIOOPFMVT join(NCMP001 == NCMPFIOCMPTIE\n\t&& CCMP001 == CCMPFIOCMPTIE\n\t&& CDEVCMPTIE001 == CDEVFIOCMPTIE\n\t&& DCRE001 == DCREFIOOPFMVT,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> FilteringOnStandaloneProducts\nEnrichmentDelivery filter(in(array(1,2,32), CDOC)) ~> Filter1\nFilteringOnStandaloneProducts select(mapColumn(\n\t\tAIDNFIOEDIPCELGL,\n\t\tCPRD,\n\t\tCCDI,\n\t\tCDOC,\n\t\tCSTU,\n\t\tCDEVEDI,\n\t\tDEDIORI,\n\t\tNCMP001,\n\t\tCCMP001,\n\t\tCDEVCMPTIE001,\n\t\tDCRE001,\n\t\tNCMP,\n\t\tCCMP\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1, enrichment join(toString(NCMP001) + CCMP001 + CDEVCMPTIE001 + toString(toDate(DCRE001))+'-'+  toString(hour(DCRE001)) + '.' +toString(minute(DCRE001))+ '.' +toString(second(DCRE001)) == LVLRFKESDD,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> EnrichmentDataRelatedToMandats\nSelect2, FilteringOnProducts union(byName: true)~> Union1\nEnrichmentDataRelatedToMandats select(mapColumn(\n\t\tAIDNFIOEDIPCELGL,\n\t\tCPRD,\n\t\tCDOC,\n\t\tCSTU,\n\t\tCDEVEDI,\n\t\tDEDIORI,\n\t\tNCMP001,\n\t\tCCMP001,\n\t\tCDEVCMPTIE001,\n\t\tDCRE001,\n\t\tNCMP,\n\t\tCCMP,\n\t\tCCDI,\n\t\tAIDNFIOAANOPF,\n\t\tNAANFIOAANOPF\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nUnion1 derive(CCDI = case(isNull(CCDI),toString(0),CCDI),\n\t\tCMETPAI = case(isNull(AIDNFIOAANOPF),'SCT','SDD')) ~> AssigningConvertCodoValues\nAssigningConvertCodoValues aggregate(groupBy(CDOC,\n\t\tCCDI,\n\t\tCSTU,\n\t\tCPRD,\n\t\tCMETPAI,\n\t\tDEDIORI),\n\tREQ_SUBTOT = count(1)) ~> AggregateKeepingLevelEdition\nAggregateKeepingLevelEdition, Aggregate1 join(CCDI == CCDIFIOPRM\n\t&& CMETPAI == CMETPAIPPSFIOPRM,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> GetRecoveryCost\nGetRecoveryCost derive(URVT = LVLR * REQ_SUBTOT) ~> DerivedColumn1\nDerivedColumn1 filter(DEDIORI  >= DFIN && DEDIORI  <= DDEBFIOPRM) ~> Filter2\nFilter2, Aggregate2 join(CCDI == Aggregate2@CCDIFIOPRM\n\t&& CMETPAI == Aggregate2@CMETPAIPPSFIOPRM,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> GetDeliveryCost\nGetDeliveryCost derive(UDLV = REQ_SUBTOT * Aggregate2@LVLR) ~> DerivedColumn2\nDerivedColumn2 filter(DEDIORI  >= Aggregate2@DFIN && DEDIORI  <= Aggregate2@DDEBFIOPRM) ~> Filter3\nFilter3, Aggregate3 join(CCDI == Aggregate3@CCDIFIOPRM\n\t&& CMETPAI == Aggregate3@CMETPAIPPSFIOPRM,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> GetPaymentCost\nGetPaymentCost derive(UPAI = REQ_SUBTOT * Aggregate3@LVLR) ~> DerivedColumn3\nDerivedColumn3 filter(DEDIORI  >= Aggregate3@DFIN && DEDIORI  <= Aggregate3@DDEBFIOPRM) ~> Filter4\nCompressCPRD, DimCompressCPRD join(CompressCPRD@CPRD == DimCompressCPRD@CPRD,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> ProductGetDimPKvalue\nProductGetDimPKvalue filter((DEDIORI  >= DDEBSIT || DEDIORI  <= DFINSIT) && BSITCOU==1) ~> Filter5\nFilter5 select(mapColumn(\n\t\tCDOC,\n\t\tCPRD = DimCompressCPRD@CPRD,\n\t\tCCDI,\n\t\tCSTU,\n\t\tCMETPAI,\n\t\tDEDIORI,\n\t\tREQ_SUBTOT,\n\t\tURVT,\n\t\tUDLV,\n\t\tUPAI,\n\t\tSIDNFIOCFMPRD\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select3\nSelect3, TBYDMADFIOCFMDOCTYP join(CDOC == CDOCTYP,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> DocumentTypeGetDimPKvalue\nDocumentTypeGetDimPKvalue filter((DEDIORI  >= DDEBSIT || DEDIORI  <=DFINSIT) && BSITCOU==1) ~> Filter6\nFilter6 select(mapColumn(\n\t\tCDOC,\n\t\tCCDI,\n\t\tCSTU,\n\t\tCPRD,\n\t\tCMETPAI,\n\t\tDEDIORI,\n\t\tREQ_SUBTOT,\n\t\tURVT,\n\t\tUDLV,\n\t\tUPAI,\n\t\tSIDNFIOCFMPRD,\n\t\tSIDNFIOCFMDOCTYP\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select4\nSelect4, TBYDMADFIOCFMDOCSTA join(CSTU == CDOCSTA,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> DocumentStatusGetDimPKvalue\nDocumentStatusGetDimPKvalue filter((DEDIORI  >= DDEBSIT || DEDIORI  <=DFINSIT) && BSITCOU==1) ~> Filter7\nFilter7 select(mapColumn(\n\t\tCDOC,\n\t\tCCDI,\n\t\tCSTU,\n\t\tCPRD,\n\t\tCMETPAI,\n\t\tDEDIORI,\n\t\tREQ_SUBTOT,\n\t\tURVT,\n\t\tUDLV,\n\t\tUPAI,\n\t\tSIDNFIOCFMPRD,\n\t\tSIDNFIOCFMDOCTYP,\n\t\tSIDNFIOCFMDOCSTA\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select5\nCompressCCDI, DimCompressCDOCCDI join(CCDI == CDOCCDI,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> DeliveryChannelGetDimPKvalue\nDeliveryChannelGetDimPKvalue filter((DEDIORI  >= DDEBSIT || DEDIORI  <=DFINSIT) && BSITCOU==1) ~> Filter8\nFilter8 select(mapColumn(\n\t\tCDOC,\n\t\tCCDI,\n\t\tCSTU,\n\t\tCPRD,\n\t\tCMETPAI,\n\t\tDEDIORI,\n\t\tREQ_SUBTOT,\n\t\tURVT,\n\t\tUDLV,\n\t\tUPAI,\n\t\tSIDNFIOCFMPRD,\n\t\tSIDNFIOCFMDOCTYP,\n\t\tSIDNFIOCFMDOCSTA,\n\t\tSIDNFIOCFMDOCCDI\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select6\nCompressCMETPAI, DimCompressCMETPAIPPS join(CMETPAI == CMETPAIPPS,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> PaymentModeGetDimPKvalue\nPaymentModeGetDimPKvalue filter((DEDIORI  >= DDEBSIT || DEDIORI  <=DFINSIT)&& BSITCOU==1) ~> Filter9\nFilter9 select(mapColumn(\n\t\tCDOC,\n\t\tCCDI,\n\t\tCSTU,\n\t\tCPRD,\n\t\tCMETPAI,\n\t\tDEDIORI,\n\t\tREQ_SUBTOT,\n\t\tURVT,\n\t\tUDLV,\n\t\tUPAI,\n\t\tSIDNFIOCFMPRD,\n\t\tSIDNFIOCFMDOCTYP,\n\t\tSIDNFIOCFMDOCSTA,\n\t\tSIDNFIOCFMDOCCDI,\n\t\tSIDNFIOCFMMETPAIPPS\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select7\nTBYDMADFIOCFMMETPAIPPS derive(CMETPAIPPS = regexReplace(CMETPAIPPS, `(\\W+)`, '')) ~> DimCompressCMETPAIPPS\nSelect6 derive(CMETPAI = regexReplace(CMETPAI, `(\\W+)`, '')) ~> CompressCMETPAI\nFilter4 derive(CPRD = regexReplace(CPRD, `(\\W+)`, '')) ~> CompressCPRD\nTBYDMADFIOCFMPRD derive(CPRD = regexReplace(CPRD, `(\\W+)`, '')) ~> DimCompressCPRD\nSelect5 derive(CCDI = regexReplace(CCDI, `(\\W+)`, '')) ~> CompressCCDI\nTBYDMADFIOCFMDOCCDI derive(CDOCCDI = regexReplace(CDOCCDI, `(\\W+)`, '')) ~> DimCompressCDOCCDI\nUNITRECOVERYCOST derive(AIDNAUD = '') ~> DerivedAIDNAUD3\nUNITPAYMENTCOST derive(AIDNAUD = '') ~> DerivedAIDNAUD2\nUNITDELIVERYCOST derive(AIDNAUD = '') ~> DerivedAIDNAUD1\nSelect7 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionFileNames:['Fact_output_APA.parquet'],\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\tCDOC,\n\t\tCCDI,\n\t\tCSTU,\n\t\tCPRD,\n\t\tCMETPAI,\n\t\tDEDIORI,\n\t\tREQ_SUBTOT,\n\t\tURVT,\n\t\tUDLV,\n\t\tUPAI,\n\t\tSIDNFIOCFMPRD,\n\t\tSIDNFIOCFMDOCTYP,\n\t\tSIDNFIOCFMDOCSTA,\n\t\tSIDNFIOCFMDOCCDI,\n\t\tSIDNFIOCFMMETPAIPPS\n\t),\n\tpartitionBy('hash', 1)) ~> TestFactSink"
+		}
+	}
+}

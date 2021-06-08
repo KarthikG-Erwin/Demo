@@ -1,0 +1,69 @@
+{
+	"name": "TBYDMADFIOCFMDOCTYP_v2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DOCTYP"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "agi_poc/DOCTYP/delta",
+				"fileSystem": "agi"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "SIDNFIOCFMDOCTYP",
+				"type": "INT64"
+			},
+			{
+				"name": "CDOCTYP",
+				"type": "INT_16"
+			},
+			{
+				"name": "LDOCTYPNDL",
+				"type": "UTF8"
+			},
+			{
+				"name": "LDOCTYPFRA",
+				"type": "UTF8"
+			},
+			{
+				"name": "LDOCTYPANG",
+				"type": "UTF8"
+			},
+			{
+				"name": "DNUMLOT",
+				"type": "INT96"
+			},
+			{
+				"name": "AIDNAUD",
+				"type": "INT32"
+			},
+			{
+				"name": "DDEBSIT",
+				"type": "INT96"
+			},
+			{
+				"name": "DFINSIT",
+				"type": "INT96"
+			},
+			{
+				"name": "BSITCOU",
+				"type": "INT32"
+			},
+			{
+				"name": "RowID",
+				"type": "INT32"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

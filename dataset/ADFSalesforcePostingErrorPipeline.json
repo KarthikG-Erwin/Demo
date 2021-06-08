@@ -1,0 +1,24 @@
+{
+	"name": "ADFSalesforcePostingErrorPipeline",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Salesforce1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TableName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SalesforceObject",
+		"schema": [],
+		"typeProperties": {
+			"objectApiName": {
+				"value": "@dataset().TableName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

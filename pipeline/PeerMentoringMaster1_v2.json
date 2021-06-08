@@ -1,0 +1,895 @@
+{
+	"name": "PeerMentoringMaster1_v2",
+	"properties": {
+		"description": "This Pipeline will lookup values from a text trigger file and determine if a data copy is required a well as which academic level notebooks to execute.",
+		"activities": [
+			{
+				"name": "Get_Run_Values",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Waiit_For_DW_Success",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BlobSource",
+						"recursive": true
+					},
+					"dataset": {
+						"referenceName": "Parameter_File_For_Pipeline_Triggers1",
+						"type": "DatasetReference",
+						"parameters": {
+							"Run_PipeLine_File_Path": {
+								"value": "@pipeline().parameters.Trigger_File_Path",
+								"type": "Expression"
+							},
+							"PipeLineFileTrigger": {
+								"value": "@pipeline().parameters.PipelineTriggerFile",
+								"type": "Expression"
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "Peer_Mentoring_Copy_UG_Tables",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Get_Run_Values",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('Get_Run_Values').output.firstRow.CopyData,'1')",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Wait_10_Seconds",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 10
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Send-Success",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Peer_Mentoring_Refresh_Table_Data",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-30.eastus2.logic.azure.com:443/workflows/fce88819c3434f05bb0219e6b2084baf/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=EqOkVYYjh85bDcCXBaJ5b84gMMoVEvebU2jCwCn-wzw",
+								"method": "POST",
+								"body": {
+									"value": "{\"DataFactoryName\":\"@{pipeline().DataFactory}\",\"PipelineName\":\"@{pipeline().Pipeline}\",\"Notebook Run\":\"Data Copy Succeeded\",\"EmailTo\":\"@{pipeline().parameters.Emailto}\"}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Success_Copy_Data_Fail",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Peer_Mentoring_Refresh_Table_Data",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-13.eastus2.logic.azure.com:443/workflows/1ed0be93017d461780f2d11e310a5ac6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FoOTuYdhUcntQP1NBN-eBEa8pk92DHjbQ8owFGptTKM",
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"body": {
+									"value": "{\n    \"DataFactoryName\":\n        \"@{pipeline().DataFactory}\",\n    \"PipelineName\":\n        \"@{pipeline().Pipeline}\",\n    \"ErrorMessage\":\n        \"Data Copy Failed\",\n    \"EmailTo\":\n      \" @{pipeline().parameters.Emailto}\"\n}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Peer_Mentoring_Refresh_Table_Data",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "PeerMentoring_table_Refresh_OP_AZ1_v2",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"EmailTo": {
+										"value": "@pipeline().parameters.EmailTo",
+										"type": "Expression"
+									},
+									"SNHUSQLServer": {
+										"value": "@pipeline().parameters.SNHUSQLServer",
+										"type": "Expression"
+									},
+									"AzureSQLServer": {
+										"value": "@pipeline().parameters.AzureSQLServer",
+										"type": "Expression"
+									},
+									"SHNUDatabase": {
+										"value": "@pipeline().parameters.SHNUDatabase",
+										"type": "Expression"
+									},
+									"AzureDatabase": {
+										"value": "@pipeline().parameters.AzureDatabase",
+										"type": "Expression"
+									},
+									"ExecSQLSource": "SELECT table_schema + '.' + Table_Name AS Table_Name\nFROM information_Schema.tables\nWHERE table_schema + '.' + Table_Name IN (\n\t\t'RBD.PeerMentoringBaseVariableList1',\n'RBD.PeerMentoringBaseVariableList2',\n'RBD.PeerMentoringBaseVariableList3'\n\t\t)"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Run_UG_Prior",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Peer_Mentoring_Copy_UG_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('Get_Run_Values').output.firstRow.Prior,'1')",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Wait1",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 5
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Initiate_Cluster_With_Test_Notebook",
+							"type": "DatabricksNotebook",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": "/DEV/COCE-ML/TestUG"
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureDatabricks1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Wait_1_minute",
+							"type": "Wait",
+							"dependsOn": [
+								{
+									"activity": "Initiate_Cluster_With_Test_Notebook",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 60
+							}
+						},
+						{
+							"name": "Peer_Mentoring_Prior_UG_Notebook",
+							"type": "DatabricksNotebook",
+							"dependsOn": [
+								{
+									"activity": "Wait_1_minute",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 1,
+								"retryIntervalInSeconds": 60,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": {
+									"value": "@pipeline().parameters.DataBricks_NotebookPrior",
+									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureDatabricks1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Peer_Mentoring_Prior_Notebook_Fail_copy1",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Peer_Mentoring_Prior_UG_Notebook",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-13.eastus2.logic.azure.com:443/workflows/1ed0be93017d461780f2d11e310a5ac6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FoOTuYdhUcntQP1NBN-eBEa8pk92DHjbQ8owFGptTKM",
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"body": {
+									"value": "{\n    \"DataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"PipelineName\":\"@{pipeline().Pipeline}\",\n    \"ErrorMessage\":\"@{activity('Peer_Mentoring_Prior_UG_Notebook').error.message}\",\n    \"EmailTo\":\" @{pipeline().parameters.Emailto}\"\n}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Send-Success_UG",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Peer_Mentoring_Prior_UG_Notebook",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-30.eastus2.logic.azure.com:443/workflows/fce88819c3434f05bb0219e6b2084baf/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=EqOkVYYjh85bDcCXBaJ5b84gMMoVEvebU2jCwCn-wzw",
+								"method": "POST",
+								"body": {
+									"value": "{\"DataFactoryName\":\"@{pipeline().DataFactory}\",\"PipelineName\":\"@{pipeline().Pipeline}\",\"Notebook Run\":\"Success UG DatabricksNotebook Succeeded\",\"EmailTo\":\"@{pipeline().parameters.Emailto}\"}",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Send-JobStart_RunValues",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Get_Run_Values",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-30.eastus2.logic.azure.com:443/workflows/fce88819c3434f05bb0219e6b2084baf/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=EqOkVYYjh85bDcCXBaJ5b84gMMoVEvebU2jCwCn-wzw",
+					"method": "POST",
+					"body": {
+						"value": "{\"DataFactoryName\":\"@{pipeline().DataFactory}\",\"PipelineName\":\"@{pipeline().Pipeline}\",\"Notebook Run\":\"Job Started\",\"EmailTo\":\"@{pipeline().parameters.Emailto}\"}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Peer_Mentoring_Prior_Table",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Run_UG_Prior",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('Get_Run_Values').output.firstRow.Prior,'1')",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Wait5",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 5
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Send-Success_Post",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Peer_Mentoring_Refresh_Table_Data_Prior",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-30.eastus2.logic.azure.com:443/workflows/fce88819c3434f05bb0219e6b2084baf/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=EqOkVYYjh85bDcCXBaJ5b84gMMoVEvebU2jCwCn-wzw",
+								"method": "POST",
+								"body": {
+									"value": "{\"DataFactoryName\":\"@{pipeline().DataFactory}\",\"PipelineName\":\"@{pipeline().Pipeline}\",\"Notebook Run\":\"Az to OP Table Data Copy Succeeded\",\"EmailTo\":\"@{pipeline().parameters.Emailto}\"}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Success_Copy_Data_Fail_Post",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Peer_Mentoring_Refresh_Table_Data_Prior",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-13.eastus2.logic.azure.com:443/workflows/1ed0be93017d461780f2d11e310a5ac6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FoOTuYdhUcntQP1NBN-eBEa8pk92DHjbQ8owFGptTKM",
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"body": {
+									"value": "{\n    \"DataFactoryName\":\n        \"@{pipeline().DataFactory}\",\n    \"PipelineName\":\n        \"@{pipeline().Pipeline}\",\n    \"ErrorMessage\":\n        \" Az to OP Data Copy Failed\",\n    \"EmailTo\":\n      \" @{pipeline().parameters.Emailto}\"\n}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Peer_Mentoring_Refresh_Table_Data_Prior",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "Peer_Mentoring_Table_Refresh_AZ_OP1_v2",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"EmailTo": {
+										"value": "@pipeline().parameters.EmailTo",
+										"type": "Expression"
+									},
+									"SNHUSQLServer": {
+										"value": "@pipeline().parameters.SNHUSQLServer",
+										"type": "Expression"
+									},
+									"AzureSQLServer": {
+										"value": "@pipeline().parameters.AzureSQLServer",
+										"type": "Expression"
+									},
+									"SHNUDatabase": {
+										"value": "@pipeline().parameters.SHNUDatabase",
+										"type": "Expression"
+									},
+									"AzureDatabase": {
+										"value": "@pipeline().parameters.AzureDatabase",
+										"type": "Expression"
+									},
+									"ExecSQLSource": "SELECT table_schema + '.' + Table_Name AS Table_Name, Table_Name AS Base_Table   \nFROM information_Schema.tables where table_schema + '.' + Table_Name in ( 'RBD.PeermentoringScoreUploadRunPrior')",
+									"Academic_Level": "UG",
+									"targetSchema": "RBD"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Waiit_For_DW_Success",
+				"type": "Until",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(1,1)",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Lookup_Success_Value_DW",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": "Select 1",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "COCE_BI_AARDA_Lookup1",
+									"type": "DatasetReference",
+									"parameters": {
+										"SQLServerName": {
+											"value": "@pipeline().parameters.SNHUSQLServer",
+											"type": "Expression"
+										},
+										"DatabaseName": {
+											"value": "@pipeline().parameters.SHNUDatabase",
+											"type": "Expression"
+										}
+									}
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "Wait_5_minutes",
+							"type": "Wait",
+							"dependsOn": [
+								{
+									"activity": "Lookup_Success_Value_DW",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 10
+							}
+						}
+					],
+					"timeout": "7.00:00:00"
+				}
+			},
+			{
+				"name": "Run_UG_Post",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Peer_Mentoring_Copy_UG_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('Get_Run_Values').output.firstRow.Post,'1')",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Wait2",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 5
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Initiate_Cluster_With_Test_Notebook_Post",
+							"type": "DatabricksNotebook",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": "/DEV/COCE-ML/TestUG"
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureDatabricks1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Wait",
+							"type": "Wait",
+							"dependsOn": [
+								{
+									"activity": "Initiate_Cluster_With_Test_Notebook_Post",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 60
+							}
+						},
+						{
+							"name": "Peer_Mentoring_Post_UG_Notebook",
+							"type": "DatabricksNotebook",
+							"dependsOn": [
+								{
+									"activity": "Wait",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 1,
+								"retryIntervalInSeconds": 60,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": {
+									"value": "@pipeline().parameters.DataBricks_NotebookPost",
+									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureDatabricks1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Peer_Mentoring_Post_Notebook_Fail",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Peer_Mentoring_Post_UG_Notebook",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-13.eastus2.logic.azure.com:443/workflows/1ed0be93017d461780f2d11e310a5ac6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FoOTuYdhUcntQP1NBN-eBEa8pk92DHjbQ8owFGptTKM",
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"body": {
+									"value": "{\n    \"DataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"PipelineName\":\"@{pipeline().Pipeline}\",\n    \"ErrorMessage\":\"@{activity('Peer_Mentoring_Post_UG_Notebook').error.message}\",\n    \"EmailTo\":\" @{pipeline().parameters.Emailto}\"\n}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Send-Success_UG_Post",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Peer_Mentoring_Post_UG_Notebook",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-30.eastus2.logic.azure.com:443/workflows/fce88819c3434f05bb0219e6b2084baf/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=EqOkVYYjh85bDcCXBaJ5b84gMMoVEvebU2jCwCn-wzw",
+								"method": "POST",
+								"body": {
+									"value": "{\"DataFactoryName\":\"@{pipeline().DataFactory}\",\"PipelineName\":\"@{pipeline().Pipeline}\",\"Notebook Run\":\"Success UG DatabricksNotebook Succeeded\",\"EmailTo\":\"@{pipeline().parameters.Emailto}\"}",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Peer_Mentoring_Post_Table",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Run_UG_Post",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('Get_Run_Values').output.firstRow.Post,'1')",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Wait_copy1",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 5
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Send-Success_Prior",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Peer_Mentoring_Refresh_Table_Data_Prior_copy1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-30.eastus2.logic.azure.com:443/workflows/fce88819c3434f05bb0219e6b2084baf/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=EqOkVYYjh85bDcCXBaJ5b84gMMoVEvebU2jCwCn-wzw",
+								"method": "POST",
+								"body": {
+									"value": "{\"DataFactoryName\":\"@{pipeline().DataFactory}\",\"PipelineName\":\"@{pipeline().Pipeline}\",\"Notebook Run\":\"Az to OP Table Data Copy Succeeded\",\"EmailTo\":\"@{pipeline().parameters.Emailto}\"}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Success_Copy_Data_Fail_Prior",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Peer_Mentoring_Refresh_Table_Data_Prior_copy1",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-13.eastus2.logic.azure.com:443/workflows/1ed0be93017d461780f2d11e310a5ac6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FoOTuYdhUcntQP1NBN-eBEa8pk92DHjbQ8owFGptTKM",
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"body": {
+									"value": "{\n    \"DataFactoryName\":\n        \"@{pipeline().DataFactory}\",\n    \"PipelineName\":\n        \"@{pipeline().Pipeline}\",\n    \"ErrorMessage\":\n        \" Az to OP Data Copy Failed\",\n    \"EmailTo\":\n      \" @{pipeline().parameters.Emailto}\"\n}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Peer_Mentoring_Refresh_Table_Data_Prior_copy1",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "Peer_Mentoring_Table_Refresh_AZ_OP1_v2",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"EmailTo": {
+										"value": "@pipeline().parameters.EmailTo",
+										"type": "Expression"
+									},
+									"SNHUSQLServer": {
+										"value": "@pipeline().parameters.SNHUSQLServer",
+										"type": "Expression"
+									},
+									"AzureSQLServer": {
+										"value": "@pipeline().parameters.AzureSQLServer",
+										"type": "Expression"
+									},
+									"SHNUDatabase": {
+										"value": "@pipeline().parameters.SHNUDatabase",
+										"type": "Expression"
+									},
+									"AzureDatabase": {
+										"value": "@pipeline().parameters.AzureDatabase",
+										"type": "Expression"
+									},
+									"ExecSQLSource": "SELECT table_schema + '.' + Table_Name AS Table_Name, Table_Name AS Base_Table   \nFROM information_Schema.tables where table_schema + '.' + Table_Name in ( 'RBD.PeermentoringScoreUploadRunPost')",
+									"Academic_Level": "UG",
+									"targetSchema": "RBD"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"EmailTo": {
+				"type": "string",
+				"defaultValue": "debarshi.nandan@quest.com"
+			},
+			"Trigger_File_Path": {
+				"type": "string",
+				"defaultValue": "snhumlcontainer/SNHU-COCE-ML-DEV"
+			},
+			"Blob_Output_File_Location": {
+				"type": "string"
+			},
+			"On_Premises_Output_Folder": {
+				"type": "string"
+			},
+			"DataBricks_NotebookPrior": {
+				"type": "string",
+				"defaultValue": "/Users/r.bhartiya@snhu.edu/PeerMentoring/PriorModelScoringCode - v1"
+			},
+			"On_Premises_Source_MSR_Database_Name": {
+				"type": "string"
+			},
+			"Databricks_NotebookPost": {
+				"type": "string",
+				"defaultValue": "/Users/r.bhartiya@snhu.edu/PeerMentoring/PostModelScoringCode - v1"
+			},
+			"SNHUSQLServer": {
+				"type": "string",
+				"defaultValue": "localhost"
+			},
+			"AzureSQLServer": {
+				"type": "string",
+				"defaultValue": "erwindbserver.database.windows.net"
+			},
+			"SHNUDatabase": {
+				"type": "string",
+				"defaultValue": "AARDA"
+			},
+			"AzureDatabase": {
+				"type": "string",
+				"defaultValue": "SNHU_COCE_ML_DEV"
+			},
+			"PipelineTriggerFile": {
+				"type": "string",
+				"defaultValue": "Peer_Mentoring_trigger.txt"
+			}
+		},
+		"folder": {
+			"name": "SNHU_v2"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-04-12T11:43:17Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

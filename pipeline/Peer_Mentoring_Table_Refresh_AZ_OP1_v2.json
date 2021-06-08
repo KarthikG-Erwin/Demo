@@ -1,0 +1,320 @@
+{
+	"name": "Peer_Mentoring_Table_Refresh_AZ_OP1_v2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Send-Success",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Copy_All_Success_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-30.eastus2.logic.azure.com:443/workflows/fce88819c3434f05bb0219e6b2084baf/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=EqOkVYYjh85bDcCXBaJ5b84gMMoVEvebU2jCwCn-wzw",
+					"method": "POST",
+					"body": {
+						"DataFactoryName": "@{pipeline().DataFactory}",
+						"PipelineName": "@{pipeline().Pipeline}",
+						"EmailTo": "@{pipeline().parameters.Emailto}"
+					}
+				}
+			},
+			{
+				"name": "On Prem to Azure Copy Fail",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Copy_All_Success_Tables",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-13.eastus2.logic.azure.com:443/workflows/1ed0be93017d461780f2d11e310a5ac6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FoOTuYdhUcntQP1NBN-eBEa8pk92DHjbQ8owFGptTKM",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "{\n    \"DataFactoryName\":\n        \"@{pipeline().DataFactory}\",\n    \"PipelineName\":\n        \"@{pipeline().Pipeline}\",\n    \"ErrorMessage\":\n        \"Copy For Each Table Failed\",\n    \"EmailTo\":\n      \" @{pipeline().parameters.Emailto}\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Copy_All_Success_Tables",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get_Success_TABLES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get_Success_TABLES').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "All_Merge_Tables",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "SqlServerSink",
+									"preCopyScript": {
+										"value": "@{Concat('Truncate Table ' , item().Table_Name,'_STG')}",
+										"type": "Expression"
+									}
+								},
+								"enableStaging": false,
+								"parallelCopies": 2
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_AzureSQL_All_Tables1",
+									"type": "DatasetReference",
+									"parameters": {
+										"AzureSQLServer": {
+											"value": "@pipeline().parameters.AzureSQLServer",
+											"type": "Expression"
+										},
+										"AzureSQLDatabaseName": {
+											"value": "@pipeline().parameters.AzureDatabase",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_2014_1d_COCE_BI__STG1",
+									"type": "DatasetReference",
+									"parameters": {
+										"SQLServerName": {
+											"value": "@pipeline().parameters.SNHUSQLServer",
+											"type": "Expression"
+										},
+										"DatabaseName": {
+											"value": "@pipeline().parameters.SHNUDatabase",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Merge_UG",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "All_Merge_Tables",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[usp_merge_stg_dynamic]",
+								"storedProcedureParameters": {
+									"Debug": {
+										"value": "N",
+										"type": "String"
+									},
+									"OutputPK": {
+										"value": "N",
+										"type": "String"
+									},
+									"ParseOnly": {
+										"value": "N",
+										"type": "String"
+									},
+									"SrcDatabase": {
+										"value": {
+											"value": "@pipeline().parameters.SHNUDatabase",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"SrcSchema": {
+										"value": "RBD",
+										"type": "String"
+									},
+									"SrcServer": {
+										"value": {
+											"value": "@pipeline().parameters.SNHUSQLServer",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"SrcTable": {
+										"value": {
+											"value": "@concat(item().Base_Table,'_STG')",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"SrcType": {
+										"value": "SQL",
+										"type": "String"
+									},
+									"TgtDatabase": {
+										"value": {
+											"value": "@pipeline().parameters.SHNUDatabase",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"TgtSchema": {
+										"value": {
+											"value": "@pipeline().parameters.targetSchema",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"TgtTable": {
+										"value": {
+											"value": "@item().Base_Table",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"WhereClause": {
+										"value": null,
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "SqlServerOnPrem",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Get_Success_TABLES",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": {
+							"value": "@pipeline().parameters.ExecSQLSource",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_2014_1d_COCE_BI_Lookup1",
+						"type": "DatasetReference",
+						"parameters": {
+							"SQLServerName": {
+								"value": "@pipeline().parameters.SNHUSQLServer",
+								"type": "Expression"
+							},
+							"DatabaseName": {
+								"value": "@pipeline().parameters.SHNUDatabase",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"EmailTo": {
+				"type": "string",
+				"defaultValue": "debarshi.nandan@quest.com"
+			},
+			"SNHUSQLServer": {
+				"type": "string",
+				"defaultValue": "localhost"
+			},
+			"AzureSQLServer": {
+				"type": "string",
+				"defaultValue": "erwindbserver.database.windows.net"
+			},
+			"SHNUDatabase": {
+				"type": "string",
+				"defaultValue": "MSR"
+			},
+			"AzureDatabase": {
+				"type": "string",
+				"defaultValue": "SNHU_COCE_ML_DEV"
+			},
+			"ExecSQLSource": {
+				"type": "string"
+			},
+			"Academic_Level": {
+				"type": "string"
+			},
+			"targetSchema": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "SNHU_v2"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-04-12T11:46:24Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

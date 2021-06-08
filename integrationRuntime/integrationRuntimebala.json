@@ -1,0 +1,6 @@
+{
+	"name": "integrationRuntimebala",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

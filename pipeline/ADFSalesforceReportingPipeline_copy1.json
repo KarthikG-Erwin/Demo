@@ -1,0 +1,35 @@
+{
+	"name": "ADFSalesforceReportingPipeline_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "select * from Publications",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ADFOnPremSQLServerStage",
+						"type": "DatasetReference"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2020-10-27T08:36:38Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

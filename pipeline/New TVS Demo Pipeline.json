@@ -1,0 +1,74 @@
+{
+	"name": "New TVS Demo Pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Notebook1",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/TvsWithPython",
+					"baseParameters": {
+						"parameters": {
+							"value": "@string(pipeline().parameters.parameters)",
+							"type": "Expression"
+						},
+						"saasurl": {
+							"value": "@string(pipeline().parameters.saasurl)",
+							"type": "Expression"
+						},
+						"containerName": {
+							"value": "@string(pipeline().parameters.containerName)",
+							"type": "Expression"
+						},
+						"functionlist": {
+							"value": "@string(pipeline().parameters.functionlist)",
+							"type": "Expression"
+						},
+						"fileContent": {
+							"value": "@string(pipeline().parameters.fileContent)",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "TVS Demo DataBricks",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"parameters": {
+				"type": "object",
+				"defaultValue": "defaultParam"
+			},
+			"saasurl": {
+				"type": "string",
+				"defaultValue": "https://tvsmoogdevdls.blob.core.windows.net/?sv=2019-12-12&ss=bfqt&srt=sco&sp=rl&se=2021-01-01T11:53:50Z&st=2020-11-03T03:53:50Z&spr=https&sig=URq2Owc1Tl0Jfj4cJ8Naa%2BnXFjt8Rbg1ffVwc6wuRJ4%3D"
+			},
+			"containerName": {
+				"type": "string",
+				"defaultValue": "defaultName"
+			},
+			"functionlist": {
+				"type": "object",
+				"defaultValue": "flist"
+			},
+			"fileContent": {
+				"type": "string",
+				"defaultValue": "defaultContent"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-12-09T15:44:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

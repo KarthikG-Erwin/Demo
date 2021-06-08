@@ -1,0 +1,31 @@
+{
+	"name": "Catalina_df_copy5",
+	"properties": {
+		"folder": {
+			"name": "Test_Catalina"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "catalina_src_copy1",
+						"type": "DatasetReference"
+					},
+					"name": "STGContact"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"script": "source(output(\n\t\tId as string,\n\t\tIsDeleted as string,\n\t\tMasterRecordId as string,\n\t\tAccountId as string,\n\t\tLastName as string,\n\t\tFirstName as string,\n\t\tSalutation as string,\n\t\tName as string,\n\t\tOtherStreet as string,\n\t\tOtherCity as string,\n\t\tOtherState as string,\n\t\tOtherPostalCode as string,\n\t\tOtherCountry as string,\n\t\tOtherLatitude as string,\n\t\tOtherLongitude as string,\n\t\tOtherGeocodeAccuracy as string,\n\t\tMailingStreet as string,\n\t\tMailingCity as string,\n\t\tMailingState as string,\n\t\tMailingPostalCode as string,\n\t\tMailingCountry as string,\n\t\tMailingLatitude as string,\n\t\tMailingLongitude as string,\n\t\tMailingGeocodeAccuracy as string,\n\t\tPhone as string,\n\t\tFax as string,\n\t\tMobilePhone as string,\n\t\tHomePhone as string,\n\t\tOtherPhone as string,\n\t\tAssistantPhone as string,\n\t\tReportsToId as string,\n\t\tEmail as string,\n\t\tTitle as string,\n\t\tDepartment as string,\n\t\tAssistantName as string,\n\t\tLeadSource as string,\n\t\tBirthdate as string,\n\t\tDescription as string,\n\t\tOwnerId as string,\n\t\tCreatedDate as string,\n\t\tCreatedById as string,\n\t\tLastModifiedDate as string,\n\t\tLastModifiedById as string,\n\t\tSystemModstamp as string,\n\t\tLastActivityDate as string,\n\t\tLastCURequestDate as string,\n\t\tLastCUUpdateDate as string,\n\t\tLastViewedDate as string,\n\t\tLastReferencedDate as string,\n\t\tEmailBouncedReason as string,\n\t\tEmailBouncedDate as string,\n\t\tIsEmailBounced as string,\n\t\tPhotoUrl as string,\n\t\tJigsaw as string,\n\t\tJigsawContactId as string,\n\t\tCleanStatus as string,\n\t\tIndividualId as string,\n\t\tLevel__c as string,\n\t\tLanguages__c as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> STGContact\nSTGContact sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcontainer: 'erwintestgen2',\n\tfolderPath: 'testcontainer/questTest',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}

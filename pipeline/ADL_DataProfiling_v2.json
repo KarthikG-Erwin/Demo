@@ -1,0 +1,66 @@
+{
+	"name": "ADL_DataProfiling_v2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Notebook2",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Deb/TVS_Profiling_v2",
+					"baseParameters": {
+						"parameters": {
+							"value": "@string(pipeline().parameters.parameters)",
+							"type": "Expression"
+						},
+						"containerName": {
+							"value": "@string(pipeline().parameters.containerName)",
+							"type": "Expression"
+						},
+						"functionlist": {
+							"value": "@string(pipeline().parameters.functionlist)",
+							"type": "Expression"
+						},
+						"fileContent": {
+							"value": "@string(pipeline().parameters.fileContent)",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks1",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"parameters": {
+				"type": "object",
+				"defaultValue": "defaultParam"
+			},
+			"containerName": {
+				"type": "string",
+				"defaultValue": "defaultName"
+			},
+			"functionlist": {
+				"type": "object",
+				"defaultValue": "flist"
+			},
+			"fileContent": {
+				"type": "string",
+				"defaultValue": "defaultContent"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-05-10T11:30:37Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

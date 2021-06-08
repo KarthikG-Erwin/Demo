@@ -1,0 +1,58 @@
+{
+	"name": "flow",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bala_AzureBlobStorage2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Emp.csv",
+				"folderPath": "demo/Test",
+				"container": "home"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Dept",
+				"type": "String"
+			},
+			{
+				"name": "Empno",
+				"type": "String"
+			},
+			{
+				"name": "Mgr",
+				"type": "String"
+			},
+			{
+				"name": "Hiredate",
+				"type": "String"
+			},
+			{
+				"name": "Job",
+				"type": "String"
+			},
+			{
+				"name": "Comm",
+				"type": "String"
+			},
+			{
+				"name": "Ename",
+				"type": "String"
+			},
+			{
+				"name": "Sal",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

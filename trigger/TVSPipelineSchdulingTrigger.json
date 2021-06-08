@@ -1,0 +1,28 @@
+{
+	"name": "TVSPipelineSchdulingTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "dataprofliningDemo",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"path": "tvsm/oog/sandbox/krishna/"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 4,
+				"startTime": "2020-10-27T09:31:00Z",
+				"endTime": "2020-10-27T09:37:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}

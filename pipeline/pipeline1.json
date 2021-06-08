@@ -1,0 +1,106 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "PRD",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Dim_PRD_SCD2_parquet",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "DOCTYP",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PRD",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Dim_DOCTYP_SCD2_parquet",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "DOCSTA",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DOCTYP",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Dim_DOCSTA_SCD2_parquet",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "DOCCDI",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DOCSTA",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Dim_DOCCDI_SCD2_parquet",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "CFMMETPAIPPS",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DOCCDI",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Dim_CFMMETPAIPPS_SCD2_parquet",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "Dim_consolidation_load"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-08-19T16:53:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
