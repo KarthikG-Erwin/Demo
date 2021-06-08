@@ -1,0 +1,734 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name"
+		},
+		"ADFOnPremStagingDatabaseConnector": {
+			"type": "string"
+		},
+		"AzureDataProfiling": {
+			"type": "string"
+		},
+		"SqlServer1": {
+			"type": "string"
+		},
+		"AzureBlobStorage1": {
+			"type": "string"
+		},
+		"SqlServerOnPrem": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ADFSalesforceEmailTemplatePipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Advisor Call History",
+				"activities": [
+					{
+						"name": "Get Posting Group Detail",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 3,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderStoredProcedureName": "[[pg].[usp_GetPostingGroupChild]",
+								"storedProcedureParameters": {
+									"pChildPostingGroupCode": {
+										"type": "String",
+										"value": {
+											"value": "@variables('PostingGroupChildCode')",
+											"type": "Expression"
+										}
+									},
+									"pETLExecutionId": {
+										"type": "Int32",
+										"value": "-1"
+									},
+									"pPathId": {
+										"type": "Int32",
+										"value": "-1"
+									},
+									"pPostingGroupBatchId": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.ParentPostingGroupBatchId",
+											"type": "Expression"
+										}
+									},
+									"pPostingGroupBatchSeq": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.ParentPostingGroupBatchSeq",
+											"type": "Expression"
+										}
+									},
+									"pPostingGroupId": {
+										"type": "Int32",
+										"value": {
+											"value": "@pipeline().parameters.ParentPostingGroupId",
+											"type": "Expression"
+										}
+									},
+									"pVerbose": {
+										"type": "Boolean",
+										"value": "False"
+									}
+								},
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "ADFOnPremStagingDatabaseDataset",
+								"type": "DatasetReference"
+							}
+						}
+					},
+					{
+						"name": "Stage Data",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get Posting Group Detail",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.01:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"additionalColumns": [
+									{
+										"name": "IssueID",
+										"value": {
+											"value": "@activity('Get Posting Group Detail').output.firstrow.IssueId",
+											"type": "Expression"
+										}
+									}
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "Raw Data Zone/Salesforce/Email Template*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": "TRUNCATE TABLE BPI_DW_STAGE.salesforce.EmailTemplate"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['Id']"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Name']"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['DeveloperName']"
+										},
+										"sink": {
+											"name": "DeveloperName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['NamespacePrefix']"
+										},
+										"sink": {
+											"name": "NamespacePrefix",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['OwnerId']"
+										},
+										"sink": {
+											"name": "OwnerId",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['FolderId']"
+										},
+										"sink": {
+											"name": "FolderId",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['FolderName']"
+										},
+										"sink": {
+											"name": "FolderName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['BrandTemplateId']"
+										},
+										"sink": {
+											"name": "BrandTemplateId",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['TemplateStyle']"
+										},
+										"sink": {
+											"name": "TemplateStyle",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['IsActive']"
+										},
+										"sink": {
+											"name": "IsActive",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['TemplateType']"
+										},
+										"sink": {
+											"name": "TemplateType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Encoding']"
+										},
+										"sink": {
+											"name": "Encoding",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Description']"
+										},
+										"sink": {
+											"name": "Description",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Subject']"
+										},
+										"sink": {
+											"name": "Subject",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['HtmlValue']"
+										},
+										"sink": {
+											"name": "HtmlValue",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Body']"
+										},
+										"sink": {
+											"name": "Body",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['TimesUsed']"
+										},
+										"sink": {
+											"name": "TimesUsed",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['LastUsedDate']"
+										},
+										"sink": {
+											"name": "LastUsedDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['CreatedDate']"
+										},
+										"sink": {
+											"name": "CreatedDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['CreatedById']"
+										},
+										"sink": {
+											"name": "CreatedById",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['LastModifiedDate']"
+										},
+										"sink": {
+											"name": "LastModifiedDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['LastModifiedById']"
+										},
+										"sink": {
+											"name": "LastModifiedById",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['SystemModstamp']"
+										},
+										"sink": {
+											"name": "SystemModstamp",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['ApiVersion']"
+										},
+										"sink": {
+											"name": "ApiVersion",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Markup']"
+										},
+										"sink": {
+											"name": "Markup",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['UiType']"
+										},
+										"sink": {
+											"name": "UiType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['RelatedEntityType']"
+										},
+										"sink": {
+											"name": "RelatedEntityType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['IssueID']"
+										},
+										"sink": {
+											"name": "IssueID",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADFSalesforceDataLakeRetrievalDataset_JSON",
+								"type": "DatasetReference",
+								"parameters": {
+									"sinktablename": "Email Template",
+									"issuename": {
+										"value": "@concat(activity('Get Posting Group Detail').output.firstrow.IssueName,'.json')",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADFOnPremStagingEmailTemplateDataset",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Load Data",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Transform",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.01:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[salesforce].[usp_LoadEmailTemplate]",
+							"storedProcedureParameters": {
+								"pETLExecutionId": {
+									"value": {
+										"value": "@pipeline().parameters.ETLExecutionID",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"pPathId": {
+									"value": "-1",
+									"type": "Int32"
+								},
+								"pPostingGroupProcessingId": {
+									"value": {
+										"value": "@activity('Get Posting Group Detail').output.firstrow.ParentPostingGroupProcessingId",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"pVerbose": {
+									"value": "False",
+									"type": "Boolean"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "[parameters('ADFOnPremStagingDatabaseConnector')]",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Transform",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Stage Data",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/AHOLD_RDS_SDM_DEMOG_OCCUPATION"
+						},
+						"linkedServiceName": {
+							"referenceName": "[parameters('AzureDataProfiling')]",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"parameters": {
+					"ParentPostingGroupBatchId": {
+						"type": "string",
+						"defaultValue": "-1"
+					},
+					"ParentPostingGroupBatchSeq": {
+						"type": "string",
+						"defaultValue": "-1"
+					},
+					"ParentPostingGroupId": {
+						"type": "string",
+						"defaultValue": "-1"
+					},
+					"ETLExecutionID": {
+						"type": "string",
+						"defaultValue": "-1"
+					}
+				},
+				"variables": {
+					"PostingGroupChildCode": {
+						"type": "String",
+						"defaultValue": "SF-EDL-SF-EMAILTEMPLATE"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-05-18T12:10:57Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ADFOnPremStagingDatabaseDataset')]",
+				"[concat(variables('factoryId'), '/datasets/ADFSalesforceDataLakeRetrievalDataset_JSON')]",
+				"[concat(variables('factoryId'), '/datasets/ADFOnPremStagingEmailTemplateDataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADFOnPremStagingDatabaseDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('SqlServer1')]",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADFSalesforceDataLakeRetrievalDataset_JSON')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('AzureBlobStorage1')]",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"sinktablename": {
+						"type": "string",
+						"defaultValue": "Email Template"
+					},
+					"issuename": {
+						"type": "string",
+						"defaultValue": "@concat(activity('Get Posting Group Detail').output.firstrow.IssueName,'.json')"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "EmailTemplate.json",
+						"folderPath": "Salesforce",
+						"container": "rawdatazone"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"commitInfo": {
+							"type": "object",
+							"properties": {
+								"timestamp": {
+									"type": "integer"
+								},
+								"userId": {
+									"type": "string"
+								},
+								"userName": {
+									"type": "string"
+								},
+								"operation": {
+									"type": "string"
+								},
+								"operationParameters": {
+									"type": "object",
+									"properties": {
+										"mode": {
+											"type": "string"
+										},
+										"partitionBy": {
+											"type": "string"
+										}
+									}
+								},
+								"notebook": {
+									"type": "object",
+									"properties": {
+										"notebookId": {
+											"type": "string"
+										}
+									}
+								},
+								"clusterId": {
+									"type": "string"
+								},
+								"isolationLevel": {
+									"type": "string"
+								},
+								"isBlindAppend": {
+									"type": "boolean"
+								},
+								"operationMetrics": {
+									"type": "object",
+									"properties": {
+										"numFiles": {
+											"type": "string"
+										},
+										"numOutputBytes": {
+											"type": "string"
+										},
+										"numOutputRows": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						},
+						"protocol": {
+							"type": "object",
+							"properties": {
+								"minReaderVersion": {
+									"type": "integer"
+								},
+								"minWriterVersion": {
+									"type": "integer"
+								}
+							}
+						},
+						"metaData": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"format": {
+									"type": "object",
+									"properties": {
+										"provider": {
+											"type": "string"
+										},
+										"options": {
+											"type": "object"
+										}
+									}
+								},
+								"schemaString": {
+									"type": "string"
+								},
+								"partitionColumns": {
+									"type": "array"
+								},
+								"configuration": {
+									"type": "object"
+								},
+								"createdTime": {
+									"type": "integer"
+								}
+							}
+						},
+						"add": {
+							"type": "object",
+							"properties": {
+								"path": {
+									"type": "string"
+								},
+								"partitionValues": {
+									"type": "object"
+								},
+								"size": {
+									"type": "integer"
+								},
+								"modificationTime": {
+									"type": "integer"
+								},
+								"dataChange": {
+									"type": "boolean"
+								},
+								"stats": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADFOnPremStagingEmailTemplateDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('SqlServerOnPrem')]",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "salesforce",
+					"table": "EmailTemplate"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
